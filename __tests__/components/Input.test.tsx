@@ -1,23 +1,16 @@
-import React, {ChangeEvent} from 'react';
+import React from 'react';
 import {render, fireEvent, screen} from '@testing-library/react';
-import { mocked } from 'ts-jest/utils'
 import {Input} from '../../src';
 
 const inputName = 'test'
 const inputType = 'text';
 const inputValue = "some text value";
 
-interface ChangeParams {
-  e: ChangeEvent<HTMLInputElement>,
-  name: string,
-  value: string | number
-}
-
 let mockHandleChange = jest.fn();
 
 describe('<Input /> Tests', () => {
   it(`should render input type: "${inputType}" with testid: "${inputName}"`, () => {
-    render(<Input type={inputType} name={inputName} className="testing-class" inputChange={mockHandleChange}/>);
+    render(<Input type={inputType} name={inputName} className="testing-class" data-testid={inputName}  inputChange={mockHandleChange}/>);
     const input = screen.queryByTestId(inputName);
 
     beforeEach(() => {
@@ -27,7 +20,7 @@ describe('<Input /> Tests', () => {
   });
 
   it('should change input value to: "some text value"', () => {
-    const {getByLabelText} = render(<Input type={inputType} name={inputName} className="testing-class" inputChange={mockHandleChange}/>);
+    const {getByLabelText} = render(<Input type={inputType} name={inputName} className="testing-class" data-testid={inputName}  inputChange={mockHandleChange}/>);
     const input = getByLabelText(inputName) as HTMLInputElement;
 
     fireEvent.change(input, {target: {value: inputValue}});
@@ -38,7 +31,7 @@ describe('<Input /> Tests', () => {
   });
 
   it(`should call the inputChange prop function and return the parameters: "name" with value: "${inputName}" and "value": "${inputValue}"`, () => {
-    const {getByLabelText} = render(<Input type={inputType} name={inputName} className="testing-class" inputChange={mockHandleChange}/>);
+    const {getByLabelText} = render(<Input type={inputType} name={inputName} className="testing-class" data-testid={inputName} inputChange={mockHandleChange}/>);
     const input = getByLabelText(inputName) as HTMLInputElement;
 
     expect(mockHandleChange).toBeCalledTimes(0);
@@ -49,5 +42,5 @@ describe('<Input /> Tests', () => {
 
     expect(value).toBe('some text value');
     expect(name).toBe(inputName);
-  })
+  });
 });

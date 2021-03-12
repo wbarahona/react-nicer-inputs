@@ -1,16 +1,6 @@
 import React, {FC, HTMLProps, ChangeEvent} from 'react';
-
-interface Attrs {
-  [key: number]: string
-}
-
-interface ChangeParams {
-  e: ChangeEvent<HTMLInputElement>,
-  name: string,
-  value: string | number
-}
-
-interface InputProps extends HTMLProps<HTMLInputElement> {
+import {Attrs, ChangeParams} from '../../types';
+export interface InputProps extends HTMLProps<HTMLInputElement> {
   type: string,
   name: string,
   className?: string,
@@ -19,7 +9,7 @@ interface InputProps extends HTMLProps<HTMLInputElement> {
   value?: string | number
 }
 
-const Input: FC<InputProps> = ({ type, name, className, inputChange, attrs, ...props }: InputProps & HTMLProps<HTMLInputElement>) => {
+export const Input: FC<InputProps> = ({ type, name, className, inputChange, attrs, ...props }: InputProps & HTMLProps<HTMLInputElement>) => {
   const classNames = `input ${name} ${className}`;
   
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +20,7 @@ const Input: FC<InputProps> = ({ type, name, className, inputChange, attrs, ...p
   }
 
   return(
-    <input {... props} type={type} name={name} id={name} className={classNames} data-testid={name} aria-label={name} onChange={handleChange} {...attrs} />
+    <input {... props} type={type} name={name} id={name} className={classNames} aria-label={name} onChange={handleChange} {...attrs} />
   )
 }
 

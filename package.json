@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "dev": "yalc-watch",
     "test": "jest --watchAll",
-    "cover": "jest --coverage",
-    "postinstall": "tsc --declaration"
+    "cover": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -43,6 +43,13 @@
     "react-dom": "^17.0.1",
     "ts-jest": "^26.5.0",
     "ts-node": "^9.1.1",
-    "typescript": "^4.1.3"
+    "typescript": "^4.1.3",
+    "yalc": "^1.0.0-pre.50",
+    "yalc-watch": "^0.0.6"
+  },
+  "yalcWatch": {
+    "watchFolder": "dist",
+    "buildWatchCommand": "tsc -d -w",
+    "extensions": "js, ts"
   }
 }

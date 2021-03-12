@@ -20,5 +20,6 @@
     "outDir": "dist",
     "jsx": "react",
   },
-  "include": ["src", "components"]
+  "include": ["src", "components"],
+  "exclude": ["node_modules", "dist"]
 }
