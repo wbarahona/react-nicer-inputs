@@ -4,7 +4,7 @@
   "description": "An easy to use library to create react forms 📝, its the new level from react-nice-inputs.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -d",
     "dev": "yalc-watch",
     "test": "jest --watchAll",
     "cover": "jest --coverage"
@@ -51,5 +51,6 @@
     "watchFolder": "dist",
     "buildWatchCommand": "tsc -d -w",
     "extensions": "js, ts"
-  }
+  },
+  "dependencies": {}
 }

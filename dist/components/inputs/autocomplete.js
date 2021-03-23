@@ -43,7 +43,16 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Autocomplete = void 0;
 var react_1 = __importStar(require("react"));
-;
+/**
+ * Autocomplete Component
+ * @param name - Is the input name
+ * @param [className] - Optional. Is the class needed, its appended to the component wrapper
+ * @param options - Is the array of options, it takes an array of objects with label and value properties, this accepts attrs for each option
+ * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value
+ * @param attrs - Are all attributes this input can have they are appended to the input not the wrapper
+ * @param [value] - Optional. Is the input value, if sent the input will take this value as default
+ * @returns {React.FunctionComponentElement} Returns a select element
+ */
 var Autocomplete = function (_a) {
     var name = _a.name, className = _a.className, options = _a.options, inputChange = _a.inputChange, attrs = _a.attrs, value = _a.value, props = __rest(_a, ["name", "className", "options", "inputChange", "attrs", "value"]);
     var _b = react_1.useState(false), optionsVisible = _b[0], setOptionsVisible = _b[1];
@@ -62,7 +71,6 @@ var Autocomplete = function (_a) {
             closeOptions();
         }
     }
-    ;
     var registerMouseDown = function () {
         document.addEventListener('mousedown', handleClick);
     };
@@ -107,15 +115,16 @@ var Autocomplete = function (_a) {
     react_1.useEffect(function () {
         registerMouseDown();
         setValue(value);
+        setAllOptions(options);
         return function () {
             unRegisterMouseDown();
         };
-    }, [value]);
-    return (react_1.default.createElement("div", { className: "autocomplete-wrapper input " + className, ref: autocompleteRef },
-        react_1.default.createElement("input", __assign({ name: name, id: name, className: "autocomplete-input", "aria-label": name, onChange: handleChange, onClick: toggleOptions, onFocus: handleFocus, value: labelValue }, attrs)),
+    }, [value, options]);
+    return (react_1.default.createElement("div", { className: "autocomplete-wrapper " + className, ref: autocompleteRef },
+        react_1.default.createElement("input", __assign({}, props, { name: name, id: name, className: "input autocomplete-input", "aria-label": name, onChange: handleChange, onClick: toggleOptions, onFocus: handleFocus, value: labelValue }, attrs)),
         optionsVisible && (react_1.default.createElement("ul", { className: "autocomplete-options" }, allOptions.map(function (_a) {
-            var label = _a.label, value = _a.value;
-            return (react_1.default.createElement("li", { key: value, "data-value": value, "data-label": label, "data-testid": name + "-autocomplete-options", onClick: selectOption }, label));
+            var label = _a.label, value = _a.value, optAttrs = _a.attrs;
+            return (react_1.default.createElement("li", __assign({ key: value, "data-value": value, "data-label": label, "data-testid": name + "-autocomplete-options", onClick: selectOption }, optAttrs), label));
         })))));
 };
 exports.Autocomplete = Autocomplete;

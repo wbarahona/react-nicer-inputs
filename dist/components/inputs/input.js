@@ -27,15 +27,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Input = void 0;
 var react_1 = __importDefault(require("react"));
+/**
+ * Input Component
+ * @param type - Can be any type of input defined in HTML5 spec, "checkbox" or "radio" are not recommended
+ * @param name - Is the input name
+ * @param [className] - Optional. Is the class needed, its appended to the component wrapper
+ * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value
+ * @param [attrs] - Optional. Are all attributes this input can have they are appended to the input not the wrapper
+ * @param [value] - Optional. Is the input value, if sent the input will take this value as default
+ * @returns {React.FunctionComponentElement} Returns an input element
+ */
 var Input = function (_a) {
     var type = _a.type, name = _a.name, className = _a.className, inputChange = _a.inputChange, attrs = _a.attrs, props = __rest(_a, ["type", "name", "className", "inputChange", "attrs"]);
     var classNames = "input " + name + " " + className;
     var handleChange = function (e) {
         var rawValue = e.currentTarget.value;
-        var value = (type === 'number') ? Number(rawValue) : rawValue;
+        var value = type === 'number' ? Number(rawValue) : rawValue;
         inputChange({ e: e, name: name, value: value });
     };
-    return (react_1.default.createElement("input", __assign({}, props, { type: type, name: name, id: name, className: classNames, "aria-label": name, onChange: handleChange }, attrs)));
+    return (
+    // TODO: add textarea
+    react_1.default.createElement("input", __assign({}, props, { type: type, name: name, id: name, className: classNames, "aria-label": name, onChange: handleChange }, attrs)));
 };
 exports.Input = Input;
 exports.default = exports.Input;
