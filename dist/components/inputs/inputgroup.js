@@ -104,20 +104,6 @@ var InputGroup = function (_a) {
                 })) === null || _a === void 0 ? void 0 : _a.value);
             }
         });
-        // const index = options.findIndex(({value}) => value === rawInputValue);
-        // if (index >= 0 && type === 'checkbox') {
-        //   optionValueArray.map(({checked}, i) => {
-        //     arr[i].checked = checked;
-        //   });
-        //   arr[index].checked = !arr[index].checked;
-        //   arr.map(({value, checked}) => {
-        //     if (checked) {response += `${value},`;}
-        //   });
-        //   response = response.slice(0, -1);
-        // } else if (index >= 0 && type === 'radio') {
-        //   arr[index].checked = true;
-        //   response = `${arr.find(({checked}) => checked)?.value}`;
-        // }
         setOptionValueArray(arr);
         return response;
     };

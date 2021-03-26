@@ -25,3 +25,17 @@ export type Option = {
 }
 
 export type InputValue = string | number | undefined;
+
+export type NicerInputProps = {
+  type: string;
+  name: string;
+  className?: string;
+  inputChange: (args: ChangeParams) => void;
+  attrs?: Attrs;
+  value?: string | number | undefined;
+}
+
+export type DateRangeProps = {
+  startDate: NicerInputProps;
+  endDate: NicerInputProps;
+}
