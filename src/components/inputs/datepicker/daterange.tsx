@@ -12,8 +12,8 @@ export const DateRange = ({
   startDate,
   endDate,
 }: ExtendedDateRangeProps) => {
-  const { name: startDateName, className: startDateClassName } = startDate;
-  const { name: endDateName, className: endDateClassName } = endDate;
+  const { name: startDateName, className: startDateClassName, attrs: startDateAttrs } = startDate;
+  const { name: endDateName, className: endDateClassName, attrs: endDateAttrs } = endDate;
 
   return (
     <>
@@ -23,6 +23,7 @@ export const DateRange = ({
         id={startDateName}
         className={`input datepicker-input ${startDateName} ${startDateClassName}`}
         onChange={onChange}
+        {...startDateAttrs}
       />
       <input
         type={type}
@@ -30,6 +31,7 @@ export const DateRange = ({
         id={endDateName}
         className={`input datepicker-input ${endDateName} ${endDateClassName}`}
         onChange={onChange}
+        {...endDateAttrs}
       />
     </>
   );
