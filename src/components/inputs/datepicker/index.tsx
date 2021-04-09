@@ -1,24 +1,23 @@
 import React, { FC, HTMLProps, ChangeEvent, useContext } from 'react';
 import { Attrs, ChangeParams, DateRangeProps } from '../../../types';
 import DateRange from './daterange';
-import DatePickerContext from './datepickercontext';
 
 /**
  * DatePickerProps
  * @typedef DatePickerProps
  */
 export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
-  type: 'date' | 'datetime',
-  name: string,
-  className?: string,
-  inputChange: (args: ChangeParams) => void,
-  native?: boolean,
-  dateRange?: DateRangeProps,
-  format?: string,
-  maxDate?: string,
-  minDate?: string,
-  attrs?: Attrs,
-  value?: string | number | undefined,
+  type: 'date' | 'datetime';
+  name: string;
+  className?: string;
+  inputChange: (args: ChangeParams) => void;
+  native?: boolean;
+  dateRange?: DateRangeProps;
+  format?: string;
+  maxDate?: string;
+  minDate?: string;
+  attrs?: Attrs;
+  value?: string | number | undefined;
 }
 
 /**
@@ -84,7 +83,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   //   }
   // };
 
-  const { inputValue, handleChange } = useContext(DatePickerContext);
+  // const { inputValue, handleChange } = useContext(DatePickerContext);
 
   // TODO: make a context of all this to avoid prop drilling
 
@@ -98,14 +97,12 @@ export const DatePicker: FC<DatePickerProps> = ({
             name={name}
             id={name}
             className={`input datepicker-input ${name}`}
-            onChange={handleChange}
-            value={inputValue}
           />
         </div>
       )}
       {dateRange && (
         <div className={`datepicker-wrapper ${className}`}>
-          <DateRange type={inputType} onChange={handleChange} {...dateRange} />
+          <DateRange type={inputType} onChange={() => {}} {...dateRange} />
         </div>
       )}
     </>
