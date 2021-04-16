@@ -5,7 +5,7 @@ import CalendarHeader from './calendarHeader';
 
 export interface MonthProps extends HTMLProps<HTMLTableElement> {
   month: Moment;
-  monthHeader?: Function;
+  monthHeader?: ReactNode;
   locale?: string;
 }
 
@@ -20,32 +20,6 @@ export const Month: FC<MonthProps> = ({
   const thisYear: number = month.year();
   const startDateOfMonth: Moment = m(month).startOf('month');
   const endDateOfMonth: Moment = m(month).endOf('month');
-
-  const calcWeeksInMonth = (date: Moment): number => {
-    const dateFirst = m(date).date(1);
-    const dateLast = m(date).date(date.daysInMonth());
-    const startWeek = dateFirst.isoWeek();
-    const endWeek = dateLast.isoWeek();
-
-    if (endWeek < startWeek) {
-      // Yearly overlaps, month is either DEC or JAN
-      if (dateFirst.month() === 0) {
-        // January
-        return endWeek + 1;
-      } else {
-        // December
-        if (dateLast.isoWeekday() === 7) {
-          // Sunday is last day of year
-          return endWeek - startWeek + 1;
-        } else {
-          // Sunday is NOT last day of year
-          return dateFirst.isoWeeksInYear() - startWeek + 1;
-        }
-      }
-    } else {
-      return endWeek - startWeek + 1;
-    }
-  };
 
   const buildMonthWeeks = (): Array<Array<Date>> => {
     let ret: Array<Array<Date>> = [];
@@ -72,12 +46,12 @@ export const Month: FC<MonthProps> = ({
     return ret;
   };
 
-  const weeksInMonth: number = calcWeeksInMonth(month);
   const week = buildMonthWeeks();
+  const weeksInMonth: number = week.length;
 
   return (
     <table>
-      <CalendarHeader month={month} monthHeader={monthHeader} />
+      <CalendarHeader>{monthHeader}</CalendarHeader>
       <thead>
         <tr>
           {weekDays.map((weekDay, i) => (

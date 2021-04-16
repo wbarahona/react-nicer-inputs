@@ -52,41 +52,6 @@ export const DatePicker: FC<DatePickerProps> = ({
 }: DatePickerProps & HTMLProps<HTMLInputElement>) => {
   const inputType = native ? type : 'text';
 
-  // const [inputValue, setInputValue] = useState<string | number>(value || '');
-  // const [startDate, setStartDate] = useState<string>('');
-  // const [endDate, setEndDate] = useState<string>('');
-
-  // const validateDate = (date: Moment) => {
-  //   let ret: Boolean = false;
-
-  //   ret = date.isValid();
-
-  //   return ret;
-  // }
-
-  // const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   const { currentTarget } = e;
-  //   const { value } = currentTarget;
-  //   const inFormat = (native) ? 'YYYY-MM-DD' : format
-  //   const date: Moment = m(value, inFormat, true);
-  //   const isValidDate = validateDate(date);
-  //   const formattedVal: string = date.format(format);
-
-  //   if (dateRange) {
-  //     // handle both dates here and set stardate and  enddate here
-  //   } else {
-  //     // setInputValue(value);
-
-  //     if (isValidDate) {
-  //       inputChange({ e, name, value: formattedVal });
-  //     }
-  //   }
-  // };
-
-  // const { inputValue, handleChange } = useContext(DatePickerContext);
-
-  // TODO: make a context of all this to avoid prop drilling
-
   return (
     <>
       {!dateRange && (

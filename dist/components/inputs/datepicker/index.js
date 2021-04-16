@@ -47,32 +47,6 @@ var daterange_1 = __importDefault(require("./daterange"));
 var DatePicker = function (_a) {
     var type = _a.type, name = _a.name, className = _a.className, inputChange = _a.inputChange, native = _a.native, dateRange = _a.dateRange, format = _a.format, maxDate = _a.maxDate, minDate = _a.minDate, attrs = _a.attrs, value = _a.value, props = __rest(_a, ["type", "name", "className", "inputChange", "native", "dateRange", "format", "maxDate", "minDate", "attrs", "value"]);
     var inputType = native ? type : 'text';
-    // const [inputValue, setInputValue] = useState<string | number>(value || '');
-    // const [startDate, setStartDate] = useState<string>('');
-    // const [endDate, setEndDate] = useState<string>('');
-    // const validateDate = (date: Moment) => {
-    //   let ret: Boolean = false;
-    //   ret = date.isValid();
-    //   return ret;
-    // }
-    // const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    //   const { currentTarget } = e;
-    //   const { value } = currentTarget;
-    //   const inFormat = (native) ? 'YYYY-MM-DD' : format
-    //   const date: Moment = m(value, inFormat, true);
-    //   const isValidDate = validateDate(date);
-    //   const formattedVal: string = date.format(format);
-    //   if (dateRange) {
-    //     // handle both dates here and set stardate and  enddate here
-    //   } else {
-    //     // setInputValue(value);
-    //     if (isValidDate) {
-    //       inputChange({ e, name, value: formattedVal });
-    //     }
-    //   }
-    // };
-    // const { inputValue, handleChange } = useContext(DatePickerContext);
-    // TODO: make a context of all this to avoid prop drilling
     return (react_1.default.createElement(react_1.default.Fragment, null,
         !dateRange && (react_1.default.createElement("div", { className: "datepicker-wrapper " + className },
             react_1.default.createElement("input", __assign({}, props, { type: inputType, name: name, id: name, className: "input datepicker-input " + name })))),

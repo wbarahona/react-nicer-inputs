@@ -23,33 +23,6 @@ var Month = function (_a) {
     var thisYear = month.year();
     var startDateOfMonth = moment_1.default(month).startOf('month');
     var endDateOfMonth = moment_1.default(month).endOf('month');
-    var calcWeeksInMonth = function (date) {
-        var dateFirst = moment_1.default(date).date(1);
-        var dateLast = moment_1.default(date).date(date.daysInMonth());
-        var startWeek = dateFirst.isoWeek();
-        var endWeek = dateLast.isoWeek();
-        if (endWeek < startWeek) {
-            // Yearly overlaps, month is either DEC or JAN
-            if (dateFirst.month() === 0) {
-                // January
-                return endWeek + 1;
-            }
-            else {
-                // December
-                if (dateLast.isoWeekday() === 7) {
-                    // Sunday is last day of year
-                    return endWeek - startWeek + 1;
-                }
-                else {
-                    // Sunday is NOT last day of year
-                    return dateFirst.isoWeeksInYear() - startWeek + 1;
-                }
-            }
-        }
-        else {
-            return endWeek - startWeek + 1;
-        }
-    };
     var buildMonthWeeks = function () {
         var ret = [];
         var weekArray = [];
@@ -69,10 +42,10 @@ var Month = function (_a) {
         }
         return ret;
     };
-    var weeksInMonth = calcWeeksInMonth(month);
     var week = buildMonthWeeks();
+    var weeksInMonth = week.length;
     return (react_1.default.createElement("table", null,
-        react_1.default.createElement(calendarHeader_1.default, { month: month, monthHeader: monthHeader }),
+        react_1.default.createElement(calendarHeader_1.default, null, monthHeader),
         react_1.default.createElement("thead", null,
             react_1.default.createElement("tr", null, weekDays.map(function (weekDay, i) { return (react_1.default.createElement("td", { key: "th-" + i }, weekDay)); }))),
         react_1.default.createElement("tbody", null, __spreadArrays(Array(weeksInMonth)).map(function (e, i) { return (react_1.default.createElement(week_1.default, { key: "week-" + i, week: week[i], month: thisMonth })); }))));
