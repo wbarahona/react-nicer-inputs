@@ -33,8 +33,9 @@ exports.Calendar = void 0;
 var react_1 = __importStar(require("react"));
 var moment_1 = __importDefault(require("moment"));
 var month_1 = require("./month");
+var CalendarContext_1 = __importDefault(require("./CalendarContext"));
 var Calendar = function (_a) {
-    var monthsToDisplay = _a.monthsToDisplay, monthHeader = _a.monthHeader, minDate = _a.minDate, maxDate = _a.maxDate;
+    var monthsToDisplay = _a.monthsToDisplay, monthHeader = _a.monthHeader, dateRange = _a.dateRange, minDate = _a.minDate, maxDate = _a.maxDate, onDateSelect = _a.onDateSelect;
     var rawNow = moment_1.default().toDate();
     var initialDate = minDate
         ? moment_1.default(minDate, 'MM-DD-YYYY', true).toDate()
@@ -70,11 +71,12 @@ var Calendar = function (_a) {
             " ",
             mm.format('YYYY')));
     };
-    return (react_1.default.createElement("div", { className: "calendar-wrapper" },
-        react_1.default.createElement("div", { className: "months-slider" }, __spreadArrays(Array(monthsToDisplay)).map(function (j, i) {
-            var month = defaultMonth.clone().add(i, 'month');
-            return (react_1.default.createElement(month_1.Month, { key: "calendar-" + i, month: month, monthHeader: whatCalendarHeader(month) }));
-        }))));
+    return (react_1.default.createElement(CalendarContext_1.default, { onDateSelect: onDateSelect, dateRange: dateRange },
+        react_1.default.createElement("div", { className: "calendar-wrapper" },
+            react_1.default.createElement("div", { className: "months-slider" }, __spreadArrays(Array(monthsToDisplay)).map(function (j, i) {
+                var month = defaultMonth.clone().add(i, 'month');
+                return (react_1.default.createElement(month_1.Month, { key: "calendar-" + i, month: month, monthHeader: whatCalendarHeader(month) }));
+            })))));
 };
 exports.Calendar = Calendar;
 exports.default = exports.Calendar;

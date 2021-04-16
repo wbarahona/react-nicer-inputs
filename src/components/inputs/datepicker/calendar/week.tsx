@@ -1,4 +1,5 @@
 import React, { FC, HTMLProps } from 'react';
+import m from 'moment';
 import Day from './day';
 
 export interface WeekProps extends HTMLProps<HTMLTableRowElement> {
@@ -22,7 +23,12 @@ export const Week: FC<WeekProps> = ({
   return (
     <tr>
       {week.map((date, i) => (
-        <Day key={`day-${i}`} date={getDate(date)} />
+        <Day
+          key={`day-${i}`}
+          date={date}
+          dateString={m(date).format('YYYY-MM-DD')}
+          dayNumber={getDate(date)}
+        />
       ))}
     </tr>
   );

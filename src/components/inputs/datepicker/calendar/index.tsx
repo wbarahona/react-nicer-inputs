@@ -1,19 +1,28 @@
-import React, { FC, HTMLProps, ReactNode, useState } from 'react';
+import React, { FC, HTMLProps, useState } from 'react';
 import m, { Moment } from 'moment';
 import { Month } from './month';
+import CalendarProvider from './CalendarContext';
 
+export interface DateRange {
+  startDate: string | Date;
+  endDate: string | Date;
+}
 export interface CalendarProps {
   monthsToDisplay?: number;
   monthHeader?: Function;
+  dateRange?: boolean;
   minDate?: string;
   maxDate?: string;
+  onDateSelect: (args: string | Date | DateRange) => void;
 }
 
 export const Calendar: FC<CalendarProps> = ({
   monthsToDisplay,
   monthHeader,
+  dateRange,
   minDate,
   maxDate,
+  onDateSelect,
 }: CalendarProps & HTMLProps<CalendarProps>) => {
   const rawNow: Date = m().toDate();
   const initialDate: Date = minDate
@@ -65,21 +74,23 @@ export const Calendar: FC<CalendarProps> = ({
     );
 
   return (
-    <div className="calendar-wrapper">
-      <div className="months-slider">
-        {[...Array(monthsToDisplay)].map((j, i) => {
-          let month = defaultMonth.clone().add(i, 'month');
+    <CalendarProvider onDateSelect={onDateSelect} dateRange={dateRange}>
+      <div className="calendar-wrapper">
+        <div className="months-slider">
+          {[...Array(monthsToDisplay)].map((j, i) => {
+            let month = defaultMonth.clone().add(i, 'month');
 
-          return (
-            <Month
-              key={`calendar-${i}`}
-              month={month}
-              monthHeader={whatCalendarHeader(month)}
-            />
-          );
-        })}
+            return (
+              <Month
+                key={`calendar-${i}`}
+                month={month}
+                monthHeader={whatCalendarHeader(month)}
+              />
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </CalendarProvider>
   );
 };
 

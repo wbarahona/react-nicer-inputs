@@ -39,3 +39,9 @@ export type DateRangeProps = {
   startDate: NicerInputProps;
   endDate: NicerInputProps;
 }
+
+export type CalendarContextType = {
+  date: string | Date,
+  saveDate: (date: Date) => void,
+  getDate: () => string | Date,
+}
