@@ -31,33 +31,44 @@ const CalendarProvider: FC<CalendarContextProps> = ({
   const [date, setDate] = useState<string | Date>('');
   const [startDate, setStartDate] = useState<string | Date>('');
   const [endDate, setEndDate] = useState<string | Date>('');
-  const [hasSelectedRange, setHasSelectedRange] = useState<boolean>(false);
+  const [hasSelectedFirstRange, setHasSelectedFirstRange] = useState<boolean>(
+    false
+  );
 
   const saveDate = (newDate: string | Date) => {
     if (dateRange) {
       const mNewDate = m(newDate);
       const mStartDate = m(startDate);
       const mEndDate = m(endDate);
-      const startDateValid = mStartDate.isValid();
-      const endDateValid = mEndDate.isValid();
+      const returnRange = {
+        startDate,
+        endDate,
+      };
 
-      if (!startDateValid) {
+      if (!hasSelectedFirstRange && !mNewDate.isSame(mEndDate)) {
+        if (mNewDate.isAfter(mEndDate)) {
+          setEndDate('');
+          returnRange.endDate = '';
+        }
         setStartDate(newDate);
-      }
+        setHasSelectedFirstRange(true);
 
-      if (startDateValid && !endDateValid) {
-        setEndDate(newDate);
-      }
+        returnRange.startDate = newDate;
+      } else if (!mNewDate.isSame(mStartDate)) {
+        if (mNewDate.isBefore(mStartDate)) {
+          setEndDate(startDate);
+          setStartDate(newDate);
 
-      if (startDateValid && mNewDate.isBefore(mEndDate)) {
-        setStartDate(newDate);
-      }
+          returnRange.endDate = startDate;
+          returnRange.startDate = newDate;
+        } else {
+          setEndDate(newDate);
 
-      if (startDateValid && endDateValid && !hasSelectedRange) {
-        setHasSelectedRange(true);
+          returnRange.endDate = newDate;
+        }
+        setHasSelectedFirstRange(false);
       }
-
-      console.log(mNewDate, mStartDate.isValid(), mEndDate.isValid());
+      onDateSelect(returnRange);
     } else {
       setDate(newDate);
       onDateSelect(newDate);

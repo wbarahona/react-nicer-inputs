@@ -9,6 +9,8 @@ export interface CalendarProps {
     dateRange?: boolean;
     minDate?: string;
     maxDate?: string;
+    minNights?: number;
+    maxNights?: number;
     onDateSelect: (args: string | Date | DateRange) => void;
 }
 export declare const Calendar: FC<CalendarProps>;

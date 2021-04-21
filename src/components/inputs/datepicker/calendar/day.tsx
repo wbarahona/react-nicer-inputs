@@ -1,4 +1,4 @@
-import React, { FC, HTMLProps, MouseEvent, useContext } from 'react';
+import React, { FC, HTMLProps, MouseEvent, useContext, useState } from 'react';
 import { CalendarContext } from './CalendarContext';
 import m from 'moment';
 import { CalendarContextType } from '../../../../types';
@@ -7,6 +7,11 @@ export interface DayProps extends HTMLProps<HTMLTableCellElement> {
   date?: Date;
   dateString?: string;
   dayNumber: string;
+  valid?: boolean;
+  inRange?: boolean;
+  selected?: boolean;
+  minDate?: boolean;
+  maxDate?: boolean;
 }
 
 export const Day: FC<DayProps> = ({
@@ -15,6 +20,7 @@ export const Day: FC<DayProps> = ({
   dayNumber,
 }: DayProps & HTMLProps<HTMLTableCellElement>) => {
   const { saveDate } = useContext(CalendarContext);
+  const [className, setClassName] = useState<string>('');
 
   const handleClick = (e: MouseEvent<HTMLTableDataCellElement>) => {
     const rawDate = e.currentTarget.getAttribute('data-date');
@@ -23,8 +29,22 @@ export const Day: FC<DayProps> = ({
     saveDate(date);
   };
 
+  const handleMouseEnter = () => {
+    console.log('mouse entered');
+  };
+
+  const handleMouseLeave = () => {
+    console.log('mouse leave');
+  };
+
   return (
-    <td data-date={dateString} onClick={handleClick}>
+    <td
+      data-date={dateString}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={className}
+    >
       <time dateTime={dateString}>{dayNumber}</time>
     </td>
   );

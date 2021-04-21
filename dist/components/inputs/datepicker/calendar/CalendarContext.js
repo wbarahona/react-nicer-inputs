@@ -36,27 +36,39 @@ var CalendarProvider = function (_a) {
     var _b = react_1.useState(''), date = _b[0], setDate = _b[1];
     var _c = react_1.useState(''), startDate = _c[0], setStartDate = _c[1];
     var _d = react_1.useState(''), endDate = _d[0], setEndDate = _d[1];
-    var _e = react_1.useState(false), hasSelectedRange = _e[0], setHasSelectedRange = _e[1];
+    var _e = react_1.useState(false), hasSelectedFirstRange = _e[0], setHasSelectedFirstRange = _e[1];
     var saveDate = function (newDate) {
         if (dateRange) {
             var mNewDate = moment_1.default(newDate);
             var mStartDate = moment_1.default(startDate);
             var mEndDate = moment_1.default(endDate);
-            var startDateValid = mStartDate.isValid();
-            var endDateValid = mEndDate.isValid();
-            if (!startDateValid) {
+            var returnRange = {
+                startDate: startDate,
+                endDate: endDate,
+            };
+            if (!hasSelectedFirstRange && !mNewDate.isSame(mEndDate)) {
+                if (mNewDate.isAfter(mEndDate)) {
+                    setEndDate('');
+                    returnRange.endDate = '';
+                }
                 setStartDate(newDate);
+                setHasSelectedFirstRange(true);
+                returnRange.startDate = newDate;
             }
-            if (startDateValid && !endDateValid) {
-                setEndDate(newDate);
+            else if (!mNewDate.isSame(mStartDate)) {
+                if (mNewDate.isBefore(mStartDate)) {
+                    setEndDate(startDate);
+                    setStartDate(newDate);
+                    returnRange.endDate = startDate;
+                    returnRange.startDate = newDate;
+                }
+                else {
+                    setEndDate(newDate);
+                    returnRange.endDate = newDate;
+                }
+                setHasSelectedFirstRange(false);
             }
-            if (startDateValid && mNewDate.isBefore(mEndDate)) {
-                setStartDate(newDate);
-            }
-            if (startDateValid && endDateValid && !hasSelectedRange) {
-                setHasSelectedRange(true);
-            }
-            console.log(mNewDate, mStartDate.isValid(), mEndDate.isValid());
+            onDateSelect(returnRange);
         }
         else {
             setDate(newDate);

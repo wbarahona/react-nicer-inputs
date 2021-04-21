@@ -29,12 +29,19 @@ var moment_1 = __importDefault(require("moment"));
 var Day = function (_a) {
     var date = _a.date, dateString = _a.dateString, dayNumber = _a.dayNumber;
     var saveDate = react_1.useContext(CalendarContext_1.CalendarContext).saveDate;
+    var _b = react_1.useState(''), className = _b[0], setClassName = _b[1];
     var handleClick = function (e) {
         var rawDate = e.currentTarget.getAttribute('data-date');
         var date = moment_1.default(rawDate, 'YYYY-MM-DD', true).toDate();
         saveDate(date);
     };
-    return (react_1.default.createElement("td", { "data-date": dateString, onClick: handleClick },
+    var handleMouseEnter = function () {
+        console.log('mouse entered');
+    };
+    var handleMouseLeave = function () {
+        console.log('mouse leave');
+    };
+    return (react_1.default.createElement("td", { "data-date": dateString, onClick: handleClick, onMouseEnter: handleMouseEnter, onMouseLeave: handleMouseLeave, className: className },
         react_1.default.createElement("time", { dateTime: dateString }, dayNumber)));
 };
 exports.Day = Day;
