@@ -353,9 +353,13 @@ const CalendarProvider: FC<CalendarContextProps> = ({
     const mInitialDate = m(initialDate).add(monthGap, 'months');
     const mMaxDate = m(maxDate, format, true);
 
-    return (
-      mInitialDate.isSameOrBefore(mMaxDate) && disableNavigationOnDateBoundary
-    );
+    if (disableNavigationOnDateBoundary) {
+      return (
+        mInitialDate.isSameOrBefore(mMaxDate) && disableNavigationOnDateBoundary
+      );
+    } else {
+      return true;
+    }
   };
 
   const moveNext = () => {
@@ -374,9 +378,13 @@ const CalendarProvider: FC<CalendarContextProps> = ({
     const mInitialDate = m(initialDate).subtract(monthGap, 'months');
     const mMinDate = m(minDate, format, true);
 
-    return (
-      mInitialDate.isSameOrAfter(mMinDate) && disableNavigationOnDateBoundary
-    );
+    if (disableNavigationOnDateBoundary) {
+      return (
+        mInitialDate.isSameOrAfter(mMinDate) && disableNavigationOnDateBoundary
+      );
+    } else {
+      return true;
+    }
   };
 
   const movePrev = () => {

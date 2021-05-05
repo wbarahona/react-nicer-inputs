@@ -278,7 +278,12 @@ var CalendarProvider = function (_a) {
     var canNavigateNext = function () {
         var mInitialDate = moment_1.default(initialDate).add(monthGap, 'months');
         var mMaxDate = moment_1.default(maxDate, format, true);
-        return (mInitialDate.isSameOrBefore(mMaxDate) && disableNavigationOnDateBoundary);
+        if (disableNavigationOnDateBoundary) {
+            return (mInitialDate.isSameOrBefore(mMaxDate) && disableNavigationOnDateBoundary);
+        }
+        else {
+            return true;
+        }
     };
     var moveNext = function () {
         var mInitialDate = moment_1.default(initialDate).add(monthGap, 'months');
@@ -292,7 +297,12 @@ var CalendarProvider = function (_a) {
     var canNavigatePrev = function () {
         var mInitialDate = moment_1.default(initialDate).subtract(monthGap, 'months');
         var mMinDate = moment_1.default(minDate, format, true);
-        return (mInitialDate.isSameOrAfter(mMinDate) && disableNavigationOnDateBoundary);
+        if (disableNavigationOnDateBoundary) {
+            return (mInitialDate.isSameOrAfter(mMinDate) && disableNavigationOnDateBoundary);
+        }
+        else {
+            return true;
+        }
     };
     var movePrev = function () {
         var mInitialDate = moment_1.default(initialDate).subtract(monthGap, 'months');
