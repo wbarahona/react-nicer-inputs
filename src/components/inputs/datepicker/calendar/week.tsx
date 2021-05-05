@@ -28,6 +28,7 @@ export const Week: FC<WeekProps> = ({
           date={date}
           dateString={m(date).format('YYYY-MM-DD')}
           dayNumber={getDate(date)}
+          // isSelectable={false}
         />
       ))}
     </tr>

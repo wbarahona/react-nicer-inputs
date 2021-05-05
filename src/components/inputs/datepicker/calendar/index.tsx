@@ -1,6 +1,8 @@
-import React, { FC, HTMLProps, useState } from 'react';
+import React, { FC, HTMLProps, useState, ReactNode } from 'react';
 import m, { Moment } from 'moment';
 import { Month } from './month';
+import CalendarSlider from './calendarSlider';
+import CalendarNavigation from './calendarNavigation';
 import CalendarProvider from './CalendarContext';
 
 export interface DateRange {
@@ -13,8 +15,14 @@ export interface CalendarProps {
   dateRange?: boolean;
   minDate?: string;
   maxDate?: string;
+  format?: string;
   minNights?: number;
   maxNights?: number;
+  date?: string | Date | DateRange;
+  disabledDates?: string[];
+  prevButton?: ReactNode;
+  nextButton?: ReactNode;
+  disableNavigationOnDateBoundary?: boolean;
   onDateSelect: (args: string | Date | DateRange) => void;
 }
 
@@ -24,73 +32,34 @@ export const Calendar: FC<CalendarProps> = ({
   dateRange,
   minDate,
   maxDate,
+  format,
+  minNights,
+  maxNights,
   onDateSelect,
+  date,
+  prevButton,
+  nextButton,
+  disableNavigationOnDateBoundary,
+  disabledDates,
 }: CalendarProps & HTMLProps<CalendarProps>) => {
-  const rawNow: Date = m().toDate();
-  const initialDate: Date = minDate
-    ? m(minDate, 'MM-DD-YYYY', true).toDate()
-    : rawNow;
-
-  const [defaultMonth, setDefaultMonth] = useState<Moment>(
-    m(initialDate, 'MM-DD-YYYY', true)
-  );
-  const [defoMM, setDefoMM] = useState<string | number>(
-    initialDate.getMonth() + 1
-  );
-  const [defoYYYY, setDefoYYYY] = useState<string | number>(
-    initialDate.getFullYear()
-  );
-  const setMonth = (month: string) => {
-    const initDate = initialDate.getDate();
-    const daDate = initDate < 10 ? `0${initDate}` : initDate;
-    const convertedMonth: number = parseInt(month, 10);
-    const daMonth = convertedMonth < 10 ? `0${convertedMonth}` : convertedMonth;
-    const daRawDate = `${daMonth}-${daDate}-${defoYYYY}`;
-    const mNewDate = m(daRawDate, 'MM-DD-YYYY', true);
-
-    //TODO: validate incoming selection vs date ranges between minDate and maxDate, decide either allow select the date throwing some warn or do not allow the selection
-
-    setDefaultMonth(mNewDate);
-    setDefoMM(month);
-  };
-  const setYear = (year: string) => {
-    const initMonth = defoMM;
-    const initDate = initialDate.getDate();
-    const daMonth = initMonth < 10 ? `0${initMonth}` : initMonth;
-    const daDate = initDate < 10 ? `0${initDate}` : initDate;
-    const daRawDate = `${daMonth}-${daDate}-${year}`;
-    const mNewDate = m(daRawDate, 'MM-DD-YYYY', true);
-
-    //TODO: validate incoming selection vs date ranges between minDate and maxDate, decide either allow select the date throwing some warn or do not allow the selection
-
-    setDefaultMonth(mNewDate);
-    setDefoYYYY(year);
-  };
-  const whatCalendarHeader = (mm: Moment) =>
-    monthHeader ? (
-      monthHeader({ setMonth, setYear, month: mm })
-    ) : (
-      <>
-        {mm.format('MMMM')} {mm.format('YYYY')}
-      </>
-    );
-
   return (
-    <CalendarProvider onDateSelect={onDateSelect} dateRange={dateRange}>
+    <CalendarProvider
+      onDateSelect={onDateSelect}
+      dateRange={dateRange}
+      monthsToDisplay={monthsToDisplay}
+      minNights={minNights}
+      maxNights={maxNights}
+      minDate={minDate}
+      maxDate={maxDate}
+      format={format}
+      date={date}
+      disabledDates={disabledDates || []}
+      monthHeader={monthHeader}
+      disableNavigationOnDateBoundary={disableNavigationOnDateBoundary}
+    >
       <div className="calendar-wrapper">
-        <div className="months-slider">
-          {[...Array(monthsToDisplay)].map((j, i) => {
-            let month = defaultMonth.clone().add(i, 'month');
-
-            return (
-              <Month
-                key={`calendar-${i}`}
-                month={month}
-                monthHeader={whatCalendarHeader(month)}
-              />
-            );
-          })}
-        </div>
+        <CalendarNavigation prev={prevButton} next={nextButton} />
+        <CalendarSlider />
       </div>
     </CalendarProvider>
   );
