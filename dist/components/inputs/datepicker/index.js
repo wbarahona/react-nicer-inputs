@@ -62,6 +62,17 @@ var daterange_1 = __importDefault(require("./daterange"));
  * @param {string} [minDate] - Optional. Is the minimum date allowable to select by this datepicker
  * @param {(string | number)} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @param {Function} [bottomPanel] - Optional. Is the panel below the calendar, it prompts the user to clear selection and confirm to close calendar, must return JSX
+ * @param {string | StringDateRange} [value] - Optional. Is the value for this datepicker
+ * @param {number} [minNights] - Optional. Is the minimum nights allowable to select by this calendar
+ * @param {number} [maxNights] - Optional. Is the maximum nights allowable to select by this calendar
+ * @param {number} [monthsToDisplay] - Optional. Is the ammount of months to render
+ * @param {string[]} [disabledDates] - Optional. Is the array of dates that this calendar will mark as unallowable to be selected
+ * @param {Function} [monthHeader] - Optional. Is header of each month, must return JSX
+ * @param {ReactNode} [prevButton] - Optional. Allows to customize the navigation button for previous calendar dates
+ * @param {ReactNode} [nextButton] - Optional. Allows to customize the navigation button for next calendar dates
+ * @param {boolean} [disableNavigationOnDateBoundary] - Optional. Defines navigation behavior, if sent the calendar wont navigate to previous dates before minDate or upcoming dates after maxDate
+ * @param {string} [calendarComponentClassName] - Optional. Is the class that the calendar below the input will contain
+ * @param {string} [calendarClassName] - Optional. Is the class needed in each of the calendar wrappers
  * @returns {React.FunctionComponentElement} Returns an input that allows dates selection or two if its a date range
  */
 // TODO: type and native are closely together, find a way to work with native and type date and datetime
@@ -139,17 +150,37 @@ var DatePicker = function (_a) {
     var whatBottomPanel = function () {
         return bottomPanel ? (bottomPanel({ clearSelections: clearSelections, confirmSelections: confirmSelections })) : (react_1.default.createElement(react_1.default.Fragment, null));
     };
+    var setDefaultValue = function () {
+        if (value && dateRange) {
+            var startDate = value.startDate, endDate = value.endDate;
+            setStartDateVal(startDate);
+            setEndDateVal(endDate);
+            setDate(value);
+        }
+        else if (value && !dateRange) {
+            setDate(value);
+        }
+    };
+    react_1.useEffect(function () {
+        setDefaultValue();
+    }, []);
     react_1.useEffect(function () {
         registerMouseDown();
-        hideAutomatically();
+        if (dateRange && date.startDate !== '' && date.endDate !== '') {
+            hideAutomatically();
+        }
+        else if (!dateRange && date !== '') {
+            hideAutomatically();
+        }
         return function () {
             unRegisterMouseDown();
         };
     }, [date, startDateVal, endDateVal]);
-    return (react_1.default.createElement("div", __assign({ className: "datepicker-wrapper " + className, ref: ref }, props),
-        !dateRange && (react_1.default.createElement("input", __assign({}, props, { type: inputType, name: name, id: name, className: "input datepicker-input " + name, onChange: function () { }, onFocusCapture: handleDisplayCalendar, value: date }))),
-        dateRange && (react_1.default.createElement(daterange_1.default, __assign({ type: inputType, displayCalendar: handleDisplayCalendar, startDateVal: startDateVal, endDateVal: endDateVal }, dateRange))),
-        calendarVisible && (react_1.default.createElement(react_1.default.Fragment, null,
+    return (react_1.default.createElement("div", { className: "datepicker-wrapper " + className, ref: ref },
+        react_1.default.createElement("div", { className: "row" },
+            !dateRange && (react_1.default.createElement("input", __assign({}, props, { type: inputType, name: name, id: name, "aria-label": name, className: "input datepicker-input " + name, onChange: function () { }, onFocusCapture: handleDisplayCalendar, value: date }))),
+            dateRange && (react_1.default.createElement(daterange_1.default, __assign({ type: inputType, displayCalendar: handleDisplayCalendar, startDateVal: startDateVal, endDateVal: endDateVal }, dateRange)))),
+        calendarVisible && (react_1.default.createElement("div", { className: "row", "data-testid": name + "-calendar" },
             react_1.default.createElement(calendar_1.default, { dateRange: isDateRange, onDateSelect: handleDateChange, date: date, format: format, minDate: minDate, maxDate: maxDate, minNights: minNights, maxNights: maxNights, monthsToDisplay: monthsToDisplay, disabledDates: disabledDates, monthHeader: monthHeader, prevButton: prevButton, nextButton: nextButton, disableNavigationOnDateBoundary: disableNavigationOnDateBoundary, className: calendarComponentClassName, calendarClassName: calendarClassName }),
             whatBottomPanel()))));
 };

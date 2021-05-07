@@ -32,6 +32,7 @@ export const DateRange = ({
         type={type}
         name={startDateName}
         id={startDateName}
+        aria-label={startDateName}
         className={`input datepicker-input ${startDateName} ${startDateClassName}`}
         onChange={() => {}}
         onFocusCapture={displayCalendar}
@@ -42,6 +43,7 @@ export const DateRange = ({
         type={type}
         name={endDateName}
         id={endDateName}
+        aria-label={endDateName}
         className={`input datepicker-input ${endDateName} ${endDateClassName}`}
         onChange={() => {}}
         onFocusCapture={displayCalendar}

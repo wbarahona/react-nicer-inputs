@@ -16,12 +16,16 @@ export interface DateRanger {
   endDate: string | Date;
 }
 
+export interface StringDateRange {
+  startDate: string;
+  endDate: string;
+}
+
 /**
  * DatePickerProps
  * @typedef DatePickerProps
  */
 export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
-  type: 'date' | 'datetime';
   name: string;
   className?: string;
   inputChange: (args: ChangeParamsDatePicker) => void;
@@ -31,7 +35,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
   minDate?: string;
   attrs?: Attrs;
   bottomPanel?: Function;
-  value?: string | number | undefined;
+  value?: string | number | undefined | StringDateRange | any;
   minNights?: number;
   maxNights?: number;
   monthsToDisplay?: number;
@@ -57,6 +61,17 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
  * @param {string} [minDate] - Optional. Is the minimum date allowable to select by this datepicker
  * @param {(string | number)} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @param {Function} [bottomPanel] - Optional. Is the panel below the calendar, it prompts the user to clear selection and confirm to close calendar, must return JSX
+ * @param {string | StringDateRange} [value] - Optional. Is the value for this datepicker
+ * @param {number} [minNights] - Optional. Is the minimum nights allowable to select by this calendar
+ * @param {number} [maxNights] - Optional. Is the maximum nights allowable to select by this calendar
+ * @param {number} [monthsToDisplay] - Optional. Is the ammount of months to render
+ * @param {string[]} [disabledDates] - Optional. Is the array of dates that this calendar will mark as unallowable to be selected
+ * @param {Function} [monthHeader] - Optional. Is header of each month, must return JSX
+ * @param {ReactNode} [prevButton] - Optional. Allows to customize the navigation button for previous calendar dates
+ * @param {ReactNode} [nextButton] - Optional. Allows to customize the navigation button for next calendar dates
+ * @param {boolean} [disableNavigationOnDateBoundary] - Optional. Defines navigation behavior, if sent the calendar wont navigate to previous dates before minDate or upcoming dates after maxDate
+ * @param {string} [calendarComponentClassName] - Optional. Is the class that the calendar below the input will contain
+ * @param {string} [calendarClassName] - Optional. Is the class needed in each of the calendar wrappers
  * @returns {React.FunctionComponentElement} Returns an input that allows dates selection or two if its a date range
  */
 
@@ -159,7 +174,6 @@ export const DatePicker: FC<DatePickerProps> = ({
   const clearSelections = () => {
     setStartDateVal('');
     setEndDateVal('');
-
     setDate(defDate);
   };
 
@@ -175,9 +189,29 @@ export const DatePicker: FC<DatePickerProps> = ({
     );
   };
 
+  const setDefaultValue = () => {
+    if (value && dateRange) {
+      const { startDate, endDate } = value;
+      setStartDateVal(startDate);
+      setEndDateVal(endDate);
+      setDate(value);
+    } else if (value && !dateRange) {
+      setDate(value);
+    }
+  };
+
+  useEffect(() => {
+    setDefaultValue();
+  }, []);
+
   useEffect(() => {
     registerMouseDown();
-    hideAutomatically();
+
+    if (dateRange && date.startDate !== '' && date.endDate !== '') {
+      hideAutomatically();
+    } else if (!dateRange && date !== '') {
+      hideAutomatically();
+    }
 
     return () => {
       unRegisterMouseDown();
@@ -185,30 +219,33 @@ export const DatePicker: FC<DatePickerProps> = ({
   }, [date, startDateVal, endDateVal]);
 
   return (
-    <div className={`datepicker-wrapper ${className}`} ref={ref} {...props}>
-      {!dateRange && (
-        <input
-          {...props}
-          type={inputType}
-          name={name}
-          id={name}
-          className={`input datepicker-input ${name}`}
-          onChange={() => {}}
-          onFocusCapture={handleDisplayCalendar}
-          value={date}
-        />
-      )}
-      {dateRange && (
-        <DateRange
-          type={inputType}
-          displayCalendar={handleDisplayCalendar}
-          startDateVal={startDateVal}
-          endDateVal={endDateVal}
-          {...dateRange}
-        />
-      )}
+    <div className={`datepicker-wrapper ${className}`} ref={ref}>
+      <div className="row">
+        {!dateRange && (
+          <input
+            {...props}
+            type={inputType}
+            name={name}
+            id={name}
+            aria-label={name}
+            className={`input datepicker-input ${name}`}
+            onChange={() => {}}
+            onFocusCapture={handleDisplayCalendar}
+            value={date}
+          />
+        )}
+        {dateRange && (
+          <DateRange
+            type={inputType}
+            displayCalendar={handleDisplayCalendar}
+            startDateVal={startDateVal}
+            endDateVal={endDateVal}
+            {...dateRange}
+          />
+        )}
+      </div>
       {calendarVisible && (
-        <>
+        <div className="row" data-testid={`${name}-calendar`}>
           <Calendar
             dateRange={isDateRange}
             onDateSelect={handleDateChange}
@@ -228,7 +265,7 @@ export const DatePicker: FC<DatePickerProps> = ({
             calendarClassName={calendarClassName}
           />
           {whatBottomPanel()}
-        </>
+        </div>
       )}
     </div>
   );
