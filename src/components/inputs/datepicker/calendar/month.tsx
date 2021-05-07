@@ -15,7 +15,7 @@ export const Month: FC<MonthProps> = ({
   locale,
 }: MonthProps & HTMLProps<HTMLTableElement>) => {
   m.locale(locale);
-  const weekDays: Array<string> = m.weekdays();
+  const weekDays: Array<string> = m.weekdaysShort();
   const thisMonth: number = month.month() + 1;
   const thisYear: number = month.year();
   const startDateOfMonth: Moment = m(month).startOf('month');
@@ -50,21 +50,23 @@ export const Month: FC<MonthProps> = ({
   const weeksInMonth: number = week.length;
 
   return (
-    <table>
+    <>
       <CalendarHeader>{monthHeader}</CalendarHeader>
-      <thead>
-        <tr>
-          {weekDays.map((weekDay, i) => (
-            <td key={`th-${i}`}>{weekDay}</td>
+      <table className="table">
+        <thead>
+          <tr>
+            {weekDays.map((weekDay, i) => (
+              <td key={`th-${i}`}>{weekDay}</td>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {[...Array(weeksInMonth)].map((e, i) => (
+            <Week key={`week-${i}`} week={week[i]} month={thisMonth} />
           ))}
-        </tr>
-      </thead>
-      <tbody>
-        {[...Array(weeksInMonth)].map((e, i) => (
-          <Week key={`week-${i}`} week={week[i]} month={thisMonth} />
-        ))}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </>
   );
 };
 

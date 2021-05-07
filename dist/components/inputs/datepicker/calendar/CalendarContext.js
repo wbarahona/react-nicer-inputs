@@ -60,36 +60,35 @@ var CalendarContextDefoValues = {
     whatCalendarHeader: function () { },
     currPaneMonths: [],
     disableNavigationOnDateBoundary: false,
+    getWeekdayName: function () { return ''; },
+    isWeekend: function () { return false; },
 };
 exports.CalendarContext = react_1.createContext(CalendarContextDefoValues);
-var nope = false;
 var CalendarProvider = function (_a) {
-    var children = _a.children, _b = _a.format, format = _b === void 0 ? 'MM-DD-YYYY' : _b, dateRange = _a.dateRange, onDateSelect = _a.onDateSelect, minNights = _a.minNights, maxNights = _a.maxNights, minDate = _a.minDate, maxDate = _a.maxDate, monthsToDisplay = _a.monthsToDisplay, dateProp = _a.date, disabledDates = _a.disabledDates, monthHeader = _a.monthHeader, disableNavigationOnDateBoundary = _a.disableNavigationOnDateBoundary;
+    var children = _a.children, _b = _a.format, format = _b === void 0 ? 'MM-DD-YYYY' : _b, dateRange = _a.dateRange, onDateSelect = _a.onDateSelect, minNights = _a.minNights, maxNights = _a.maxNights, minDate = _a.minDate, maxDate = _a.maxDate, monthsToDisplay = _a.monthsToDisplay, dateProp = _a.date, _c = _a.disabledDates, disabledDates = _c === void 0 ? [] : _c, monthHeader = _a.monthHeader, disableNavigationOnDateBoundary = _a.disableNavigationOnDateBoundary;
     var rawNow = moment_1.default().startOf('month').toDate();
-    var initDate = minDate
-        ? moment_1.default(minDate, 'MM-DD-YYYY', true).toDate()
-        : rawNow;
+    var initDate = minDate ? moment_1.default(minDate, format, true).toDate() : rawNow;
     var monthGap = monthsToDisplay || 1;
-    var _c = react_1.useState(''), date = _c[0], setDate = _c[1];
-    var _d = react_1.useState(''), startDate = _d[0], setStartDate = _d[1];
-    var _e = react_1.useState(''), endDate = _e[0], setEndDate = _e[1];
-    var _f = react_1.useState(false), hasSelectedFirstRange = _f[0], setHasSelectedFirstRange = _f[1];
-    var _g = react_1.useState(''), hoverDate = _g[0], setHoverDate = _g[1];
-    var _h = react_1.useState([]), prevPaneMonths = _h[0], setPrevPaneMonths = _h[1];
-    var _j = react_1.useState([]), currPaneMonths = _j[0], setCurrPaneMonths = _j[1];
-    var _k = react_1.useState([]), nextPaneMonths = _k[0], setNextPaneMonths = _k[1];
-    var _l = react_1.useState(initDate), initialDate = _l[0], setInitialDate = _l[1];
-    var _m = react_1.useState(moment_1.default(initDate, 'MM-DD-YYYY', true)), defaultMonth = _m[0], setDefaultMonth = _m[1];
-    var _o = react_1.useState(initDate.getMonth() + 1), defoMM = _o[0], setDefoMM = _o[1];
-    var _p = react_1.useState(initDate.getFullYear()), defoYYYY = _p[0], setDefoYYYY = _p[1];
+    var _d = react_1.useState('test'), t = _d[0], setT = _d[1];
+    var _e = react_1.useState(''), date = _e[0], setDate = _e[1];
+    var _f = react_1.useState(''), startDate = _f[0], setStartDate = _f[1];
+    var _g = react_1.useState(''), endDate = _g[0], setEndDate = _g[1];
+    var _h = react_1.useState(false), hasSelectedFirstRange = _h[0], setHasSelectedFirstRange = _h[1];
+    var _j = react_1.useState(''), hoverDate = _j[0], setHoverDate = _j[1];
+    var _k = react_1.useState([]), prevPaneMonths = _k[0], setPrevPaneMonths = _k[1];
+    var _l = react_1.useState([]), currPaneMonths = _l[0], setCurrPaneMonths = _l[1];
+    var _m = react_1.useState([]), nextPaneMonths = _m[0], setNextPaneMonths = _m[1];
+    var _o = react_1.useState(initDate), initialDate = _o[0], setInitialDate = _o[1];
+    var _p = react_1.useState(moment_1.default(initDate, format, true)), defaultMonth = _p[0], setDefaultMonth = _p[1];
+    var _q = react_1.useState(initDate.getMonth() + 1), defoMM = _q[0], setDefoMM = _q[1];
+    var _r = react_1.useState(initDate.getFullYear()), defoYYYY = _r[0], setDefoYYYY = _r[1];
     var setMonth = function (month) {
         var initDate = initialDate.getDate();
         var daDate = initDate < 10 ? "0" + initDate : initDate;
         var convertedMonth = parseInt(month, 10);
         var daMonth = convertedMonth < 10 ? "0" + convertedMonth : convertedMonth;
         var daRawDate = daMonth + "-" + daDate + "-" + defoYYYY;
-        var mNewDate = moment_1.default(daRawDate, 'MM-DD-YYYY', true);
-        console.log(mNewDate.format('MM-DD-YYYY'));
+        var mNewDate = moment_1.default(daRawDate, format, true);
         //TODO: validate incoming selection vs date ranges between minDate and maxDate, decide either allow select the date throwing some warn or do not allow the selection
         setDefaultMonth(mNewDate);
         setDefoMM(month);
@@ -102,7 +101,7 @@ var CalendarProvider = function (_a) {
         var daMonth = initMonth < 10 ? "0" + initMonth : initMonth;
         var daDate = initDate < 10 ? "0" + initDate : initDate;
         var daRawDate = daMonth + "-" + daDate + "-" + year;
-        var mNewDate = moment_1.default(daRawDate, 'MM-DD-YYYY', true);
+        var mNewDate = moment_1.default(daRawDate, format, true);
         //TODO: validate incoming selection vs date ranges between minDate and maxDate, decide either allow select the date throwing some warn or do not allow the selection
         setDefaultMonth(mNewDate);
         setDefoYYYY(year);
@@ -125,28 +124,49 @@ var CalendarProvider = function (_a) {
                 endDate: endDate,
             };
             if (!hasSelectedFirstRange && !mNewDate.isSame(mEndDate)) {
+                // if user has NOT selected any first date and newdate is NOT the same as endDate
                 if (mNewDate.isAfter(mEndDate)) {
+                    // user has selected a date that is past endDate, so we reset a new
+                    // selection in the date range, set endDate as empty then...
                     setEndDate('');
                     returnRange.endDate = '';
                 }
-                setStartDate(newDate);
-                setHasSelectedFirstRange(true);
-                returnRange.startDate = newDate;
+                // ... then set normally the new date as startDate
+                if (!hasDateRangeDisabled(newDate, startDate)) {
+                    setStartDate(newDate);
+                    setHasSelectedFirstRange(true);
+                    returnRange.startDate = newDate;
+                }
+                else {
+                    setStartDate('');
+                    setEndDate('');
+                    setHasSelectedFirstRange(false);
+                    returnRange.startDate = '';
+                    returnRange.endDate = '';
+                }
                 if (minNights || maxNights) {
                     setEndDate('');
                     returnRange.endDate = '';
                 }
             }
             else if (!mNewDate.isSame(mStartDate)) {
+                // if new date is NOT the same as startDate
                 if (mNewDate.isBefore(mStartDate)) {
-                    setEndDate(startDate);
-                    setStartDate(newDate);
-                    returnRange.endDate = startDate;
-                    returnRange.startDate = newDate;
+                    // Invert selection as the user has selected a new date that is before
+                    // previously selected date
+                    if (!hasDateRangeDisabled(newDate, startDate)) {
+                        setStartDate(newDate);
+                        setEndDate(startDate);
+                        returnRange.startDate = newDate;
+                        returnRange.endDate = startDate;
+                    }
                 }
                 else {
-                    setEndDate(newDate);
-                    returnRange.endDate = newDate;
+                    // welp, this is before startDate so normally set it as endDate
+                    if (!hasDateRangeDisabled(startDate, newDate)) {
+                        setEndDate(newDate);
+                        returnRange.endDate = newDate;
+                    }
                 }
                 setHasSelectedFirstRange(false);
             }
@@ -168,55 +188,88 @@ var CalendarProvider = function (_a) {
         };
     };
     var isDateRange = dateRange ? true : false;
-    var isDateSelectable = function (theDate) {
-        // is dateRange?
-        if (isDateRange) {
-            var addMonths = monthsToDisplay || 0;
-            var mMinSelectableDate = minDate
-                ? moment_1.default(minDate, format, true)
-                : moment_1.default(initialDate);
-            var maxSelectableDate = maxDate
-                ? moment_1.default(maxDate, format, true)
-                : moment_1.default(initialDate)
-                    .add(addMonths - 1, 'months')
-                    .endOf('month')
-                    .format('MM-DD-YYYY');
-            var mMaxSelectableDate = moment_1.default(maxSelectableDate, 'MM-DD-YYYY', true);
-            var mDate = moment_1.default(theDate);
-            if (!mDate.isBetween(mMinSelectableDate, mMaxSelectableDate, 'days', '[]')) {
-                return false;
-            }
-            else if (startDate !== '' && endDate === '') {
-                var mStartDate = moment_1.default(startDate);
-                // this below is to check if user has selected as starting date the last day of month, if this is the case then allow previous dates to be selected
-                var lastDaySelected = mStartDate.isSame(mMaxSelectableDate);
-                var diffDays = lastDaySelected
-                    ? mStartDate.diff(mDate, 'days')
-                    : mDate.diff(mStartDate, 'days');
-                var minNites = minNights || -99999;
-                var maxNites = maxNights || 99999;
-                if (diffDays >= minNites && diffDays <= maxNites) {
-                    // console.log(
-                    //   mDate.format('MM-DD-YYYY'),
-                    //   mStartDate.format('MM-DD-YYYY'),
-                    //   diffDays,
-                    //   ' this date is selectable'
-                    // );
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-        }
+    var isDateInDisabled = function (theDate) {
+        var mTheDate = moment_1.default(theDate);
+        var ret = false;
         if (disabledDates.length > 0) {
-            var thing = disabledDates.filter(function (date) {
-                return moment_1.default(date, format, true).isSame(moment_1.default(theDate));
-            });
-            return thing.length <= 0;
+            ret =
+                disabledDates.filter(function (date) { return moment_1.default(date, format, true).isSame(mTheDate); })
+                    .length > 0;
         }
-        // then all dates are selectable because is not a range
-        return true;
+        return ret;
+    };
+    var hasDateRangeDisabled = function (start, end) {
+        var mStartDate = moment_1.default(start);
+        var mEndDate = moment_1.default(end);
+        var selectable = false;
+        if (mStartDate.isValid() && mEndDate.isValid()) {
+            while (!selectable && mStartDate.isBefore(mEndDate)) {
+                mStartDate.add(1, 'day');
+                selectable = isDateInDisabled(mStartDate.toDate());
+            }
+        }
+        return selectable;
+    };
+    var getMinSelectableDate = function () {
+        var mMinDate = moment_1.default(minDate, format, true);
+        var ret = moment_1.default();
+        var selectable = true;
+        while (selectable) {
+            mMinDate.add(1, 'days');
+            ret = mMinDate;
+            selectable = isDateInDisabled(mMinDate.toDate());
+        }
+        return ret;
+    };
+    var getMaxSelectableDate = function () {
+        var mMaxDate = moment_1.default(maxDate, format, true);
+        var ret = moment_1.default();
+        var selectable = true;
+        while (selectable) {
+            mMaxDate.subtract(1, 'days');
+            ret = mMaxDate;
+            selectable = isDateInDisabled(mMaxDate.toDate());
+        }
+        return ret;
+    };
+    var isDateSelectable = function (theDate) {
+        var mTheDate = moment_1.default(theDate);
+        var mMinDate = moment_1.default(minDate, format, true);
+        var mMaxDate = moment_1.default(maxDate, format, true);
+        var mStartDate = moment_1.default(startDate);
+        var minNites = minNights || -99999;
+        var maxNites = maxNights || 99999;
+        var dateIsAfterMinDate = true;
+        var dateIsBeforeMaxDate = true;
+        var foundInDisabledDates = true;
+        var dateIsBetweenNightRange = true;
+        // if this date belongs in disableDates
+        foundInDisabledDates = !isDateInDisabled(theDate);
+        // if only mindate is sent
+        if (mMinDate.isValid()) {
+            dateIsAfterMinDate = mTheDate.isSameOrAfter(mMinDate);
+        }
+        // if only maxdate is sent
+        if (mMaxDate.isValid()) {
+            dateIsBeforeMaxDate = mTheDate.isSameOrBefore(mMaxDate);
+        }
+        // validations when calendar is dateRange
+        if (isDateRange && mStartDate.isValid()) {
+            // const mMinSelectableDate = getMinSelectableDate();
+            var mMaxSelectableDate = getMaxSelectableDate();
+            var lastDaySelected = mMaxSelectableDate.isSame(mStartDate);
+            var mMinSelectableDate = lastDaySelected
+                ? mStartDate.clone().subtract(maxNites, 'days')
+                : mStartDate.clone().add(minNites, 'days');
+            mMaxSelectableDate = lastDaySelected
+                ? mStartDate.clone().subtract(minNites, 'days')
+                : mStartDate.clone().add(maxNites, 'days');
+            dateIsBetweenNightRange = mTheDate.isBetween(mMinSelectableDate, mMaxSelectableDate, 'days', '[]');
+        }
+        return (foundInDisabledDates &&
+            dateIsAfterMinDate &&
+            dateIsBeforeMaxDate &&
+            dateIsBetweenNightRange);
     };
     var isDateSelected = function (theDate) {
         // is dateRange
@@ -267,7 +320,7 @@ var CalendarProvider = function (_a) {
             setStartDate(moment_1.default(startDate_1, format, true).toDate());
             setEndDate(moment_1.default(endDate_1, format, true).toDate());
         }
-        else if (dateProp) {
+        else {
             var theDate = dateProp;
             setDate(moment_1.default(theDate, format, true).toDate());
         }
@@ -335,6 +388,11 @@ var CalendarProvider = function (_a) {
         setPrevPaneMonths(prevPaneMonthsArr);
         setNextPaneMonths(nextPaneMonthArr);
     };
+    var isWeekend = function (date) {
+        var weekday = moment_1.default(date).format('dddd').toLowerCase();
+        return weekday === 'saturday' || weekday === 'sunday';
+    };
+    var getWeekdayName = function (date) { return moment_1.default(date).format('dddd').toLowerCase(); };
     react_1.useEffect(function () {
         setDefaultDate();
         buildMonthsPanes();
@@ -370,6 +428,8 @@ var CalendarProvider = function (_a) {
             whatCalendarHeader: whatCalendarHeader,
             currPaneMonths: currPaneMonths,
             disableNavigationOnDateBoundary: disableNavigationOnDateBoundary,
+            getWeekdayName: getWeekdayName,
+            isWeekend: isWeekend,
         } }, children));
 };
 exports.default = CalendarProvider;

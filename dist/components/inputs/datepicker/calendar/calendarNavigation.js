@@ -25,11 +25,11 @@ var CalendarContext_1 = require("./CalendarContext");
 var CalendarNavigation = function (_a) {
     var prev = _a.prev, next = _a.next;
     var _b = react_1.useContext(CalendarContext_1.CalendarContext), movePrev = _b.movePrev, moveNext = _b.moveNext, canNavigatePrev = _b.canNavigatePrev, canNavigateNext = _b.canNavigateNext;
-    return (react_1.default.createElement("div", { className: "calendar-navigation" },
-        react_1.default.createElement("div", { className: "calendar-prev-button-wrapper " + (!canNavigatePrev()
+    return (react_1.default.createElement("div", { className: "row calendar-navigation" },
+        react_1.default.createElement("div", { className: "calendar-nav-button-wrapper calendar-prev-button-wrapper " + (!canNavigatePrev()
                 ? 'calendar-nav-button-wrapper--disabled calendar-navigation-prev--disabled'
                 : ''), onClick: movePrev }, prev ? prev : react_1.default.createElement("button", null, "<")),
-        react_1.default.createElement("div", { className: "calendar-next-button-wrapper " + (!canNavigateNext()
+        react_1.default.createElement("div", { className: "calendar-nav-button-wrapper calendar-next-button-wrapper " + (!canNavigateNext()
                 ? 'calendar-nav-button-wrapper--disabled calendar-navigation-next--disabled'
                 : ''), onClick: moveNext }, next ? next : react_1.default.createElement("button", null, ">"))));
 };

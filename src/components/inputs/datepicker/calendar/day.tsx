@@ -39,6 +39,8 @@ export const Day: FC<DayProps> = ({
     maxDate,
     date: ctxDate,
     currPaneMonths,
+    isWeekend,
+    getWeekdayName,
   } = useContext<CalendarContextType>(CalendarContext);
   const [className, setClassName] = useState<string>('calendar-date');
 
@@ -90,7 +92,14 @@ export const Day: FC<DayProps> = ({
       if (isSelectedDateEndDate(theDate)) {
         classArray.push('calendar-date--end-date');
       }
+      if (isWeekend(theDate)) {
+        classArray.push('calendar-date--weekend');
+      } else {
+        classArray.push('calendar-date--weekday');
+      }
     }
+
+    classArray.push(`calendar-date--weekday-${getWeekdayName(theDate)}`);
 
     setClassName(classArray.join(' '));
   };

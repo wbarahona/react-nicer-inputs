@@ -1,8 +1,10 @@
-import { ChangeEvent } from 'react';
+/// <reference types="react" />
 import { DateRangeProps } from '../../../types';
 export interface ExtendedDateRangeProps extends DateRangeProps {
     type: 'date' | 'datetime' | 'text';
-    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    startDateVal: string;
+    endDateVal: string;
+    displayCalendar: () => void;
 }
-export declare const DateRange: ({ type, onChange, startDate, endDate, }: ExtendedDateRangeProps) => JSX.Element;
+export declare const DateRange: ({ type, startDate, endDate, startDateVal, endDateVal, displayCalendar, }: ExtendedDateRangeProps) => JSX.Element;
 export default DateRange;

@@ -95,7 +95,7 @@ var Autocomplete = function (_a) {
     var selectOption = function (e) {
         var value = e.currentTarget.getAttribute('data-value') || '';
         setValue(value);
-        inputChange({ e: e, name: name, value: value });
+        inputChange({ e: autocompleteRef, name: name, value: value });
         closeOptions();
     };
     var handleFocus = function (e) {

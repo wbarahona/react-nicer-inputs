@@ -1,11 +1,17 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext, HTMLProps } from 'react';
 import { CalendarContext } from './CalendarContext';
 import { CalendarContextType } from '../../../../types';
 import { Month } from './month';
 import { Moment } from 'moment';
 
+export interface CalendarSliderProps {
+  calendarClassName?: string;
+}
+
 // TODO: add animation later to slide
-export const CalendarSlider = () => {
+export const CalendarSlider: FC<CalendarSliderProps> = ({
+  calendarClassName,
+}: CalendarSliderProps & HTMLProps<CalendarSliderProps>) => {
   const {
     getPrevPaneMonths,
     getCurrentPaneMonths,
@@ -26,11 +32,12 @@ export const CalendarSlider = () => {
         />
       ))} */}
       {currPaneMonths.map((month: Moment, i: number) => (
-        <Month
+        <div
           key={`calendar-${i}`}
-          month={month}
-          monthHeader={whatCalendarHeader(month)}
-        />
+          className={`${calendarClassName || ''} calendar-element-wrapper`}
+        >
+          <Month month={month} monthHeader={whatCalendarHeader(month)} />
+        </div>
       ))}
       {/* {nextPaneMonths.map((month: Moment, i: number) => (
         <Month

@@ -17,12 +17,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DateRange = void 0;
 var react_1 = __importDefault(require("react"));
 var DateRange = function (_a) {
-    var type = _a.type, onChange = _a.onChange, startDate = _a.startDate, endDate = _a.endDate;
+    var type = _a.type, startDate = _a.startDate, endDate = _a.endDate, startDateVal = _a.startDateVal, endDateVal = _a.endDateVal, displayCalendar = _a.displayCalendar;
     var startDateName = startDate.name, startDateClassName = startDate.className, startDateAttrs = startDate.attrs;
     var endDateName = endDate.name, endDateClassName = endDate.className, endDateAttrs = endDate.attrs;
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("input", __assign({ type: type, name: startDateName, id: startDateName, className: "input datepicker-input " + startDateName + " " + startDateClassName, onChange: onChange }, startDateAttrs)),
-        react_1.default.createElement("input", __assign({ type: type, name: endDateName, id: endDateName, className: "input datepicker-input " + endDateName + " " + endDateClassName, onChange: onChange }, endDateAttrs))));
+        react_1.default.createElement("input", __assign({ type: type, name: startDateName, id: startDateName, className: "input datepicker-input " + startDateName + " " + startDateClassName, onChange: function () { }, onFocusCapture: displayCalendar, value: startDateVal }, startDateAttrs)),
+        react_1.default.createElement("input", __assign({ type: type, name: endDateName, id: endDateName, className: "input datepicker-input " + endDateName + " " + endDateClassName, onChange: function () { }, onFocusCapture: displayCalendar, value: endDateVal }, endDateAttrs))));
 };
 exports.DateRange = DateRange;
 exports.default = exports.DateRange;

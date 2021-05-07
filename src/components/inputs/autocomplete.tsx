@@ -81,7 +81,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
     const value = e.currentTarget.getAttribute('data-value') || '';
 
     setValue(value);
-    inputChange({ e, name, value });
+    inputChange({ e: autocompleteRef, name, value });
     closeOptions();
   };
   const handleFocus = (e: ChangeEvent<HTMLInputElement>) => {

@@ -18,7 +18,7 @@ var calendarHeader_1 = __importDefault(require("./calendarHeader"));
 var Month = function (_a) {
     var month = _a.month, monthHeader = _a.monthHeader, locale = _a.locale;
     moment_1.default.locale(locale);
-    var weekDays = moment_1.default.weekdays();
+    var weekDays = moment_1.default.weekdaysShort();
     var thisMonth = month.month() + 1;
     var thisYear = month.year();
     var startDateOfMonth = moment_1.default(month).startOf('month');
@@ -44,11 +44,12 @@ var Month = function (_a) {
     };
     var week = buildMonthWeeks();
     var weeksInMonth = week.length;
-    return (react_1.default.createElement("table", null,
+    return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(calendarHeader_1.default, null, monthHeader),
-        react_1.default.createElement("thead", null,
-            react_1.default.createElement("tr", null, weekDays.map(function (weekDay, i) { return (react_1.default.createElement("td", { key: "th-" + i }, weekDay)); }))),
-        react_1.default.createElement("tbody", null, __spreadArrays(Array(weeksInMonth)).map(function (e, i) { return (react_1.default.createElement(week_1.default, { key: "week-" + i, week: week[i], month: thisMonth })); }))));
+        react_1.default.createElement("table", { className: "table" },
+            react_1.default.createElement("thead", null,
+                react_1.default.createElement("tr", null, weekDays.map(function (weekDay, i) { return (react_1.default.createElement("td", { key: "th-" + i }, weekDay)); }))),
+            react_1.default.createElement("tbody", null, __spreadArrays(Array(weeksInMonth)).map(function (e, i) { return (react_1.default.createElement(week_1.default, { key: "week-" + i, week: week[i], month: thisMonth })); })))));
 };
 exports.Month = Month;
 exports.default = exports.Month;

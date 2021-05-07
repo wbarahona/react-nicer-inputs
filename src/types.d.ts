@@ -4,22 +4,23 @@ export type Attrs = {
   [key: number]: string | number | boolean;
 };
 
-/**
- * ChangeParams
- * @typedef {{e: Event, name: string, value: (string | number | null)}} ChangeParams
- */
 export type ChangeParams = {
-  /**
-   * @param {Event} e - Is the event element for the input
-   */
   e: ChangeEvent<HTMLSelectElement | HTMLInputElement>;
   name: string;
   value: string | number | null;
 };
-/**
- * @param {string} label This is the label to be displayed by the input
- * @param {string | number} value This is the value of the option
- */
+
+export interface DateRange {
+  startDate: string | Date;
+  endDate: string | Date;
+}
+
+export type ChangeParamsDatePicker = {
+  e: ChangeEvent<HTMLSelectElement | HTMLInputElement>;
+  name: string;
+  value: string | number | null | DateRange;
+};
+
 export type Option = {
   label: string;
   value: string | number;
@@ -41,11 +42,6 @@ export type DateRangeProps = {
   startDate: NicerInputProps;
   endDate: NicerInputProps;
 };
-
-export interface DateRange {
-  startDate: string | Date;
-  endDate: string | Date;
-}
 
 export interface DateArrayProps {
   selected: boolean;
@@ -88,4 +84,6 @@ export type CalendarContextType = {
   whatCalendarHeader: (mm: Moment) => ReactNode | Function;
   currPaneMonths: Moment[];
   disableNavigationOnDateBoundary: boolean | undefined;
+  getWeekdayName: (date: Date) => string;
+  isWeekend: (date: Date) => boolean;
 };

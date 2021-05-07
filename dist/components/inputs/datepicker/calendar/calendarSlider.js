@@ -24,12 +24,14 @@ var react_1 = __importStar(require("react"));
 var CalendarContext_1 = require("./CalendarContext");
 var month_1 = require("./month");
 // TODO: add animation later to slide
-var CalendarSlider = function () {
-    var _a = react_1.useContext(CalendarContext_1.CalendarContext), getPrevPaneMonths = _a.getPrevPaneMonths, getCurrentPaneMonths = _a.getCurrentPaneMonths, getNextPaneMonths = _a.getNextPaneMonths, whatCalendarHeader = _a.whatCalendarHeader;
+var CalendarSlider = function (_a) {
+    var calendarClassName = _a.calendarClassName;
+    var _b = react_1.useContext(CalendarContext_1.CalendarContext), getPrevPaneMonths = _b.getPrevPaneMonths, getCurrentPaneMonths = _b.getCurrentPaneMonths, getNextPaneMonths = _b.getNextPaneMonths, whatCalendarHeader = _b.whatCalendarHeader;
     // const prevPaneMonths: Moment[] = getPrevPaneMonths();
     var currPaneMonths = getCurrentPaneMonths();
     // const nextPaneMonths: Moment[] = getNextPaneMonths();
-    return (react_1.default.createElement("div", { className: "row months-slider" }, currPaneMonths.map(function (month, i) { return (react_1.default.createElement(month_1.Month, { key: "calendar-" + i, month: month, monthHeader: whatCalendarHeader(month) })); })));
+    return (react_1.default.createElement("div", { className: "row months-slider" }, currPaneMonths.map(function (month, i) { return (react_1.default.createElement("div", { key: "calendar-" + i, className: (calendarClassName || '') + " calendar-element-wrapper" },
+        react_1.default.createElement(month_1.Month, { month: month, monthHeader: whatCalendarHeader(month) }))); })));
 };
 exports.CalendarSlider = CalendarSlider;
 exports.default = exports.CalendarSlider;

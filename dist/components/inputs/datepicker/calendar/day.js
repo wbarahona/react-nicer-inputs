@@ -28,7 +28,7 @@ var CalendarContext_1 = require("./CalendarContext");
 var moment_1 = __importDefault(require("moment"));
 var Day = function (_a) {
     var date = _a.date, dateString = _a.dateString, dayNumber = _a.dayNumber, _b = _a.isSelectable, isSelectable = _b === void 0 ? true : _b;
-    var _c = react_1.useContext(CalendarContext_1.CalendarContext), saveDate = _c.saveDate, startDate = _c.startDate, endDate = _c.endDate, saveHoverDate = _c.saveHoverDate, isDateSelectable = _c.isDateSelectable, isDateSelected = _c.isDateSelected, isDateWithinRange = _c.isDateWithinRange, isSelectedDateStartDate = _c.isSelectedDateStartDate, isSelectedDateEndDate = _c.isSelectedDateEndDate, minNights = _c.minNights, maxNights = _c.maxNights, minDate = _c.minDate, maxDate = _c.maxDate, ctxDate = _c.date, currPaneMonths = _c.currPaneMonths;
+    var _c = react_1.useContext(CalendarContext_1.CalendarContext), saveDate = _c.saveDate, startDate = _c.startDate, endDate = _c.endDate, saveHoverDate = _c.saveHoverDate, isDateSelectable = _c.isDateSelectable, isDateSelected = _c.isDateSelected, isDateWithinRange = _c.isDateWithinRange, isSelectedDateStartDate = _c.isSelectedDateStartDate, isSelectedDateEndDate = _c.isSelectedDateEndDate, minNights = _c.minNights, maxNights = _c.maxNights, minDate = _c.minDate, maxDate = _c.maxDate, ctxDate = _c.date, currPaneMonths = _c.currPaneMonths, isWeekend = _c.isWeekend, getWeekdayName = _c.getWeekdayName;
     var _d = react_1.useState('calendar-date'), className = _d[0], setClassName = _d[1];
     var handleClick = function (e) {
         if (isSelectable &&
@@ -68,7 +68,14 @@ var Day = function (_a) {
             if (isSelectedDateEndDate(theDate)) {
                 classArray.push('calendar-date--end-date');
             }
+            if (isWeekend(theDate)) {
+                classArray.push('calendar-date--weekend');
+            }
+            else {
+                classArray.push('calendar-date--weekday');
+            }
         }
+        classArray.push("calendar-date--weekday-" + getWeekdayName(theDate));
         setClassName(classArray.join(' '));
     };
     react_1.useEffect(function () {

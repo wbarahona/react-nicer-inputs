@@ -18,9 +18,9 @@ export const CalendarNavigation: FC<CalendarNavigationProps> = ({
     canNavigateNext,
   } = useContext<CalendarContextType>(CalendarContext);
   return (
-    <div className="calendar-navigation">
+    <div className="row calendar-navigation">
       <div
-        className={`calendar-prev-button-wrapper ${
+        className={`calendar-nav-button-wrapper calendar-prev-button-wrapper ${
           !canNavigatePrev()
             ? 'calendar-nav-button-wrapper--disabled calendar-navigation-prev--disabled'
             : ''
@@ -30,7 +30,7 @@ export const CalendarNavigation: FC<CalendarNavigationProps> = ({
         {prev ? prev : <button>&lt;</button>}
       </div>
       <div
-        className={`calendar-next-button-wrapper ${
+        className={`calendar-nav-button-wrapper calendar-next-button-wrapper ${
           !canNavigateNext()
             ? 'calendar-nav-button-wrapper--disabled calendar-navigation-next--disabled'
             : ''

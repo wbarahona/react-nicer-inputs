@@ -7,7 +7,7 @@ exports.CalendarHeader = void 0;
 var react_1 = __importDefault(require("react"));
 var CalendarHeader = function (_a) {
     var children = _a.children;
-    return react_1.default.createElement("caption", null, children);
+    return react_1.default.createElement("div", { className: "table-caption" }, children);
 };
 exports.CalendarHeader = CalendarHeader;
 exports.default = exports.CalendarHeader;

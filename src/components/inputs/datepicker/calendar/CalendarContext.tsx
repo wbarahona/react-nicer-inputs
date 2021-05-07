@@ -73,13 +73,13 @@ const CalendarContextDefoValues: CalendarContextType = {
   whatCalendarHeader: () => {},
   currPaneMonths: [],
   disableNavigationOnDateBoundary: false,
+  getWeekdayName: () => '',
+  isWeekend: () => false,
 };
 
 export const CalendarContext = createContext<CalendarContextType>(
   CalendarContextDefoValues
 );
-
-const nope = false;
 
 const CalendarProvider: FC<CalendarContextProps> = ({
   children,
@@ -92,15 +92,15 @@ const CalendarProvider: FC<CalendarContextProps> = ({
   maxDate,
   monthsToDisplay,
   date: dateProp,
-  disabledDates,
+  disabledDates = [],
   monthHeader,
   disableNavigationOnDateBoundary,
 }) => {
   const rawNow: Date = m().startOf('month').toDate();
-  const initDate: Date = minDate
-    ? m(minDate, 'MM-DD-YYYY', true).toDate()
-    : rawNow;
+  const initDate: Date = minDate ? m(minDate, format, true).toDate() : rawNow;
+
   const monthGap = monthsToDisplay || 1;
+  const [t, setT] = useState('test');
   const [date, setDate] = useState<string | Date>('');
   const [startDate, setStartDate] = useState<string | Date>('');
   const [endDate, setEndDate] = useState<string | Date>('');
@@ -114,7 +114,7 @@ const CalendarProvider: FC<CalendarContextProps> = ({
   const [initialDate, setInitialDate] = useState<Date>(initDate);
 
   const [defaultMonth, setDefaultMonth] = useState<Moment>(
-    m(initDate, 'MM-DD-YYYY', true)
+    m(initDate, format, true)
   );
   const [defoMM, setDefoMM] = useState<string | number>(
     initDate.getMonth() + 1
@@ -128,9 +128,7 @@ const CalendarProvider: FC<CalendarContextProps> = ({
     const convertedMonth: number = parseInt(month, 10);
     const daMonth = convertedMonth < 10 ? `0${convertedMonth}` : convertedMonth;
     const daRawDate = `${daMonth}-${daDate}-${defoYYYY}`;
-    const mNewDate = m(daRawDate, 'MM-DD-YYYY', true);
-
-    console.log(mNewDate.format('MM-DD-YYYY'));
+    const mNewDate = m(daRawDate, format, true);
 
     //TODO: validate incoming selection vs date ranges between minDate and maxDate, decide either allow select the date throwing some warn or do not allow the selection
 
@@ -145,7 +143,7 @@ const CalendarProvider: FC<CalendarContextProps> = ({
     const daMonth = initMonth < 10 ? `0${initMonth}` : initMonth;
     const daDate = initDate < 10 ? `0${initDate}` : initDate;
     const daRawDate = `${daMonth}-${daDate}-${year}`;
-    const mNewDate = m(daRawDate, 'MM-DD-YYYY', true);
+    const mNewDate = m(daRawDate, format, true);
 
     //TODO: validate incoming selection vs date ranges between minDate and maxDate, decide either allow select the date throwing some warn or do not allow the selection
 
@@ -174,30 +172,51 @@ const CalendarProvider: FC<CalendarContextProps> = ({
       };
 
       if (!hasSelectedFirstRange && !mNewDate.isSame(mEndDate)) {
+        // if user has NOT selected any first date and newdate is NOT the same as endDate
         if (mNewDate.isAfter(mEndDate)) {
+          // user has selected a date that is past endDate, so we reset a new
+          // selection in the date range, set endDate as empty then...
           setEndDate('');
           returnRange.endDate = '';
         }
-        setStartDate(newDate);
-        setHasSelectedFirstRange(true);
+        // ... then set normally the new date as startDate
+        if (!hasDateRangeDisabled(newDate, startDate)) {
+          setStartDate(newDate);
+          setHasSelectedFirstRange(true);
 
-        returnRange.startDate = newDate;
+          returnRange.startDate = newDate;
+        } else {
+          setStartDate('');
+          setEndDate('');
+          setHasSelectedFirstRange(false);
+
+          returnRange.startDate = '';
+          returnRange.endDate = '';
+        }
 
         if (minNights || maxNights) {
           setEndDate('');
           returnRange.endDate = '';
         }
       } else if (!mNewDate.isSame(mStartDate)) {
+        // if new date is NOT the same as startDate
         if (mNewDate.isBefore(mStartDate)) {
-          setEndDate(startDate);
-          setStartDate(newDate);
+          // Invert selection as the user has selected a new date that is before
+          // previously selected date
+          if (!hasDateRangeDisabled(newDate, startDate)) {
+            setStartDate(newDate);
+            setEndDate(startDate);
 
-          returnRange.endDate = startDate;
-          returnRange.startDate = newDate;
+            returnRange.startDate = newDate;
+            returnRange.endDate = startDate;
+          }
         } else {
-          setEndDate(newDate);
+          // welp, this is before startDate so normally set it as endDate
 
-          returnRange.endDate = newDate;
+          if (!hasDateRangeDisabled(startDate, newDate)) {
+            setEndDate(newDate);
+            returnRange.endDate = newDate;
+          }
         }
         setHasSelectedFirstRange(false);
       }
@@ -223,60 +242,122 @@ const CalendarProvider: FC<CalendarContextProps> = ({
 
   const isDateRange = dateRange ? true : false;
 
-  const isDateSelectable = (theDate: Date) => {
-    // is dateRange?
-    if (isDateRange) {
-      const addMonths = monthsToDisplay || 0;
-      const mMinSelectableDate = minDate
-        ? m(minDate, format, true)
-        : m(initialDate);
-      const maxSelectableDate = maxDate
-        ? m(maxDate, format, true)
-        : m(initialDate)
-            .add(addMonths - 1, 'months')
-            .endOf('month')
-            .format('MM-DD-YYYY');
-      const mMaxSelectableDate = m(maxSelectableDate, 'MM-DD-YYYY', true);
-      const mDate = m(theDate);
+  const isDateInDisabled = (theDate: Date) => {
+    const mTheDate = m(theDate);
+    let ret = false;
 
-      if (
-        !mDate.isBetween(mMinSelectableDate, mMaxSelectableDate, 'days', '[]')
-      ) {
-        return false;
-      } else if (startDate !== '' && endDate === '') {
-        const mStartDate = m(startDate);
-        // this below is to check if user has selected as starting date the last day of month, if this is the case then allow previous dates to be selected
-        const lastDaySelected = mStartDate.isSame(mMaxSelectableDate);
-        const diffDays = lastDaySelected
-          ? mStartDate.diff(mDate, 'days')
-          : mDate.diff(mStartDate, 'days');
-        const minNites = minNights || -99999;
-        const maxNites = maxNights || 99999;
+    if (disabledDates.length > 0) {
+      ret =
+        disabledDates.filter(date => m(date, format, true).isSame(mTheDate))
+          .length > 0;
+    }
 
-        if (diffDays >= minNites && diffDays <= maxNites) {
-          // console.log(
-          //   mDate.format('MM-DD-YYYY'),
-          //   mStartDate.format('MM-DD-YYYY'),
-          //   diffDays,
-          //   ' this date is selectable'
-          // );
-          return true;
-        } else {
-          return false;
-        }
+    return ret;
+  };
+
+  const hasDateRangeDisabled = (
+    start: string | Date,
+    end: string | Date
+  ): boolean => {
+    const mStartDate = m(start);
+    const mEndDate = m(end);
+    let selectable = false;
+
+    if (mStartDate.isValid() && mEndDate.isValid()) {
+      while (!selectable && mStartDate.isBefore(mEndDate)) {
+        mStartDate.add(1, 'day');
+
+        selectable = isDateInDisabled(mStartDate.toDate());
       }
     }
 
-    if (disabledDates.length > 0) {
-      const thing: string[] = disabledDates.filter(date =>
-        m(date, format, true).isSame(m(theDate))
-      );
+    return selectable;
+  };
 
-      return thing.length <= 0;
+  const getMinSelectableDate = (): Moment => {
+    const mMinDate = m(minDate, format, true);
+    let ret = m();
+    let selectable = true;
+
+    while (selectable) {
+      mMinDate.add(1, 'days');
+
+      ret = mMinDate;
+
+      selectable = isDateInDisabled(mMinDate.toDate());
     }
 
-    // then all dates are selectable because is not a range
-    return true;
+    return ret;
+  };
+
+  const getMaxSelectableDate = (): Moment => {
+    const mMaxDate = m(maxDate, format, true);
+    let ret = m();
+    let selectable = true;
+
+    while (selectable) {
+      mMaxDate.subtract(1, 'days');
+
+      ret = mMaxDate;
+
+      selectable = isDateInDisabled(mMaxDate.toDate());
+    }
+
+    return ret;
+  };
+
+  const isDateSelectable = (theDate: Date) => {
+    const mTheDate = m(theDate);
+    const mMinDate = m(minDate, format, true);
+    const mMaxDate = m(maxDate, format, true);
+    const mStartDate = m(startDate);
+    const minNites = minNights || -99999;
+    const maxNites = maxNights || 99999;
+
+    let dateIsAfterMinDate = true;
+    let dateIsBeforeMaxDate = true;
+    let foundInDisabledDates = true;
+    let dateIsBetweenNightRange = true;
+
+    // if this date belongs in disableDates
+    foundInDisabledDates = !isDateInDisabled(theDate);
+
+    // if only mindate is sent
+    if (mMinDate.isValid()) {
+      dateIsAfterMinDate = mTheDate.isSameOrAfter(mMinDate);
+    }
+    // if only maxdate is sent
+    if (mMaxDate.isValid()) {
+      dateIsBeforeMaxDate = mTheDate.isSameOrBefore(mMaxDate);
+    }
+
+    // validations when calendar is dateRange
+    if (isDateRange && mStartDate.isValid()) {
+      // const mMinSelectableDate = getMinSelectableDate();
+      let mMaxSelectableDate = getMaxSelectableDate();
+      const lastDaySelected = mMaxSelectableDate.isSame(mStartDate);
+      const mMinSelectableDate = lastDaySelected
+        ? mStartDate.clone().subtract(maxNites, 'days')
+        : mStartDate.clone().add(minNites, 'days');
+
+      mMaxSelectableDate = lastDaySelected
+        ? mStartDate.clone().subtract(minNites, 'days')
+        : mStartDate.clone().add(maxNites, 'days');
+
+      dateIsBetweenNightRange = mTheDate.isBetween(
+        mMinSelectableDate,
+        mMaxSelectableDate,
+        'days',
+        '[]'
+      );
+    }
+
+    return (
+      foundInDisabledDates &&
+      dateIsAfterMinDate &&
+      dateIsBeforeMaxDate &&
+      dateIsBetweenNightRange
+    );
   };
 
   const isDateSelected = (theDate: Date) => {
@@ -336,7 +417,7 @@ const CalendarProvider: FC<CalendarContextProps> = ({
 
       setStartDate(m(startDate, format, true).toDate());
       setEndDate(m(endDate, format, true).toDate());
-    } else if (dateProp) {
+    } else {
       const theDate = dateProp as string;
 
       setDate(m(theDate, format, true).toDate());
@@ -427,6 +508,14 @@ const CalendarProvider: FC<CalendarContextProps> = ({
     setNextPaneMonths(nextPaneMonthArr);
   };
 
+  const isWeekend = (date: Date) => {
+    const weekday = m(date).format('dddd').toLowerCase();
+
+    return weekday === 'saturday' || weekday === 'sunday';
+  };
+
+  const getWeekdayName = (date: Date) => m(date).format('dddd').toLowerCase();
+
   useEffect(() => {
     setDefaultDate();
     buildMonthsPanes();
@@ -465,6 +554,8 @@ const CalendarProvider: FC<CalendarContextProps> = ({
         whatCalendarHeader,
         currPaneMonths,
         disableNavigationOnDateBoundary,
+        getWeekdayName,
+        isWeekend,
       }}
     >
       {children}

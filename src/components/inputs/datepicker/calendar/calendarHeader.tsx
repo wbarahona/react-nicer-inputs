@@ -9,7 +9,7 @@ export interface CalendarHeaderProps
 export const CalendarHeader: FC<CalendarHeaderProps> = ({
   children,
 }: CalendarHeaderProps & HTMLProps<HTMLTableCaptionElement>) => {
-  return <caption>{children}</caption>;
+  return <div className="table-caption">{children}</div>;
 };
 
 export default CalendarHeader;
