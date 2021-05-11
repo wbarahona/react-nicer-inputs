@@ -93,7 +93,7 @@ var Day = function (_a) {
     return (react_1.default.createElement("td", { "data-date": dateString, onClick: handleClick, 
         // onMouseEnter={handleMouseEnter}
         // onMouseLeave={handleMouseLeave}
-        className: className },
+        className: className, "data-testid": dateString },
         react_1.default.createElement("time", { dateTime: dateString }, dayNumber)));
 };
 exports.Day = Day;

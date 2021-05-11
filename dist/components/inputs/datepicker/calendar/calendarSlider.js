@@ -30,7 +30,7 @@ var CalendarSlider = function (_a) {
     // const prevPaneMonths: Moment[] = getPrevPaneMonths();
     var currPaneMonths = getCurrentPaneMonths();
     // const nextPaneMonths: Moment[] = getNextPaneMonths();
-    return (react_1.default.createElement("div", { className: "row months-slider" }, currPaneMonths.map(function (month, i) { return (react_1.default.createElement("div", { key: "calendar-" + i, className: (calendarClassName || '') + " calendar-element-wrapper" },
+    return (react_1.default.createElement("div", { className: "row months-slider" }, currPaneMonths.map(function (month, i) { return (react_1.default.createElement("div", { key: "calendar-" + i, className: (calendarClassName || '') + " calendar-element-wrapper", "data-testid": "calendar-element" },
         react_1.default.createElement(month_1.Month, { month: month, monthHeader: whatCalendarHeader(month) }))); })));
 };
 exports.CalendarSlider = CalendarSlider;

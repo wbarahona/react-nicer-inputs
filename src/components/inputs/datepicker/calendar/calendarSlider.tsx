@@ -35,6 +35,7 @@ export const CalendarSlider: FC<CalendarSliderProps> = ({
         <div
           key={`calendar-${i}`}
           className={`${calendarClassName || ''} calendar-element-wrapper`}
+          data-testid={`calendar-element`}
         >
           <Month month={month} monthHeader={whatCalendarHeader(month)} />
         </div>

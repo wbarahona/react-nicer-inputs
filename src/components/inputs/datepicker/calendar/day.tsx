@@ -124,6 +124,7 @@ export const Day: FC<DayProps> = ({
       // onMouseEnter={handleMouseEnter}
       // onMouseLeave={handleMouseLeave}
       className={className}
+      data-testid={dateString}
     >
       <time dateTime={dateString}>{dayNumber}</time>
     </td>
