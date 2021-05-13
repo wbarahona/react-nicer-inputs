@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import { ReactNode } from 'react';
 
 export type Attrs = {
   [key: number]: string | number | boolean;
@@ -86,4 +87,35 @@ export type CalendarContextType = {
   disableNavigationOnDateBoundary: boolean | undefined;
   getWeekdayName: (date: Date) => string;
   isWeekend: (date: Date) => boolean;
+};
+
+export type DropdowndateContextType = {
+  name: string;
+  inputChange: (args: ChangeParams) => void;
+  format?: string;
+  maxDate?: string;
+  minDate?: string;
+  attrs?: Attrs;
+  value?: string | undefined;
+  ddClassName?: string;
+  mmClassName?: string;
+  yyClassName?: string;
+  ddLabel?: string;
+  mmLabel?: string;
+  yyLabel?: string;
+  ddDefaultLabel?: string;
+  mmDefaultLabel?: string;
+  yyDefaultLabel?: string;
+  displayOrder?: string;
+  mmmm?: boolean;
+  getElement: (i: number) => ReactNode;
+  ddOptions: Option[];
+  handleDDChange: (args: ChangeParams) => void;
+  ddValue: number;
+  mmOptions: Option[];
+  handleMMChange: (args: ChangeParams) => void;
+  mmValue: number;
+  yyOptions: Option[];
+  handleYYChange: (args: ChangeParams) => void;
+  yyValue: number;
 };

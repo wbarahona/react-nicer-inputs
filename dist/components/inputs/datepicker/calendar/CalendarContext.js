@@ -57,7 +57,7 @@ var CalendarContextDefoValues = {
     moveNext: function () { },
     canNavigatePrev: function () { return true; },
     canNavigateNext: function () { return true; },
-    whatCalendarHeader: function () { },
+    whatCalendarHeader: function () { return react_1.default.createElement(react_1.default.Fragment, null); },
     currPaneMonths: [],
     disableNavigationOnDateBoundary: false,
     getWeekdayName: function () { return ''; },
@@ -69,19 +69,18 @@ var CalendarProvider = function (_a) {
     var rawNow = moment_1.default().startOf('month').toDate();
     var initDate = minDate ? moment_1.default(minDate, format, true).toDate() : rawNow;
     var monthGap = monthsToDisplay || 1;
-    var _d = react_1.useState('test'), t = _d[0], setT = _d[1];
-    var _e = react_1.useState(''), date = _e[0], setDate = _e[1];
-    var _f = react_1.useState(''), startDate = _f[0], setStartDate = _f[1];
-    var _g = react_1.useState(''), endDate = _g[0], setEndDate = _g[1];
-    var _h = react_1.useState(false), hasSelectedFirstRange = _h[0], setHasSelectedFirstRange = _h[1];
-    var _j = react_1.useState(''), hoverDate = _j[0], setHoverDate = _j[1];
-    var _k = react_1.useState([]), prevPaneMonths = _k[0], setPrevPaneMonths = _k[1];
-    var _l = react_1.useState([]), currPaneMonths = _l[0], setCurrPaneMonths = _l[1];
-    var _m = react_1.useState([]), nextPaneMonths = _m[0], setNextPaneMonths = _m[1];
-    var _o = react_1.useState(initDate), initialDate = _o[0], setInitialDate = _o[1];
-    var _p = react_1.useState(moment_1.default(initDate, format, true)), defaultMonth = _p[0], setDefaultMonth = _p[1];
-    var _q = react_1.useState(initDate.getMonth() + 1), defoMM = _q[0], setDefoMM = _q[1];
-    var _r = react_1.useState(initDate.getFullYear()), defoYYYY = _r[0], setDefoYYYY = _r[1];
+    var _d = react_1.useState(''), date = _d[0], setDate = _d[1];
+    var _e = react_1.useState(''), startDate = _e[0], setStartDate = _e[1];
+    var _f = react_1.useState(''), endDate = _f[0], setEndDate = _f[1];
+    var _g = react_1.useState(false), hasSelectedFirstRange = _g[0], setHasSelectedFirstRange = _g[1];
+    var _h = react_1.useState(''), hoverDate = _h[0], setHoverDate = _h[1];
+    var _j = react_1.useState([]), prevPaneMonths = _j[0], setPrevPaneMonths = _j[1];
+    var _k = react_1.useState([]), currPaneMonths = _k[0], setCurrPaneMonths = _k[1];
+    var _l = react_1.useState([]), nextPaneMonths = _l[0], setNextPaneMonths = _l[1];
+    var _m = react_1.useState(initDate), initialDate = _m[0], setInitialDate = _m[1];
+    var _o = react_1.useState(moment_1.default(initDate, format, true)), defaultMonth = _o[0], setDefaultMonth = _o[1];
+    var _p = react_1.useState(initDate.getMonth() + 1), defoMM = _p[0], setDefoMM = _p[1];
+    var _q = react_1.useState(initDate.getFullYear()), defoYYYY = _q[0], setDefoYYYY = _q[1];
     var setMonth = function (month) {
         var initDate = initialDate.getDate();
         var daDate = initDate < 10 ? "0" + initDate : initDate;

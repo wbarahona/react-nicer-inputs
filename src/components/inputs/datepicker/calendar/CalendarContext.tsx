@@ -70,7 +70,7 @@ const CalendarContextDefoValues: CalendarContextType = {
   moveNext: () => {},
   canNavigatePrev: () => true,
   canNavigateNext: () => true,
-  whatCalendarHeader: () => {},
+  whatCalendarHeader: () => <></>,
   currPaneMonths: [],
   disableNavigationOnDateBoundary: false,
   getWeekdayName: () => '',
@@ -100,13 +100,11 @@ const CalendarProvider: FC<CalendarContextProps> = ({
   const initDate: Date = minDate ? m(minDate, format, true).toDate() : rawNow;
 
   const monthGap = monthsToDisplay || 1;
-  const [t, setT] = useState('test');
   const [date, setDate] = useState<string | Date>('');
   const [startDate, setStartDate] = useState<string | Date>('');
   const [endDate, setEndDate] = useState<string | Date>('');
-  const [hasSelectedFirstRange, setHasSelectedFirstRange] = useState<boolean>(
-    false
-  );
+  const [hasSelectedFirstRange, setHasSelectedFirstRange] =
+    useState<boolean>(false);
   const [hoverDate, setHoverDate] = useState<string | Date>('');
   const [prevPaneMonths, setPrevPaneMonths] = useState<Moment[]>([]);
   const [currPaneMonths, setCurrPaneMonths] = useState<Moment[]>([]);
