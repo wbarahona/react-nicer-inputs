@@ -9,13 +9,19 @@ jobs:
     name: '⚛🏗 publish'
     runs-on: ubuntu-latest
     steps:
-      - name: ☑ checkout
+      - name: 1️⃣ Checkout
         uses: actions/checkout@v2.3.4
-      - name: ✅ node
+      - name: 2️⃣ Node
         uses: actions/setup-node@v2.1.5
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org
+      - name: 3️⃣ Install node modules
+        run: npm i
+      - name: 4️⃣ Run tests
+        run: npm test
+      - name: 5️⃣ Build /dist
+        run: npm run build
       - name: 🚀 Publish
         run: npm publish --access public
         env:
