@@ -51,7 +51,7 @@ var react_1 = __importStar(require("react"));
  * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value
  * @param attrs - Are all attributes this input can have they are appended to the input not the wrapper
  * @param [value] - Optional. Is the input value, if sent the input will take this value as default
- * @returns {React.FunctionComponentElement} Returns a select element
+ * @returns {React.FunctionComponentElement} Returns an ```autocomplete selector``` element
  */
 var Autocomplete = function (_a) {
     var name = _a.name, className = _a.className, options = _a.options, inputChange = _a.inputChange, attrs = _a.attrs, value = _a.value, props = __rest(_a, ["name", "className", "options", "inputChange", "attrs", "value"]);
@@ -78,7 +78,7 @@ var Autocomplete = function (_a) {
         document.removeEventListener('mousedown', handleClick);
     };
     var setValue = function (val) {
-        if (value && value !== '') {
+        if (val && val !== '') {
             var currentOptions = options.filter(function (_a) {
                 var value = _a.value;
                 return value === val;
@@ -88,7 +88,7 @@ var Autocomplete = function (_a) {
                 setLabelValue(label);
             }
         }
-        else if (value && value === '') {
+        else if (val && val === '') {
             setLabelValue('');
         }
     };
@@ -114,12 +114,16 @@ var Autocomplete = function (_a) {
     };
     react_1.useEffect(function () {
         registerMouseDown();
-        setValue(value);
-        setAllOptions(options);
         return function () {
             unRegisterMouseDown();
         };
-    }, [value, options]);
+    }, []);
+    react_1.useEffect(function () {
+        setValue(value);
+    }, [value]);
+    react_1.useEffect(function () {
+        setAllOptions(options);
+    }, [options]);
     return (react_1.default.createElement("div", { className: "autocomplete-wrapper " + className, ref: autocompleteRef },
         react_1.default.createElement("input", __assign({}, props, { name: name, id: name, className: "input autocomplete-input", "aria-label": name, onChange: handleChange, onClick: toggleOptions, onFocus: handleFocus, value: labelValue }, attrs)),
         optionsVisible && (react_1.default.createElement("ul", { className: "autocomplete-options" }, allOptions.map(function (_a) {

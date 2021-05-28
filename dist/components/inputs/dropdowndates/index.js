@@ -49,6 +49,29 @@ var react_1 = __importStar(require("react"));
 var moment_1 = __importDefault(require("moment"));
 var DropdowndatesContext_1 = __importDefault(require("./DropdowndatesContext"));
 var DropDownSelectRow_1 = __importDefault(require("./DropDownSelectRow"));
+/**
+ * DropDownDates Component
+ * @param {DropDownDatesProps} props - All Props
+ * @param {string} name - Is the input name
+ * @param {string} [className] - Optional. Is the class needed, its appended to the component wrapper
+ * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value, for checkboxes it will return a comma separated string of each value selected by the user
+ * @param {string} [format] - Optional. Is the format this input will handle, defines the format the date will be returned.
+ * @param {string} [maxDate] - Optional. Is the maximum date allowable to select by this datepicker
+ * @param {string} [minDate] - Optional. Is the minimum date allowable to select by this datepicker
+ * @param {string} [ddClassName] - Optional. Is the class used to wrap the Day Group
+ * @param {string} [mmClassName] - Optional. Is the class used to wrap the Month Group
+ * @param {string} [yyClassName] - Optional. Is the class used to wrap the Year Group
+ * @param {string} [ddLabel] - Optional. Is the label text in the Day Group selector
+ * @param {string} [mmLabel] - Optional. Is the label text in the Month Group selector
+ * @param {string} [yyLabel] - Optional. Is the label text in the Year Group selector
+ * @param {string} [ddDefaultLabel] - Optional. Is the default text for the Day Group selector
+ * @param {string} [mmDefaultLabel] - Optional. Is the default text for the Day Group selector
+ * @param {string} [yyDefaultLabel] - Optional. Is the default text for the Day Group selector
+ * @param {string} [displayOrder] - Optional. Is the display order on the selectors elements
+ * @param {string} [mmmm] - Optional. Defines if the month is on words or not
+ * @param {(string | number)} [value] - Optional. Is the input value, if sent the input will take this value as default
+ * @returns {React.FunctionComponentElement} Returns a collection of ```<select />``` that allows dates selection
+ */
 var DropDownDates = function (_a) {
     var name = _a.name, className = _a.className, inputChange = _a.inputChange, _b = _a.format, format = _b === void 0 ? 'MM-DD-YYYY' : _b, _c = _a.maxDate, maxDate = _c === void 0 ? moment_1.default().endOf('year').format('MM-DD-YYYY') : _c, _d = _a.minDate, minDate = _d === void 0 ? '01-01-1900' : _d, attrs = _a.attrs, value = _a.value, _e = _a.ddClassName, ddClassName = _e === void 0 ? '' : _e, _f = _a.mmClassName, mmClassName = _f === void 0 ? '' : _f, _g = _a.yyClassName, yyClassName = _g === void 0 ? '' : _g, _h = _a.ddLabel, ddLabel = _h === void 0 ? 'DD:' : _h, _j = _a.mmLabel, mmLabel = _j === void 0 ? 'MM:' : _j, _k = _a.yyLabel, yyLabel = _k === void 0 ? 'YYYY:' : _k, _l = _a.ddDefaultLabel, ddDefaultLabel = _l === void 0 ? 'Pick a day...' : _l, _m = _a.mmDefaultLabel, mmDefaultLabel = _m === void 0 ? 'Pick a month...' : _m, _o = _a.yyDefaultLabel, yyDefaultLabel = _o === void 0 ? 'Pick a year...' : _o, _p = _a.displayOrder, displayOrder = _p === void 0 ? 'MM-DD-YY' : _p, _q = _a.mmmm, mmmm = _q === void 0 ? false : _q, props = __rest(_a, ["name", "className", "inputChange", "format", "maxDate", "minDate", "attrs", "value", "ddClassName", "mmClassName", "yyClassName", "ddLabel", "mmLabel", "yyLabel", "ddDefaultLabel", "mmDefaultLabel", "yyDefaultLabel", "displayOrder", "mmmm"]);
     var dropDownDatesRef = react_1.useRef(null);

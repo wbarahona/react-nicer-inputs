@@ -28,7 +28,7 @@ export interface AutocompleteProps extends HTMLProps<HTMLInputElement> {
  * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value
  * @param attrs - Are all attributes this input can have they are appended to the input not the wrapper
  * @param [value] - Optional. Is the input value, if sent the input will take this value as default
- * @returns {React.FunctionComponentElement} Returns a select element
+ * @returns {React.FunctionComponentElement} Returns an ```autocomplete selector``` element
  */
 export const Autocomplete: FC<AutocompleteProps> = ({
   name,
@@ -65,7 +65,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
     document.removeEventListener('mousedown', handleClick);
   };
   const setValue = (val: String | number | undefined) => {
-    if (value && value !== '') {
+    if (val && val !== '') {
       const currentOptions = options.filter(({ value }) => value === val);
 
       if (currentOptions.length > 0) {
@@ -73,7 +73,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
 
         setLabelValue(label);
       }
-    } else if (value && value === '') {
+    } else if (val && val === '') {
       setLabelValue('');
     }
   };
@@ -100,13 +100,18 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   };
   useEffect(() => {
     registerMouseDown();
-    setValue(value);
-    setAllOptions(options);
-
     return () => {
       unRegisterMouseDown();
     };
-  }, [value, options]);
+  }, []);
+
+  useEffect(() => {
+    setValue(value);
+  }, [value]);
+
+  useEffect(() => {
+    setAllOptions(options);
+  }, [options]);
 
   return (
     <div className={`autocomplete-wrapper ${className}`} ref={autocompleteRef}>

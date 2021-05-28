@@ -58,7 +58,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
  * @param {boolean} [disableNavigationOnDateBoundary] - Optional. Defines navigation behavior, if sent the calendar wont navigate to previous dates before minDate or upcoming dates after maxDate
  * @param {string} [calendarComponentClassName] - Optional. Is the class that the calendar below the input will contain
  * @param {string} [calendarClassName] - Optional. Is the class needed in each of the calendar wrappers
- * @returns {React.FunctionComponentElement} Returns an input that allows dates selection or two if its a date range
+ * @returns {React.FunctionComponentElement} Returns an ```<input type="text" />``` that allows dates selection or two if its a date range
  */
 export declare const DatePicker: FC<DatePickerProps>;
 export default DatePicker;

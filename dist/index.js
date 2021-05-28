@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DropDownDates = exports.Calendar = exports.DatePicker = exports.InputGroup = exports.Autocomplete = exports.Select = exports.Input = void 0;
+exports.FormGroup = exports.Password = exports.Feedback = exports.Label = exports.DropDownDates = exports.Calendar = exports.DatePicker = exports.InputGroup = exports.Autocomplete = exports.Select = exports.Input = void 0;
 var input_1 = __importDefault(require("./components/inputs/input"));
 exports.Input = input_1.default;
 var select_1 = __importDefault(require("./components/inputs/select"));
@@ -18,3 +18,11 @@ var calendar_1 = __importDefault(require("./components/inputs/datepicker/calenda
 exports.Calendar = calendar_1.default;
 var dropdowndates_1 = __importDefault(require("./components/inputs/dropdowndates"));
 exports.DropDownDates = dropdowndates_1.default;
+var label_1 = __importDefault(require("./components/inputs/label"));
+exports.Label = label_1.default;
+var feedback_1 = __importDefault(require("./components/inputs/feedback"));
+exports.Feedback = feedback_1.default;
+var password_1 = __importDefault(require("./components/inputs/password"));
+exports.Password = password_1.default;
+var formgroup_1 = __importDefault(require("./components/inputs/formgroup"));
+exports.FormGroup = formgroup_1.default;

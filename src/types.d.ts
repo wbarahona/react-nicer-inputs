@@ -2,7 +2,7 @@ import { Moment } from 'moment';
 import { ReactNode } from 'react';
 
 export type Attrs = {
-  [key: number]: string | number | boolean;
+  [key: string]: string | number | boolean;
 };
 
 export type ChangeParams = {

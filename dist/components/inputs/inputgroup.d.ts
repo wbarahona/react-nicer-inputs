@@ -26,9 +26,9 @@ export interface OptionValueArray extends Array<OptionValue> {
  * @param {string} name - Is the input name
  * @param {string} className - Optional. Is the class needed, its appended to the component wrapper
  * @param {object[]} options - Is the array of options, it takes an array of objects with label and value properties, this accepts attrs for each option
- * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value, for checkboxes it will return a comma separated string of each value selected by the user
+ * @param {Function} inputChange - Non native change handler performed by the library, will return the event, the input name and the value, for checkboxes it will return a comma separated string of each value selected by the user
  * @param {(string | number)} value - Optional. Is the input value, if sent the input will take this value as default, for checkboxes it needs a comma separated value, for radios just the radio value
- * @returns {React.FunctionComponentElement} Returns a list of checkbox or radio button list
+ * @returns {React.FunctionComponentElement} Returns a list of ```<checkbox />``` or ```<radio />``` button list
  */
 export declare const InputGroup: FC<InputGroupProps>;
 export default InputGroup;
