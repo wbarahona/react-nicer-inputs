@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -d",
     "dev": "yalc-watch",
-    "test": "jest --watchAll",
+    "test": "jest",
+    "test-w": "jest --watchAll",
     "cover": "jest --coverage"
   },
   "repository": {
