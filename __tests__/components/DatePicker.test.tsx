@@ -11,6 +11,7 @@ const testIdFormat = 'YYYY-MM-DD';
 const dateFormat = 'MM-DD-YYYY';
 
 let mockHandleChange = jest.fn();
+let mockHandleChangeEndDate = jest.fn();
 
 describe('<DatePicker /> Tests', () => {
   it(`should render input type: "text" with testid: "${inputName}"`, () => {
@@ -26,6 +27,7 @@ describe('<DatePicker /> Tests', () => {
 
     beforeEach(() => {
       mockHandleChange = jest.fn();
+      mockHandleChangeEndDate = jest.fn();
     });
     expect(input).toBeDefined();
   });
@@ -261,10 +263,6 @@ describe('<DatePicker /> Tests', () => {
       mToday.format(testIdFormat)
     ) as HTMLTableCellElement[];
 
-    // const datepickerEndDateElement = screen.getAllByTestId(
-    //   mFutureDate.format(testIdFormat)
-    // ) as HTMLTableCellElement[];
-
     expect(mockHandleChange).toBeCalledTimes(0);
     fireEvent.click(datepickerStartDateElement[0]);
     expect(mockHandleChange).toBeCalledTimes(1);
@@ -276,6 +274,12 @@ describe('<DatePicker /> Tests', () => {
     expect(startValue.startDate).toBe(mToday.format(dateFormat));
     expect(datePickerStartDateTextInput.value).toBe(mToday.format(dateFormat));
     expect(datePickerEndDateTextInput.value).toBe('');
+
+    const datepickerEndDateElement = screen.getAllByTestId(
+      mFutureDate.format(testIdFormat)
+    ) as HTMLTableCellElement[];
+
+    console.log(mFutureDate.format(testIdFormat), datepickerEndDateElement[0]);
 
     // fireEvent.click(datepickerEndDateElement[0]);
     // expect(mockHandleChange).toBeCalledTimes(2);
