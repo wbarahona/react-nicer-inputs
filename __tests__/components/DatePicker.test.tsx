@@ -6,7 +6,8 @@ import { DatePicker } from '../../src';
 const inputName = 'test';
 const now = new Date();
 const mToday = m(now, true);
-const mFutureDate = m(now, true).add(3, 'days');
+const mFirstDayOfMonth = mToday.startOf('month');
+const mFutureDate = mFirstDayOfMonth.clone().add(3, 'days');
 const testIdFormat = 'YYYY-MM-DD';
 const dateFormat = 'MM-DD-YYYY';
 
@@ -77,7 +78,7 @@ describe('<DatePicker /> Tests', () => {
     expect(datepickerCalendarWrapper).toBeDefined();
 
     const datepickerDateElement = screen.getAllByTestId(
-      mToday.format(testIdFormat)
+      mFirstDayOfMonth.format(testIdFormat)
     ) as HTMLTableCellElement[];
 
     expect(mockHandleChange).toBeCalledTimes(0);
@@ -88,9 +89,9 @@ describe('<DatePicker /> Tests', () => {
 
     expect(datepickerCalendarWrapper).toBeDefined();
     expect(datepickerCalendarWrapper).toHaveLength(1);
-    expect(datePickerTextInput.value).toBe(mToday.format(dateFormat));
+    expect(datePickerTextInput.value).toBe(mFirstDayOfMonth.format(dateFormat));
     expect(name).toBe(inputName);
-    expect(value).toBe(mToday.format(dateFormat));
+    expect(value).toBe(mFirstDayOfMonth.format(dateFormat));
   });
 
   it('should show a single calendar then click a date that is sent as non available, must not call inputChange function nor return anything', () => {
@@ -260,7 +261,7 @@ describe('<DatePicker /> Tests', () => {
     expect(datepickerCalendar.length).toBe(2);
 
     const datepickerStartDateElement = screen.getAllByTestId(
-      mToday.format(testIdFormat)
+      mFirstDayOfMonth.format(testIdFormat)
     ) as HTMLTableCellElement[];
 
     expect(mockHandleChange).toBeCalledTimes(0);
@@ -271,26 +272,26 @@ describe('<DatePicker /> Tests', () => {
       mockHandleChange.mock.calls[0][0];
 
     expect(startName).toBe(inputName);
-    expect(startValue.startDate).toBe(mToday.format(dateFormat));
-    expect(datePickerStartDateTextInput.value).toBe(mToday.format(dateFormat));
+    expect(startValue.startDate).toBe(mFirstDayOfMonth.format(dateFormat));
+    expect(datePickerStartDateTextInput.value).toBe(
+      mFirstDayOfMonth.format(dateFormat)
+    );
     expect(datePickerEndDateTextInput.value).toBe('');
 
     const datepickerEndDateElement = screen.getAllByTestId(
       mFutureDate.format(testIdFormat)
     ) as HTMLTableCellElement[];
 
-    console.log(mFutureDate.format(testIdFormat), datepickerEndDateElement[0]);
+    fireEvent.click(datepickerEndDateElement[0]);
+    expect(mockHandleChange).toBeCalledTimes(2);
 
-    // fireEvent.click(datepickerEndDateElement[0]);
-    // expect(mockHandleChange).toBeCalledTimes(2);
+    const { name: endName, value: endValue } =
+      mockHandleChange.mock.calls[1][0];
 
-    // const { name: endName, value: endValue } =
-    //   mockHandleChange.mock.calls[1][0];
-
-    // expect(endName).toBe(inputName);
-    // expect(endValue.endDate).toBe(mFutureDate.format(dateFormat));
-    // expect(datePickerEndDateTextInput.value).toBe(
-    //   mFutureDate.format(dateFormat)
-    // );
+    expect(endName).toBe(inputName);
+    expect(endValue.endDate).toBe(mFutureDate.format(dateFormat));
+    expect(datePickerEndDateTextInput.value).toBe(
+      mFutureDate.format(dateFormat)
+    );
   });
 });
