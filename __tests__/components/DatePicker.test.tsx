@@ -4,7 +4,9 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import { DatePicker } from '../../src';
 
 const inputName = 'test';
-const mToday = m();
+const now = new Date();
+const mToday = m(now, true);
+const mFutureDate = m(now, true).add(3, 'days');
 const testIdFormat = 'YYYY-MM-DD';
 const dateFormat = 'MM-DD-YYYY';
 
@@ -90,7 +92,7 @@ describe('<DatePicker /> Tests', () => {
   });
 
   it('should show a single calendar then click a date that is sent as non available, must not call inputChange function nor return anything', () => {
-    const mSomeDisabledDate = mToday.clone().add(3, 'days');
+    const mSomeDisabledDate = mFutureDate;
     render(
       <DatePicker
         name={inputName}
@@ -260,7 +262,7 @@ describe('<DatePicker /> Tests', () => {
     ) as HTMLTableCellElement[];
 
     const datepickerEndDateElement = screen.getAllByTestId(
-      mToday.clone().add(3, 'days').format(testIdFormat)
+      mFutureDate.format(testIdFormat)
     ) as HTMLTableCellElement[];
 
     expect(mockHandleChange).toBeCalledTimes(0);
@@ -282,11 +284,9 @@ describe('<DatePicker /> Tests', () => {
       mockHandleChange.mock.calls[1][0];
 
     expect(endName).toBe(inputName);
-    expect(endValue.endDate).toBe(
-      mToday.clone().add(3, 'days').format(dateFormat)
-    );
+    expect(endValue.endDate).toBe(mFutureDate.format(dateFormat));
     expect(datePickerEndDateTextInput.value).toBe(
-      mToday.clone().add(3, 'days').format(dateFormat)
+      mFutureDate.format(dateFormat)
     );
   });
 });
