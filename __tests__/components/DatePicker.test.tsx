@@ -259,6 +259,10 @@ describe('<DatePicker /> Tests', () => {
       mToday.format(testIdFormat)
     ) as HTMLTableCellElement[];
 
+    const datepickerEndDateElement = screen.getAllByTestId(
+      mToday.clone().add(3, 'days').format(testIdFormat)
+    ) as HTMLTableCellElement[];
+
     expect(mockHandleChange).toBeCalledTimes(0);
     fireEvent.click(datepickerStartDateElement[0]);
     expect(mockHandleChange).toBeCalledTimes(1);
@@ -271,12 +275,8 @@ describe('<DatePicker /> Tests', () => {
     expect(datePickerStartDateTextInput.value).toBe(mToday.format(dateFormat));
     expect(datePickerEndDateTextInput.value).toBe('');
 
-    const datepickerEndDateElement = screen.getAllByTestId(
-      mToday.clone().add(3, 'days').format(testIdFormat)
-    ) as HTMLTableCellElement[];
-
     fireEvent.click(datepickerEndDateElement[0]);
-    // expect(mockHandleChange).toBeCalledTimes(2);
+    expect(mockHandleChange).toBeCalledTimes(2);
 
     const { name: endName, value: endValue } =
       mockHandleChange.mock.calls[1][0];

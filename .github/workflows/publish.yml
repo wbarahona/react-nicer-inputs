@@ -16,11 +16,13 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org
-      - name: 3️⃣ Install node modules
+      - name: 3️⃣ Remove node_modules
+        run: rm -r node_modules
+      - name: 4️⃣ Install node modules
         run: npm i
-      - name: 4️⃣ Run tests
+      - name: 5️⃣ Run tests
         run: npm test
-      - name: 5️⃣ Build /dist
+      - name: 6️⃣ Build /dist
         run: npm run build
       - name: 🚀 Publish
         run: npm publish --access public
