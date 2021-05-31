@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-// import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/extend-expect';
 import { Password } from '../../src';
 
 const inputName = 'password';
@@ -91,5 +91,29 @@ describe('<Password /> Tests', () => {
     fireEvent.click(button);
 
     expect(input.type).toBe('password');
+  });
+
+  it('should display a simple password input, no toggle button, yet allows change normally.', () => {
+    render(
+      <Password
+        name={inputName}
+        className="testing-class"
+        data-testid={inputName}
+        inputChange={mockHandleChange}
+        noToggle
+      />
+    );
+    const input = screen.getByLabelText(inputName) as HTMLInputElement;
+    const button = screen.queryByText('button');
+
+    expect(mockHandleChange).toBeCalledTimes(0);
+    fireEvent.change(input, { target: { value: inputValue } });
+    expect(mockHandleChange).toBeCalledTimes(1);
+
+    const { name, value } = mockHandleChange.mock.calls[0][0];
+
+    expect(value).toBe('some text value');
+    expect(name).toBe(inputName);
+    expect(button).not.toBeInTheDocument();
   });
 });

@@ -15,6 +15,7 @@ export interface PasswordProps extends HTMLProps<HTMLInputElement> {
   attrs?: Attrs;
   showIcon?: ReactNode;
   hideIcon?: ReactNode;
+  noToggle?: boolean;
   value?: string | number | undefined;
 }
 
@@ -37,6 +38,7 @@ export const Password: FC<PasswordProps> = ({
   value,
   showIcon = 'hide',
   hideIcon = 'show',
+  noToggle = false,
   ...props
 }: PasswordProps & HTMLProps<HTMLInputElement>) => {
   const classNames = `input ${name} ${className ? className : ''}`;
@@ -85,9 +87,11 @@ export const Password: FC<PasswordProps> = ({
         value={inputValue}
         {...finalAttrs}
       />
-      <button onClick={toggleVisible}>
-        {pwdVisible ? hideIcon : showIcon}
-      </button>
+      {!noToggle && (
+        <button onClick={toggleVisible}>
+          {pwdVisible ? hideIcon : showIcon}
+        </button>
+      )}
     </>
   );
 };
