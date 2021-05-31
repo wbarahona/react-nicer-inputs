@@ -2,7 +2,7 @@
 
 An easy to use library to quickly create react forms 📝, its the new level from react-nice-inputs.
 
-[![NPM version](https://img.shields.io/npm/v/react-nicer-inputs.svg?style=flat-square)](https://www.npmjs.com/package/react-nicer-inputs)
+![npm](https://img.shields.io/npm/v/react-nicer-inputs)
 [![React Nicer Inputs Actions Status](https://img.shields.io/github/workflow/status/wbarahona/react-nicer-inputs/%E2%9A%9B%F0%9F%8F%97%20publish?style=flat-square)](https://github.com/wbarahona/react-nicer-inputs/actions)
 ![David](https://img.shields.io/david/wbarahona/react-nicer-inputs)
 ![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/react-nicer-inputs)
@@ -50,7 +50,7 @@ And when you type in the console must display the value you type in, the name of
 
 So each component renders different inputs for you to use and each have common props which will be discussed next but for particular props check each component definition in the next section.
 
-`type="" {string}` This defines the type of the input being rendered, is passed to the native HTML5 type attribute; now some components do not require this or prefer the usage of a dedicated component for an specific input. Refer to each component description below what case it is for the component you are currently using.
+- `type="" {string}` This defines the type of the input being rendered, is passed to the native HTML5 type attribute; now some components do not require this or prefer the usage of a dedicated component for an specific input. Refer to each component description below what case it is for the component you are currently using.
 
 - `name="fname" {string}` This sets the name of this input as well it is assigned to the HTML5 name and id attributes, additionally it is returned as well on the `inputChange` prop.
 
@@ -60,11 +60,11 @@ So each component renders different inputs for you to use and each have common p
 
 - `inputChange={} {Function}` This is the way the input return the value back. This is a semantic name for onChange (due to the implementation of TS it needed to be named as **inputChange**). You may destructure the params to:
 
-```js
+```json
 {
   e, // This is the syntetic event from the input
-    name, // This is the name of the input, helpful if you are storing a model of the form in the state and you have a single function that handles input change
-    value; // The value from the input
+  name, // This is the name of the input, helpful if you are storing a model of the form in the state and you have a single function that handles input change
+  value // The value from the input
 }
 ```
 
@@ -119,6 +119,8 @@ For checkboxes since conceptually it is a multi option selectable it will return
 
 For radio buttons as its a single option selectable out of a group of option this will return on inputChange function a normal string, no commas. The value prop can be a single string of one of the options.
 
+---
+
 ### Autocomplete
 
 This component allows a large list of options to be browsable by typing in the textbox, reducing the ammount of options available as the user type by matching the string to any possible option.
@@ -128,6 +130,8 @@ This component allows a large list of options to be browsable by typing in the t
 This component needs the following props:
 
 - `options={[ {label: 'Option 1 1️⃣', value: '1'} ]} {Array}` Idem as `<select> and <InputGroup>` This is an array of objects that define the options available to pick, from there the options are reduced as the user types in.
+
+---
 
 ### Password
 
@@ -139,6 +143,8 @@ Some props are the same as the input component but this contains the following:
 - `hideIcon="❌" {ReactNode} defaults to 'show'` This is the invers as showIcon, it displays when the password is visible
 - `noToggle {boolean} defaults to false` This defines if you need the toggle button or not.
 
+---
+
 ### Label and Feedback
 
 These are simple components you can use to work along with any input.
@@ -147,6 +153,8 @@ The label component can take className and also requires only:
 - `htmlFor="fname" {string}` This is of course the id of the input this label belongs to.
 
 The feedback component allows to display a text and its usage is to be part of the FormGroup as a way to display messages about this input, can take className but nothing else, it will render a `<span>` element with whatever text you send to it.
+
+---
 
 ### Datepicker
 
@@ -182,6 +190,8 @@ This component takes a handful of props that mutate its behavior, let's see:
 - `calendarComponentClassName="col-12" {string}` Is the class that the calendar wrapper(which contains the month/months, navigation arrows... etc) below the input can have
 - `calendarClassName="col-12 col-md-6" {string}` Is the class that each of the months can have, allows for further customization on each of the months wrappers
 
+---
+
 ### Calendar
 
 This is a calendar element that you can use to make your own implementations of date picker without the `<DatePicker>` component in favor of your own ways.
@@ -189,6 +199,8 @@ All the props explained in the `<DatePicker>` component are almost the same.
 
 - `className="custom-calendar" {string}` This class is appended to the wrapper of this calendar component.
 - `calendarClassName="col-12 col-md-4" {string}` Is the class that each of the months can have, allows for further customization on each of the months wrappers
+
+---
 
 ### DropDownDates
 
@@ -210,6 +222,8 @@ This component is kinda special, sometimes somewhere there is the need to select
 - `mmmm {boolean}` If you need the month element to have words instead of numbers
 
 **_Observation: The options react to maxDate and minDate and its options are rerendered to disallow user selecting dates out of boundaries._**
+
+---
 
 ### Form Group
 
@@ -235,7 +249,7 @@ So, it utilizes all the props explained for each component above.
 
 ---
 
-###CODE SANDBOX 🛠
+## CODE SANDBOX 🛠
 
 Have a spin: check this **_codesandbox_**
 
