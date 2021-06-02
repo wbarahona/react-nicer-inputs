@@ -10,6 +10,7 @@ import Feedback from './components/inputs/feedback';
 import Password from './components/inputs/password';
 import FormGroup from './components/inputs/formgroup';
 import Option from './components/inputs/option';
+import Grecaptcha from './components/inputs/grecaptcha';
 
 export {
   Input,
@@ -24,4 +25,5 @@ export {
   Password,
   FormGroup,
   Option,
+  Grecaptcha,
 };

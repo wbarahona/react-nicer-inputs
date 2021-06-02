@@ -46,6 +46,61 @@ And when you type in the console must display the value you type in, the name of
 
 ---
 
+## Local Development Install
+
+When you want to cooperate and create or update or patch the components you may fork this repo.
+
+### install dev dependencies
+
+```sh
+npm i -D
+```
+
+This will install all dev dependencies to start working.
+
+### install yalc
+
+```sh
+npm i -g yalc
+```
+
+[Yalc](https://www.npmjs.com/package/yalc) is a perfect tool to develop libraries, it helps with bad dependencies resolutions between node environments therefore this library needs it in order to work locally by building yalc local repo and linking it into the example folder app.
+
+### create a react app
+
+Inside the root directory create a react app called `example`:
+
+```sh
+npx create-react-app example
+```
+
+This way you can see the actual render in browser of any input you are updating and creating, also provides a react instance for the input library in order to avoid [Invalid Hook Call Warnings](https://reactjs.org/warnings/invalid-hook-call-warning.html). Check package.json in root dir in order to see the `react` dev-dependency path.
+
+### run dev script on root dir
+
+To fire the library compilation run at the root directory:
+
+```sh
+npm run dev
+```
+
+To fire jest at watch mode run at the root directory in separate bash window:
+
+```sh
+npm run test-w
+```
+
+To start the example react app, in yet another bash window run:
+
+```sh
+$ cd example
+$ npm start
+```
+
+Nice! Let's get hackin' 👨🏽‍💻
+
+---
+
 ## The Components 🧰
 
 So each component renders different inputs for you to use and each have common props which will be discussed next but for particular props check each component definition in the next section.

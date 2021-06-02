@@ -11,6 +11,10 @@ export type ChangeParams = {
   value: string | number | null;
 };
 
+export type GrecaptchaResponseParams = {
+  token?: string;
+};
+
 export interface DateRange {
   startDate: string | Date;
   endDate: string | Date;
