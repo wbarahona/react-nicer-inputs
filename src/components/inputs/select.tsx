@@ -25,10 +25,11 @@ export interface SelectProps extends HTMLProps<HTMLSelectElement> {
 export const Select: FC<SelectProps> = ({
   name,
   className,
-  options,
+  options = [],
   defaultLabel,
   inputChange,
   attrs,
+  children,
   ...props
 }: SelectProps & HTMLProps<HTMLSelectElement>) => {
   const classNames = `input ${name} ${className ? className : ''}`;
@@ -43,6 +44,12 @@ export const Select: FC<SelectProps> = ({
 
   const selectOptions: Options = [{ value: '', label: defoLabel }, ...options];
 
+  if (children && options.length > 0) {
+    console.warn(
+      'react-nicer-inputs warning: There are manual options and options array prop... you need to work with either manual options or the options array.'
+    );
+  }
+
   return (
     <div className={`select-wrapper ${classNames}`}>
       <select
@@ -54,11 +61,14 @@ export const Select: FC<SelectProps> = ({
         onChange={handleChange}
         {...attrs}
       >
-        {selectOptions.map(({ value, label }) => (
-          <option key={value} value={value} data-testid={`${name}-options`}>
-            {label}
-          </option>
-        ))}
+        {options.length <= 0 && children}
+        {!children &&
+          options.length > 0 &&
+          selectOptions.map(({ value, label }) => (
+            <option key={value} value={value} data-testid={`${name}-options`}>
+              {label}
+            </option>
+          ))}
       </select>
     </div>
   );

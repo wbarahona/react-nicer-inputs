@@ -1,6 +1,6 @@
 {
   "name": "react-nicer-inputs",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "An easy to use library to create react forms 📝, its the new level from react-nice-inputs.",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -43,7 +43,7 @@
     "eslint-plugin-react": "^7.22.0",
     "jest": "^26.6.3",
     "moment": "^2.29.1",
-    "react": "^17.0.1",
+    "react": "file:./example/node_modules/react",
     "react-dom": "^17.0.1",
     "ts-jest": "^26.5.0",
     "ts-node": "^9.1.1",

@@ -9,6 +9,7 @@ import Label from './components/inputs/label';
 import Feedback from './components/inputs/feedback';
 import Password from './components/inputs/password';
 import FormGroup from './components/inputs/formgroup';
+import Option from './components/inputs/option';
 
 export {
   Input,
@@ -22,4 +23,5 @@ export {
   Feedback,
   Password,
   FormGroup,
+  Option,
 };
