@@ -74,11 +74,26 @@ Inside the root directory create a react app called `example`:
 npx create-react-app example
 ```
 
-This way you can see the actual render in browser of any input you are updating and creating, also provides a react instance for the input library in order to avoid [Invalid Hook Call Warnings](https://reactjs.org/warnings/invalid-hook-call-warning.html). Check package.json in root dir in order to see the `react` dev-dependency path.
+This way you can see the actual render in browser of any input you are updating and creating, also provides a react instance for the input library in order to avoid [Invalid Hook Call Warnings](https://reactjs.org/warnings/invalid-hook-call-warning.html). Check `package.json` in root dir in order to see the `react` dev-dependency path.
+
+### add react-nicer-inputs to yalc local repo and link to example
+
+To add react-nicer-inputs to yalc local repo just run on root:
+
+```sh
+yalc add react-nicer-inputs
+```
+
+Now to link this into the example app run:
+
+```sh
+$ cd example
+$ yalc link react-nicer-inputs
+```
 
 ### run dev script on root dir
 
-To fire the library compilation run at the root directory:
+To fire the library dev compilation run at the root directory:
 
 ```sh
 npm run dev
@@ -115,12 +130,13 @@ So each component renders different inputs for you to use and each have common p
 
 - `inputChange={} {Function}` This is the way the input return the value back. This is a semantic name for onChange (due to the implementation of TS it needed to be named as **inputChange**). You may destructure the params to:
 
-```json
+```js
 {
-  e, // This is the syntetic event from the input
-  name, // This is the name of the input, helpful if you are storing a model of the form in the state and you have a single function that handles input change
-  value // The value from the input
+  e, name, value;
 }
+// e: This is the syntetic event from the input
+// name: This is the name of the input, helpful if you are storing a model of the form in the state and you have a single function that handles input change
+// value: The value from the input
 ```
 
 - `attrs={{placeholder: 'Enter your name'}} {Object}` This is the list of HTML5 attributes the input can handle, you can send here as much as you need.
@@ -280,24 +296,65 @@ This component is kinda special, sometimes somewhere there is the need to select
 
 ---
 
+### Google Captcha
+
+This component will help you to create a google captcha validation before any form is submitted. It works with v2 and v3 APIs. Let us see the props:
+
+For v2 the purpose is to have a check element that provides a challenge under certain circumstances which are in google side, that said the props you need to create one is:
+
+- `publicKey="AAAABBBCCCC" {string}` This defines the key to be used for this captcha element, check 👉🏽 [google recaptcha docs](https://developers.google.com/recaptcha/docs/v3).
+- `theme="dark" {string} defaults to 'light'` Is the color scheme this captcha element will have, the values could be light | dark as per google recaptcha docs
+- `captchaSize="compact" {string} defaults to 'normal'` Is the size of this captcha element, the values could be compact | normal | invisible as per docs
+- `getResponse={} {Function}` Is the function that returns the token google returned after the challenge is completed
+
+For v3 the challenge is not visible as per the docs, and it must trigger on form submit, so the way we play the game in this one is different, we wrap the `<Submit>` component around captcha component, we use the v3 prop.
+
+- `v3 {boolean}` Helps to define what API version is going to be used
+
+---
+
+### Submit
+
+This component provide an in-house approach to submit your forms, this way you can submit forms regularly or with google recaptcha protection.
+The unique prop is just one, let's take a look at that now:
+
+- `formSubmit={} {Function}` This function is triggered when you click the submit button, using v3 captcha it will return the captchaToken.
+
+Check the example:
+
+```jsx
+<Grecaptcha publicKey="AAAABBBBCCCCCDDDDEEEE111222333" v3>
+  <Submit
+    className="blue-big"
+    formSubmit={({ captchaToken }) => {
+      // Your logic to submit the form
+    }}
+  >
+    Send Form
+  </Submit>
+</Grecaptcha>
+```
+
+The submit component is now part of the Grecaptcha protection, this way, when the button is clicked it will fetch to google for the token, then it will run the formSubmit Function returning the captchaToken in v3 captcha API.
+
+**_Observation: a simple submit does not require to be wrapped around with `<Grecaptcha >` component, the formSubmit function does not need to destructure the captchaToken either._**
+
+---
+
 ### Form Group
 
 This is a component that is composed of three elemental components.
 
-```html
-<label>
-  <input /> ||
-  <select>
-    ||
-    <InputGroup>
-      ||
-      <AutoComplete>
-        ||
-        <DatePicker>
-          ||
-          <Password> <Feedback></Feedback></Password></DatePicker></AutoComplete
-    ></InputGroup></select
-></label>
+```jsx
+<Label>
+  <Input> ||
+  <Select> ||
+  <InputGroup> ||
+  <Password> ||
+  <Autocomplete> ||
+  <Datepicker> ||
+  <DropDownDates>
+<Feedback>
 ```
 
 So, it utilizes all the props explained for each component above.

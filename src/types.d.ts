@@ -123,3 +123,9 @@ export type DropdowndateContextType = {
   handleYYChange: (args: ChangeParams) => void;
   yyValue: number;
 };
+
+export type GrecaptchaContextType = {
+  publicKey: string;
+  validateCaptcha?: () => Promise<string>;
+  v3?: boolean;
+};
