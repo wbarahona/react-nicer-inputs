@@ -16,6 +16,7 @@ import {
   InputValue,
   ValidationResponse,
 } from '../../types';
+import { useIsMount } from './isMount';
 
 import { InputProps, Input } from '../inputs/input';
 import { InputGroupProps, InputGroup } from '../inputs/inputgroup';
@@ -66,6 +67,7 @@ export const FormProvider: FC<FormContextProps> = ({
   useModel = () => {},
   model = 'defaultModel',
 }) => {
+  const isMount = useIsMount();
   const modelToBuild: FormModel = {};
 
   modelToBuild[model] = { fields: {}, isValid: null, isInvalid: null };
@@ -135,10 +137,13 @@ export const FormProvider: FC<FormContextProps> = ({
   };
 
   useEffect(() => {
-    const formModelCopy = Object.assign({}, formModel);
+    if (isMount) {
+    } else {
+      const formModelCopy = Object.assign({}, formModel);
 
-    useModel(formModelCopy);
-  }, [formModel]);
+      useModel(formModelCopy);
+    }
+  });
 
   return (
     <FormContext.Provider
