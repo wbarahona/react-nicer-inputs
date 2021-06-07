@@ -5,8 +5,10 @@ import React, {
   ChangeEvent,
   ReactNode,
   useEffect,
+  useContext,
 } from 'react';
-import { Attrs, ChangeParams } from '../../types';
+import { useFormContext } from '../form/FormContext';
+import { Attrs, ChangeParams, Validation } from '../../types';
 
 export interface PasswordProps extends HTMLProps<HTMLInputElement> {
   name: string;
@@ -16,6 +18,7 @@ export interface PasswordProps extends HTMLProps<HTMLInputElement> {
   showIcon?: ReactNode;
   hideIcon?: ReactNode;
   noToggle?: boolean;
+  validate?: Validation[];
   value?: string | number | undefined;
 }
 
@@ -27,6 +30,7 @@ export interface PasswordProps extends HTMLProps<HTMLInputElement> {
  * @param {Object} [attrs] - Optional. Are all attributes this input can have they are appended to the input not the wrapper
  * @param {ReactNode} [showIcon] - Optional. Is the icon to be displayed when the password text is hidden
  * @param {ReactNode} [hideIcon] - Optional. Is the icon to be displayed when the password text is shown
+ * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param {string} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input type="password" />``` element
  */
@@ -39,12 +43,14 @@ export const Password: FC<PasswordProps> = ({
   showIcon = 'hide',
   hideIcon = 'show',
   noToggle = false,
+  validate,
   ...props
 }: PasswordProps & HTMLProps<HTMLInputElement>) => {
   const classNames = `input ${name} ${className ? className : ''}`;
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
   const [pwdVisible, setPwdVisible] = useState<boolean>(false);
   const [finalAttrs, setFinalAttrs] = useState<Attrs>({ ...attrs });
+  const { model, addToModel, updateModelInputValue } = useFormContext();
 
   const toggleVisible = () => {
     if (!pwdVisible) {
@@ -60,6 +66,7 @@ export const Password: FC<PasswordProps> = ({
   ) => {
     const { value } = e.currentTarget;
 
+    updateModelInputValue(name, value);
     inputChange({ e, name, value });
     setInputValue(value);
   };
@@ -70,9 +77,24 @@ export const Password: FC<PasswordProps> = ({
     }
   };
 
+  const checkAndAddModel = () => {
+    if (model) {
+      addToModel(name, {
+        type: 'password',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        value: value || '',
+      });
+    }
+  };
+
   useEffect(() => {
+    checkAndAddModel();
     setDefoValue(value);
-  }, [value]);
+  }, [value, validate]);
 
   return (
     <>

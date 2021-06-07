@@ -7,7 +7,13 @@ import React, {
   ReactNode,
 } from 'react';
 import m from 'moment';
-import { Attrs, ChangeParamsDatePicker, DateRangeProps } from '../../../types';
+import { useFormContext } from '../../form/FormContext';
+import {
+  Attrs,
+  ChangeParamsDatePicker,
+  DateRangeProps,
+  Validation,
+} from '../../../types';
 import Calendar from './calendar';
 import DateRange from './daterange';
 
@@ -46,6 +52,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
   disableNavigationOnDateBoundary?: boolean;
   calendarComponentClassName?: string;
   calendarClassName?: string;
+  validate?: Validation[];
 }
 
 /**
@@ -72,12 +79,11 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
  * @param {boolean} [disableNavigationOnDateBoundary] - Optional. Defines navigation behavior, if sent the calendar wont navigate to previous dates before minDate or upcoming dates after maxDate
  * @param {string} [calendarComponentClassName] - Optional. Is the class that the calendar below the input will contain
  * @param {string} [calendarClassName] - Optional. Is the class needed in each of the calendar wrappers
+ * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @returns {React.FunctionComponentElement} Returns an ```<input type="text" />``` that allows dates selection or two if its a date range
  */
 
 // TODO: type and native are closely together, find a way to work with native and type date and datetime
-// @param {string} type - Can be only "date" || "datetime"
-// @param {string} [native] - Optional. Defines the visual aspect of the component, if it will render native dates or text based input
 export const DatePicker: FC<DatePickerProps> = ({
   name,
   className,
@@ -99,6 +105,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   disableNavigationOnDateBoundary,
   calendarComponentClassName,
   calendarClassName,
+  validate,
   ...props
 }: DatePickerProps & HTMLProps<HTMLInputElement>) => {
   const isDateRange: boolean =
@@ -117,6 +124,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   const [calendarVisible, setCalendarVisible] = useState<boolean>(false);
   const [date, setDate] = useState<any>(defDate);
   const ref = useRef<HTMLDivElement>(null);
+  const { model, addToModel, updateModelInputValue } = useFormContext();
 
   const handleDateChange = (calendarResp: any) => {
     if (dateRange) {
@@ -130,11 +138,13 @@ export const DatePicker: FC<DatePickerProps> = ({
       const value: string | Date | DateRanger = dateRange
         ? { startDate: stDate, endDate: edDate }
         : '';
+      updateModelInputValue(name, value);
       setDate(value);
       inputChange({ e: ref, name, value });
     } else {
       const mDate = m(calendarResp);
       const value = mDate.isValid() ? mDate.format(format) : '';
+      updateModelInputValue(name, value);
       setDate(value);
       inputChange({ e: ref, name, value });
     }
@@ -200,6 +210,21 @@ export const DatePicker: FC<DatePickerProps> = ({
     }
   };
 
+  const checkAndAddModel = () => {
+    if (model) {
+      addToModel(name, {
+        type: 'datepicker',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value: value || '',
+      });
+    }
+  };
+
   useEffect(() => {
     setDefaultValue();
   }, []);
@@ -217,6 +242,10 @@ export const DatePicker: FC<DatePickerProps> = ({
       unRegisterMouseDown();
     };
   }, [date, startDateVal, endDateVal]);
+
+  useEffect(() => {
+    checkAndAddModel();
+  }, [value, validate]);
 
   return (
     <div className={`datepicker-wrapper ${className}`} ref={ref}>

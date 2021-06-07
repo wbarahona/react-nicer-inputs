@@ -1,5 +1,6 @@
 import React, { FC, HTMLProps, ChangeEvent, useState, useEffect } from 'react';
-import { Attrs, ChangeParams } from '../../types';
+import { Attrs, ChangeParams, Validation } from '../../types';
+import { useFormContext } from '../form/FormContext';
 export interface InputProps
   extends HTMLProps<HTMLInputElement & HTMLTextAreaElement> {
   type: string;
@@ -9,6 +10,7 @@ export interface InputProps
   attrs?: Attrs;
   mask?: string;
   maskChar?: string;
+  validate?: Validation[];
   value?: string | number | undefined;
 }
 
@@ -24,6 +26,7 @@ export interface InputProps
  * @param {number} [rows] - Optional. Is the number of rows in case of textarea
  * @param {RegExp} [mask] - Optional. Is the regex that will mask this input with discs. THIS DOES NOT AFFECT the returned value to inputChange
  * @param {string} [maskChar] - Optional. Is the special character that is used by the input to mask the text displayed
+ * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param {string | number} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input />``` element
  */
@@ -37,6 +40,7 @@ export const Input: FC<InputProps> = ({
   rows,
   mask,
   maskChar = '●',
+  validate,
   value,
   onBlurCapture,
   onFocusCapture,
@@ -46,6 +50,7 @@ export const Input: FC<InputProps> = ({
   const [cleanValue, setCleanValue] = useState<string | number | undefined>('');
   const [maskedValue, setMaskedValue] = useState<string>('');
   const classNames = `input ${name} ${className ? className : ''}`;
+  const { model, addToModel, updateModelInputValue } = useFormContext();
 
   const getMask = (val?: string | number) => {
     if (mask && val) {
@@ -94,6 +99,7 @@ export const Input: FC<InputProps> = ({
       type === 'number' ? Number(rawValue) : rawValue;
 
     validateValue(value);
+    updateModelInputValue(name, value);
 
     inputChange({ e, name, value });
   };
@@ -106,9 +112,25 @@ export const Input: FC<InputProps> = ({
     setInputValue(maskedValue);
   };
 
+  const checkAndAddModel = () => {
+    if (model) {
+      addToModel(name, {
+        type,
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value: value || '',
+      });
+    }
+  };
+
   useEffect(() => {
+    checkAndAddModel();
     setDefoValue(value);
-  }, [value]);
+  }, [value, validate]);
 
   if (type === 'textarea') {
     return (

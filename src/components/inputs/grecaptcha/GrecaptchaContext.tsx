@@ -2,7 +2,9 @@ import React, { FC, createContext, useEffect, ReactNode } from 'react';
 import {
   GrecaptchaContextType,
   GrecaptchaResponseParams,
+  Validation,
 } from '../../../types';
+import { useFormContext } from '../../form/FormContext';
 
 declare var grecaptcha: any;
 declare global {
@@ -18,6 +20,7 @@ export interface GrecaptchaContext {
   v3?: boolean;
   captchaSize?: 'compact' | 'normal' | 'invisible';
   theme?: 'dark' | 'light';
+  validate?: Validation[];
   getResponse?: (args: GrecaptchaResponseParams) => void;
 }
 
@@ -38,8 +41,10 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
   v3,
   captchaSize,
   theme,
+  validate,
   getResponse = () => {},
 }: GrecaptchaContext) => {
+  const { model, addToModel, updateModelInputValue } = useFormContext();
   const appendGrParam = v3
     ? `?render=${publicKey}`
     : '?onload=onCallBack&render=explicit';
@@ -50,6 +55,7 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
 
   const verifyCallback = (token: any) => {
     getResponse({ token });
+    updateModelInputValue(name, token);
   };
 
   const onCallBack = () => {
@@ -84,7 +90,23 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
     return response;
   };
 
+  const checkAndAddModel = () => {
+    if (model) {
+      addToModel(name, {
+        type: 'grecaptcha',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate: validate || ['required'],
+        value: '',
+      });
+    }
+  };
+
   useEffect(() => {
+    checkAndAddModel();
     if (!v3) {
       window.onCallBack = onCallBack;
     }

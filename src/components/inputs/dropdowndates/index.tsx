@@ -1,7 +1,7 @@
 import React, { FC, HTMLProps, useRef } from 'react';
 import m from 'moment';
 import DropDownDatesProvider from './DropdowndatesContext';
-import { ChangeParams, Attrs } from '../../../types';
+import { ChangeParams, Attrs, Validation } from '../../../types';
 import DropDownSelectRow from './DropDownSelectRow';
 
 export interface DropDownDatesProps extends HTMLProps<HTMLInputElement> {
@@ -24,6 +24,7 @@ export interface DropDownDatesProps extends HTMLProps<HTMLInputElement> {
   yyDefaultLabel?: string;
   displayOrder?: string;
   mmmm?: boolean;
+  validate?: Validation[];
 }
 
 /**
@@ -46,6 +47,7 @@ export interface DropDownDatesProps extends HTMLProps<HTMLInputElement> {
  * @param {string} [yyDefaultLabel] - Optional. Is the default text for the Day Group selector
  * @param {string} [displayOrder] - Optional. Is the display order on the selectors elements
  * @param {string} [mmmm] - Optional. Defines if the month is on words or not
+ * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param {(string | number)} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns a collection of ```<select />``` that allows dates selection
  */
@@ -69,6 +71,7 @@ export const DropDownDates: FC<DropDownDatesProps> = ({
   yyDefaultLabel = 'Pick a year...',
   displayOrder = 'MM-DD-YY',
   mmmm = false,
+  validate,
   ...props
 }: DropDownDatesProps & HTMLProps<HTMLDivElement>) => {
   const dropDownDatesRef = useRef<HTMLDivElement>(null);
@@ -93,6 +96,7 @@ export const DropDownDates: FC<DropDownDatesProps> = ({
       yyDefaultLabel={yyDefaultLabel}
       displayOrder={displayOrder}
       mmmm={mmmm}
+      validate={validate}
       dropDownDatesRef={dropDownDatesRef || props.ref}
     >
       <div

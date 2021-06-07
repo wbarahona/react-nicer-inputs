@@ -15,6 +15,21 @@ export type GrecaptchaResponseParams = {
   token?: string;
 };
 
+export type ValidationElement = {
+  [key: string]: string | number | Function;
+};
+
+export type Validation = string | ValidationElement;
+
+export type ValidationSummaryElement = {
+  [key: string]: boolean;
+};
+
+export type ValidationResponse = {
+  valid: boolean;
+  summary: ValidationSummaryElement;
+};
+
 export interface DateRange {
   startDate: string | Date;
   endDate: string | Date;
@@ -128,4 +143,42 @@ export type GrecaptchaContextType = {
   publicKey: string;
   validateCaptcha?: () => Promise<string>;
   v3?: boolean;
+};
+
+export type FormModelElementProps = {
+  type: string;
+  valid: boolean | null; // may be null because is not yet validated or will not be validated at all
+  invalid: boolean | null; // may be null because is not yet validated or will not be validated at all
+  pristine: boolean; // input has not received focus nor changed
+  touched: boolean; // input has received focus but not changed
+  dirty: boolean; // input has received focus and changed
+  validate?: Validation[];
+  summary?: ValidationSummaryElement;
+  value?: string | number | DateRange | Date | null;
+};
+
+export type FormModelElement = {
+  [key: string]: FormModelElementProps;
+};
+
+export type FormModel = {
+  [key: string]: {
+    fields: FormModelElement;
+    isValid: boolean | null; // allow null becaus is not yet validated or will not be validated at all
+    isInvalid: boolean | null; // allow null becaus is not yet validated or will not be validated at all
+  };
+};
+
+export type FormContextType = {
+  model?: string | null;
+  formModel: FormModel;
+  addToModel: (name: string, modelElementProps: FormModelElementProps) => void;
+  updateModelInputValue: (
+    name: string,
+    value: InputValue | Date | DateRange
+  ) => void;
+  validateModelInput: (
+    name: string,
+    value: InputValue | Date | DateRange
+  ) => ValidationResponse;
 };

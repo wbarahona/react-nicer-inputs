@@ -7,11 +7,13 @@ import React, {
   Ref,
 } from 'react';
 import m, { min } from 'moment';
+import { useFormContext } from '../../form/FormContext';
 import {
   DropdowndateContextType,
   ChangeParams,
   Attrs,
   Option,
+  Validation,
 } from '../../../types';
 import DD from './DD';
 import MM from './MM';
@@ -37,6 +39,7 @@ export interface DropdowndatesContext {
   yyDefaultLabel?: string;
   displayOrder?: string;
   mmmm?: boolean;
+  validate?: Validation[];
   dropDownDatesRef: Ref<HTMLDivElement>;
 }
 
@@ -95,6 +98,7 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   yyDefaultLabel,
   displayOrder,
   mmmm,
+  validate,
   dropDownDatesRef,
 }: DropdowndatesContext) => {
   const internalFormat = 'MM-DD-YYYY';
@@ -113,6 +117,7 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   const [ddOptions, setDDOptions] = useState<Option[]>([]);
   const [mmOptions, setMMOptions] = useState<Option[]>([]);
   const [yyOptions, setYYOptions] = useState<Option[]>([]);
+  const { model, addToModel, updateModelInputValue } = useFormContext();
 
   const getDateFormatElements = (): string[] => displayOrder?.split('-') || [];
   const getElement = (i: number): ReactNode => {
@@ -152,6 +157,7 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
     const mDate = m(dateString, internalFormat, true);
 
     if (mDate.isValid()) {
+      updateModelInputValue(name, mDate.format(format));
       inputChange({ e: dropDownDatesRef, name, value: mDate.format(format) });
     }
   };
@@ -163,8 +169,12 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   // DAY RELATED FUNCTIONS
   const handleDDChange = ({ value }: ChangeParams) => {
     const valueConverted = addLeadZero(value as number);
+    const stringValue = `${value}`;
+    const numericValue = isNaN(parseInt(stringValue))
+      ? 0
+      : parseInt(stringValue);
 
-    setDDvalue(parseInt(`${value}`, 10));
+    setDDvalue(numericValue);
     setDDvalueString(valueConverted);
   };
 
@@ -188,7 +198,9 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   // MONTH RELATED FUNCTIONS
   const handleMMChange = ({ value }: ChangeParams) => {
     const stringValue = `${value}`;
-    const numericValue = parseInt(stringValue);
+    const numericValue = isNaN(parseInt(stringValue))
+      ? 0
+      : parseInt(stringValue);
     const valueConverted = addLeadZero(numericValue);
     const dd = ddValue > 0 ? addLeadZero(ddValue) : '01';
     const yy = yyValue > 0 ? yyValue : 1900;
@@ -234,7 +246,9 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   // YEAR RELATED FUNCTIONS
   const handleYYChange = ({ value }: ChangeParams) => {
     const stringValue = `${value}`;
-    const numericValue = parseInt(stringValue, 10);
+    const numericValue = isNaN(parseInt(stringValue, 10))
+      ? 0
+      : parseInt(stringValue, 10);
     setYYValue(numericValue);
     setYYValueString(stringValue);
 
@@ -297,6 +311,21 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
     buildYYOptions();
   };
 
+  const checkAndAddModel = () => {
+    if (model) {
+      addToModel(name, {
+        type: 'dropdowndates',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value,
+      });
+    }
+  };
+
   useEffect(() => {
     buildDropOptions();
   }, []);
@@ -309,6 +338,10 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
     buildDateLimits();
     setDefaultValue();
   }, [minDate, maxDate, value]);
+
+  useEffect(() => {
+    checkAndAddModel();
+  }, [value, validate]);
 
   return (
     <DropDownDatesContext.Provider

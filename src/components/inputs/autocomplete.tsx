@@ -7,7 +7,8 @@ import React, {
   useRef,
   useEffect,
 } from 'react';
-import { Attrs, ChangeParams, Option } from '../../types';
+import { Attrs, ChangeParams, Option, Validation } from '../../types';
+import { useFormContext } from '../form/FormContext';
 
 export interface Options extends Array<Option> {}
 
@@ -17,6 +18,7 @@ export interface AutocompleteProps extends HTMLProps<HTMLInputElement> {
   options: Options;
   inputChange: (args: ChangeParams) => void;
   attrs?: Attrs;
+  validate?: Validation[];
   value?: string | number | undefined;
 }
 
@@ -27,6 +29,7 @@ export interface AutocompleteProps extends HTMLProps<HTMLInputElement> {
  * @param options - Is the array of options, it takes an array of objects with label and value properties, this accepts attrs for each option
  * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value
  * @param attrs - Are all attributes this input can have they are appended to the input not the wrapper
+ * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```autocomplete selector``` element
  */
@@ -36,6 +39,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   options,
   inputChange,
   attrs,
+  validate,
   value,
   ...props
 }: AutocompleteProps & HTMLProps<HTMLInputElement>) => {
@@ -43,6 +47,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   const [labelValue, setLabelValue] = useState('');
   const [allOptions, setAllOptions] = useState(options);
   const autocompleteRef = useRef<HTMLDivElement>(null);
+  const { model, addToModel, updateModelInputValue } = useFormContext();
   const toggleOptions = () => {
     setOptionsVisible(!optionsVisible);
   };
@@ -81,6 +86,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
     const value = e.currentTarget.getAttribute('data-value') || '';
 
     setValue(value);
+    updateModelInputValue(name, value);
     inputChange({ e: autocompleteRef, name, value });
     closeOptions();
   };
@@ -105,9 +111,24 @@ export const Autocomplete: FC<AutocompleteProps> = ({
     };
   }, []);
 
+  const checkAndAddModel = () => {
+    if (model) {
+      addToModel(name, {
+        type: 'autocomplete',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        value: value || '',
+      });
+    }
+  };
+
   useEffect(() => {
+    checkAndAddModel();
     setValue(value);
-  }, [value]);
+  }, [value, validate]);
 
   useEffect(() => {
     setAllOptions(options);

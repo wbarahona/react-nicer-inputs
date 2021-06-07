@@ -12,6 +12,7 @@ import FormGroup from './components/inputs/formgroup';
 import Option from './components/inputs/option';
 import Grecaptcha from './components/inputs/grecaptcha';
 import Submit from './components/inputs/submit';
+import Form from './components/form';
 
 export {
   Input,
@@ -28,4 +29,5 @@ export {
   Option,
   Grecaptcha,
   Submit,
+  Form,
 };
