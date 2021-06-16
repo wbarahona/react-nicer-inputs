@@ -4,7 +4,6 @@ An easy to use library to quickly create react forms 📝, its the new level fro
 
 ![npm](https://img.shields.io/npm/v/react-nicer-inputs)
 [![React Nicer Inputs Actions Status](https://img.shields.io/github/workflow/status/wbarahona/react-nicer-inputs/%E2%9A%9B%F0%9F%8F%97%20publish?style=flat-square)](https://github.com/wbarahona/react-nicer-inputs/actions)
-![David](https://img.shields.io/david/wbarahona/react-nicer-inputs)
 ![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/react-nicer-inputs)
 ![NPM](https://img.shields.io/npm/l/react-nicer-inputs)
 
