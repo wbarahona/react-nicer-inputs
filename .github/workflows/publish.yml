@@ -19,7 +19,7 @@ jobs:
       - name: ♻ Install node modules
         run: npm i -D
       - name: ⚛ Install react and react-dom
-        run: npm i react react-dom
+        run: npm i react@latest react-dom@latest
       - name: 🧪 Run tests
         run: npm test
       - name: 🔨 Build /dist
