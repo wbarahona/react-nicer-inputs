@@ -20,12 +20,14 @@ const emailRegex =
 export const Assertions: AssertionsProps = {
   required: (value: AnyInputType): boolean => {
     const valueStr = value as string;
+    const valueNum = value as number;
     const valueDateRange = value as DateRange;
     const startDateStr = valueDateRange.startDate as string;
     const endDateStr = valueDateRange.endDate as string;
 
     return (
       (typeof valueStr === 'string' && valueStr !== '') ||
+      (typeof valueNum === 'number' && valueNum !== undefined) ||
       (typeof valueDateRange === 'object' &&
         startDateStr !== undefined &&
         startDateStr !== '' &&
@@ -159,6 +161,19 @@ export const ValidationFactory = {
               const objFnResp = ruleObjValFn(value);
 
               summary[ruleObjName] = objFnResp;
+            }
+
+            if (
+              typeof ruleObjValNumber === 'string' &&
+              typeof ruleObjValFn === 'string'
+            ) {
+              const objNumResp = runObjectRule(
+                ruleObjName,
+                ruleObjValNumber,
+                value
+              );
+
+              summary[ruleObjName] = objNumResp;
             }
 
             break;
