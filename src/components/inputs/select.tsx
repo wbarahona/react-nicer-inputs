@@ -6,7 +6,7 @@ export interface Options extends Array<Option> {}
 export interface SelectProps extends HTMLProps<HTMLSelectElement> {
   name: string;
   className?: string;
-  options: Options;
+  options?: Options;
   inputChange: (args: ChangeParams) => void;
   defaultLabel?: string;
   attrs?: Attrs;
