@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { Select } from '../../src';
+import { Select, OptGroup, Option } from '../../src';
 
 const inputName = 'test';
 const inputValue = 'option1';
@@ -121,5 +121,65 @@ describe('<Select /> Tests', () => {
     const optionsLen = options.length + 1; // taking default option into account
 
     expect(inputOptionsLen).toBe(optionsLen);
+  });
+
+  it(`should have render a select using option and optgroup component with testid: "${inputName}"`, () => {
+    render(
+      <Select
+        name={inputName}
+        className="testing-class"
+        data-testid={inputName}
+        inputChange={mockHandleChange}
+      >
+        <Option value="">Select an option...</Option>
+        <OptGroup label="js libraries">
+          <Option value="react">react</Option>
+          <Option value="angular">angular</Option>
+        </OptGroup>
+        <OptGroup label="css frameworks">
+          <Option value="sass">sass</Option>
+          <Option value="less">less</Option>
+        </OptGroup>
+      </Select>
+    );
+
+    const input = screen.queryByTestId(inputName);
+
+    beforeEach(() => {
+      mockHandleChange = jest.fn();
+    });
+    expect(input).toBeDefined();
+  });
+
+  it('it should select the option "react" and return the value on inputChange function must be "react', () => {
+    render(
+      <Select
+        name={inputName}
+        className="testing-class"
+        data-testid={inputName}
+        inputChange={mockHandleChange}
+      >
+        <Option value="">Select an option...</Option>
+        <OptGroup label="js libraries">
+          <Option value="react">react</Option>
+          <Option value="angular">angular</Option>
+        </OptGroup>
+        <OptGroup label="css frameworks">
+          <Option value="sass">sass</Option>
+          <Option value="less">less</Option>
+        </OptGroup>
+      </Select>
+    );
+
+    const input = screen.getByLabelText(inputName) as HTMLSelectElement;
+
+    expect(mockHandleChange).toBeCalledTimes(0);
+    fireEvent.change(input, { target: { value: 'react' } });
+    expect(mockHandleChange).toBeCalledTimes(1);
+
+    const { name, value } = mockHandleChange.mock.calls[0][0];
+
+    expect(value).toBe('react');
+    expect(name).toBe(inputName);
   });
 });

@@ -1,5 +1,6 @@
 import { Moment } from 'moment';
 import { ReactNode } from 'react';
+import { OptionValue } from './components/inputs/inputgroup/InputgroupContext';
 
 export type Attrs = {
   [key: string]: string | number | boolean;
@@ -181,4 +182,12 @@ export type FormContextType = {
     name: string,
     value: InputValue | Date | DateRange
   ) => ValidationResponse;
+};
+
+export type InputGroupContextType = {
+  // inputGroupOptions: () => ReactNode[];
+  // addToOptionValueArray: (args: OptionValue) => void;
+  handleChange: (args: ChangeEvent<HTMLInputElement>) => void;
+  setAnOption: (args: OptionValue) => void;
+  optionModel: OptionValue[];
 };

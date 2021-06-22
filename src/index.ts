@@ -10,6 +10,9 @@ import Feedback from './components/inputs/feedback';
 import Password from './components/inputs/password';
 import FormGroup from './components/inputs/formgroup';
 import Option from './components/inputs/option';
+import OptGroup from './components/inputs/optgroup';
+import Checkbox from './components/inputs/checkbox';
+import Radio from './components/inputs/radio';
 import Grecaptcha from './components/inputs/grecaptcha';
 import Submit from './components/inputs/submit';
 import Form from './components/form';
@@ -27,6 +30,9 @@ export {
   Password,
   FormGroup,
   Option,
+  OptGroup,
+  Checkbox,
+  Radio,
   Grecaptcha,
   Submit,
   Form,

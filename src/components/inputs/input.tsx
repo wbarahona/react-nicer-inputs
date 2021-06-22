@@ -56,7 +56,7 @@ export const Input: FC<InputProps> = ({
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
   const [cleanValue, setCleanValue] = useState<string | number | undefined>('');
   const [maskedValue, setMaskedValue] = useState<string>('');
-  const classNames = `input ${name} ${className ? className : ''}`;
+  const classNames = `input ${name} ${className || ''}`;
   // const { model, addToModel, updateModelInputValue } = useFormContext();
   const { model, addToModel, updateModelInputValue } =
     useContext<FormContextType>(FormContext);
@@ -156,25 +156,24 @@ export const Input: FC<InputProps> = ({
         value={inputValue}
       ></textarea>
     );
-  } else {
-    return (
-      <input
-        {...props}
-        type={type}
-        name={name}
-        id={name}
-        className={classNames}
-        aria-label={name}
-        aria-describedby={`${name}-help`}
-        onChange={handleChange}
-        onFocusCapture={mask ? handleFocus : onFocusCapture}
-        onBlurCapture={mask ? handleBlur : onBlurCapture}
-        value={inputValue}
-        // defaultValue={value}
-        {...attrs}
-      />
-    );
   }
+  return (
+    <input
+      {...props}
+      type={type}
+      name={name}
+      id={name}
+      className={classNames}
+      aria-label={name}
+      aria-describedby={`${name}-help`}
+      onChange={handleChange}
+      onFocusCapture={mask ? handleFocus : onFocusCapture}
+      onBlurCapture={mask ? handleBlur : onBlurCapture}
+      value={inputValue}
+      // defaultValue={value}
+      {...attrs}
+    />
+  );
 };
 
 export default Input;

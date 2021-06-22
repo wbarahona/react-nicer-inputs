@@ -175,6 +175,10 @@ This component creates a `<select>` dropdown for you. Since this is straight for
 
 - `defaultLabel="Pick your favorite option" {string}` This is the default option label on the Select.
 
+### OptGroup and Option
+
+These two components help you create more semantic accurate inputs rather than just a simple list of options when you send the options prop to the `<Select >`. Nest these boys inside the **Select** component and you are ready to go.
+
 ---
 
 ### InputGroup
@@ -188,6 +192,12 @@ If you need to create checkboxes and radiobutton groups this component will aid 
 For checkboxes since conceptually it is a multi option selectable it will return on the inputChange function a string of the selected options separated by a commas, the same as the value prop, it will take a comma separated string of the values to be preselected by the component.
 
 For radio buttons as its a single option selectable out of a group of option this will return on inputChange function a normal string, no commas. The value prop can be a single string of one of the options.
+
+### Checkbox & Radio
+
+The checkbox and radio button components allow for you to create single checkbox and single radio, providing a more semantic approach for your inputs. The value grouping falls to your hands but you could wrap these `<Checkbox>` or `<Radio>` components inside a `<InputGroup>` component, be aware of the `type` prop for **InputGroup**. Do not mix `<InputGroup>` type="radio" with `<Checkboxes>`.
+
+- `labelClassName="col-8" {string}` Optional. Is the class appended to the label element
 
 ---
 
@@ -359,6 +369,12 @@ This is a component that is composed of three elemental components.
 So, it utilizes all the props explained for each component above.
 
 ---
+
+## Upcoming components:
+
+- Form (Beta)
+- Custom options for Autocomplete
+- Input type range
 
 ## CODE SANDBOX 🛠
 
