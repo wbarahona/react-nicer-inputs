@@ -17,6 +17,18 @@ export interface AssertionsProps {
 const emailRegex =
   /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
+const isEmptyString = (v: string) => typeof v === 'string' && v !== '';
+
+const isValidNumber = (v: number) => typeof v === 'number' && v !== undefined;
+
+const isValidDate = (v: DateRange, s: string, e: string) =>
+  typeof v === 'object' &&
+  s !== undefined &&
+  s !== '' &&
+  typeof v === 'object' &&
+  e !== undefined &&
+  e !== '';
+
 export const Assertions: AssertionsProps = {
   required: (value: AnyInputType): boolean => {
     const valueStr = value as string;
@@ -26,14 +38,9 @@ export const Assertions: AssertionsProps = {
     const endDateStr = valueDateRange.endDate as string;
 
     return (
-      (typeof valueStr === 'string' && valueStr !== '') ||
-      (typeof valueNum === 'number' && valueNum !== undefined) ||
-      (typeof valueDateRange === 'object' &&
-        startDateStr !== undefined &&
-        startDateStr !== '' &&
-        typeof valueDateRange === 'object' &&
-        endDateStr !== undefined &&
-        endDateStr !== '')
+      isEmptyString(valueStr) ||
+      isValidNumber(valueNum) ||
+      isValidDate(valueDateRange, startDateStr, endDateStr)
     );
   },
   email: (value: AnyInputType): boolean => {

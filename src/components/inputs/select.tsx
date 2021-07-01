@@ -72,6 +72,7 @@ export const Select: FC<SelectProps> = ({
         touched: false,
         dirty: false,
         value: value || '',
+        validate,
       });
     }
   };

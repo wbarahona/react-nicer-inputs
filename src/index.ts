@@ -14,6 +14,7 @@ import OptGroup from './components/inputs/optgroup';
 import Checkbox from './components/inputs/checkbox';
 import Radio from './components/inputs/radio';
 import Grecaptcha from './components/inputs/grecaptcha';
+import Range from './components/inputs/range';
 import Submit from './components/inputs/submit';
 import Form from './components/form';
 
@@ -34,6 +35,7 @@ export {
   Checkbox,
   Radio,
   Grecaptcha,
+  Range,
   Submit,
   Form,
 };

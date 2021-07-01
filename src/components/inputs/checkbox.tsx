@@ -40,7 +40,11 @@ export const Checkbox: FC<CheckboxProps> = ({
   ...props
 }: CheckboxProps & HTMLProps<HTMLInputElement>) => {
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const {
+    model: formModel,
+    addToModel,
+    updateModelInputValue,
+  } = useFormContext();
   const {
     handleChange: inputGroupContextChange,
     setAnOption,
@@ -51,19 +55,19 @@ export const Checkbox: FC<CheckboxProps> = ({
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     let { value, checked } = e.currentTarget;
 
-    if (optionModel.length <= 0) {
-      value = checked ? value : '';
+    value = checked ? value : '';
 
-      setInputValue(value);
+    if (optionModel.length <= 0 && formModel) {
+      updateModelInputValue(name, value);
+    } else if (optionModel.length > 0) {
+      inputGroupContextChange(e);
     }
-    inputGroupContextChange(e);
-    updateModelInputValue(name, value);
 
     inputChange({ e, name, value });
   };
 
   const checkAndAddModel = () => {
-    if (model) {
+    if (formModel) {
       addToModel(name, {
         type: 'checkbox',
         valid: null,

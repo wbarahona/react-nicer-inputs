@@ -16,7 +16,6 @@ import {
   ChangeParams,
   Validation,
   InputValue,
-  Attrs,
 } from '../../../types';
 
 export interface Options extends Array<Option> {}
@@ -55,9 +54,10 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
   options = [],
   inputChange,
   value = '',
+  validate,
 }) => {
   const [optionModel, setOptionModel] = useState<OptionValue[]>([]);
-  const { updateModelInputValue } = useFormContext();
+  const { model, updateModelInputValue, addToModel } = useFormContext();
 
   function modifyOption(theOptions: OptionValue[], value: string | number) {
     const valueStr = value as string;
@@ -140,9 +140,28 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
     }
   }
 
+  const checkAndAddModel = () => {
+    if (model) {
+      addToModel(name, {
+        type,
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        value: value || '',
+        validate,
+      });
+    }
+  };
+
   useEffect(() => {
     setDefoValues();
   }, [value, options]);
+
+  useEffect(() => {
+    checkAndAddModel();
+  }, [value, validate]);
 
   return (
     <InputGroupContext.Provider
