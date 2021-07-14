@@ -58,10 +58,15 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
     updateModelInputValue(name, token);
   };
 
+  const expiredCallback = () => {
+    updateModelInputValue(name, '');
+  };
+
   const onCallBack = () => {
     grecaptcha.render(name, {
       sitekey: publicKey,
       callback: verifyCallback,
+      'expired-callback': expiredCallback,
       theme,
       size: captchaSize,
     });
@@ -76,15 +81,18 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
       });
       if (captchaToken) {
         response = captchaToken;
+        updateModelInputValue(name, captchaToken);
       } else {
         console.warn(
           'Captcha could not be validated. code: CAPTCHA_UNABLE_VALIDATION'
         );
+        updateModelInputValue(name, '');
       }
     } catch (error) {
       console.warn(
         `There was an error validating the captcha: ${error.message}. code: CAPTCHA_TRY_ERROR`
       );
+      updateModelInputValue(name, '');
     }
 
     return response;

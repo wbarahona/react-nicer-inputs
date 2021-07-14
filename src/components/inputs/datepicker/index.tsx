@@ -5,6 +5,7 @@ import React, {
   useRef,
   useEffect,
   ReactNode,
+  ChangeEvent,
 } from 'react';
 import m from 'moment';
 import { useFormContext } from '../../form/FormContext';
@@ -41,7 +42,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
   minDate?: string;
   attrs?: Attrs;
   bottomPanel?: Function;
-  value?: string | number | undefined | StringDateRange | any;
+  value?: string | number | StringDateRange | any;
   minNights?: number;
   maxNights?: number;
   monthsToDisplay?: number;
@@ -53,6 +54,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
   calendarComponentClassName?: string;
   calendarClassName?: string;
   validate?: Validation[];
+  disableAutoClose?: boolean;
 }
 
 /**
@@ -106,6 +108,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   calendarComponentClassName,
   calendarClassName,
   validate,
+  disableAutoClose,
   ...props
 }: DatePickerProps & HTMLProps<HTMLInputElement>) => {
   const isDateRange: boolean =
@@ -129,8 +132,10 @@ export const DatePicker: FC<DatePickerProps> = ({
   const handleDateChange = (calendarResp: any) => {
     if (dateRange) {
       const { startDate, endDate } = calendarResp as DateRanger;
-      const mStartDate = m(startDate);
-      const mEndDate = m(endDate);
+      const startDateAsDate = startDate !== '' ? new Date(startDate) : null;
+      const endDateAsDate = endDate !== '' ? new Date(endDate) : null;
+      const mStartDate = m(startDateAsDate);
+      const mEndDate = m(endDateAsDate);
       const stDate = mStartDate.isValid() ? mStartDate.format(format) : '';
       const edDate = mEndDate.isValid() ? mEndDate.format(format) : '';
       setStartDateVal(stDate);
@@ -144,13 +149,14 @@ export const DatePicker: FC<DatePickerProps> = ({
     } else {
       const mDate = m(calendarResp);
       const value = mDate.isValid() ? mDate.format(format) : '';
+
       updateModelInputValue(name, value);
       setDate(value);
       inputChange({ e: ref, name, value });
     }
   };
 
-  const handleDisplayCalendar = () => {
+  const handleDisplayCalendar = (e: ChangeEvent<HTMLInputElement>) => {
     setCalendarVisible(true);
   };
 
@@ -220,21 +226,26 @@ export const DatePicker: FC<DatePickerProps> = ({
         touched: false,
         dirty: false,
         validate,
-        value: value || '',
+        value: value || null,
       });
     }
   };
 
   useEffect(() => {
     setDefaultValue();
-  }, []);
+  }, [value]);
 
   useEffect(() => {
     registerMouseDown();
 
-    if (dateRange && date.startDate !== '' && date.endDate !== '') {
+    if (
+      dateRange &&
+      date.startDate !== '' &&
+      date.endDate !== '' &&
+      !disableAutoClose
+    ) {
       hideAutomatically();
-    } else if (!dateRange && date !== '') {
+    } else if (!dateRange && date !== '' && !disableAutoClose) {
       hideAutomatically();
     }
 
@@ -261,6 +272,7 @@ export const DatePicker: FC<DatePickerProps> = ({
             onChange={() => {}}
             onFocusCapture={handleDisplayCalendar}
             value={date}
+            {...attrs}
           />
         )}
         {dateRange && (
@@ -275,6 +287,7 @@ export const DatePicker: FC<DatePickerProps> = ({
       </div>
       {calendarVisible && (
         <div className="row" data-testid={`${name}-calendar`}>
+          <button onClick={handleHideCalendar}>&times;</button>
           <Calendar
             dateRange={isDateRange}
             onDateSelect={handleDateChange}

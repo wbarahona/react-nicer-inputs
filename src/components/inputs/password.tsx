@@ -40,8 +40,8 @@ export const Password: FC<PasswordProps> = ({
   inputChange,
   attrs,
   value,
-  showIcon = 'hide',
-  hideIcon = 'show',
+  showIcon = 'show',
+  hideIcon = 'hide',
   noToggle = false,
   validate,
   ...props
@@ -86,7 +86,8 @@ export const Password: FC<PasswordProps> = ({
         pristine: true,
         touched: false,
         dirty: false,
-        value: value || '',
+        validate,
+        value: value || null,
       });
     }
   };

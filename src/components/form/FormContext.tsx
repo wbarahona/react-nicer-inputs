@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useState,
   useContext,
+  HTMLProps,
 } from 'react';
 import {
   FormContextType,
@@ -15,8 +16,10 @@ import {
   FormModelElementProps,
   InputValue,
   ValidationResponse,
+  FormValidityResponse,
 } from '../../types';
-import { useIsMount } from './isMount';
+import { useIsMount } from '../../hooks/isMount';
+import { isEq } from '../../utils';
 
 import { InputProps, Input } from '../inputs/input';
 import { InputGroupProps, InputGroup } from '../inputs/inputgroup';
@@ -45,6 +48,7 @@ export interface AllReactNicerInputsProps
 export interface FormContextProps {
   children?: ReactNode;
   model?: string;
+  formSubmit?: (args?: FormValidityResponse) => void;
   useModel?: (args: FormModel) => void;
 }
 
@@ -56,6 +60,14 @@ const FormContextDefoValues: FormContextType = {
   validateModelInput: () => {
     return { valid: false, summary: {} };
   },
+  updateModelInput: () => {},
+  formSubmit: () => {},
+  validateFormModel: () => {
+    return {
+      isValid: false,
+      isInvalid: false,
+    };
+  },
 };
 
 export const FormContext = createContext<FormContextType>(
@@ -65,6 +77,7 @@ export const FormContext = createContext<FormContextType>(
 export const FormProvider: FC<FormContextProps> = ({
   children,
   useModel = () => {},
+  formSubmit = () => {},
   model = 'defaultModel',
 }) => {
   const isMount = useIsMount();
@@ -97,14 +110,50 @@ export const FormProvider: FC<FormContextProps> = ({
     modelElementProps: FormModelElementProps
   ) => {
     const formModelCopy = Object.assign({}, formModel);
+    const exists = formModelCopy[model].fields[name];
+
+    if (!exists) {
+      addNewModelElement(name, modelElementProps);
+    } else {
+      updateModelProps(name, modelElementProps);
+    }
+  };
+
+  const addNewModelElement = (
+    name: string,
+    modelElementProps: FormModelElementProps
+  ) => {
+    const formModelCopy = Object.assign({}, formModel);
+
     formModelCopy[model].fields[name] = modelElementProps;
 
     setFormModel(formModelCopy);
   };
 
+  const updateModelProps = (name: string, newProps: FormModelElementProps) => {
+    const formModelCopy = Object.assign({}, formModel);
+    const currentProps = Object.assign({}, formModelCopy[model].fields[name]);
+
+    const { value: currentValue, validate: currentValidate } = currentProps;
+    const { value: newValue, validate: newValidate } = newProps;
+
+    if (newValue !== null && currentValue !== newValue) {
+      formModelCopy[model].fields[name].value = newValue;
+
+      // setFormModel(formModelCopy);
+      updateModelInputValue(name, newValue);
+    }
+    if (!isEq(currentValidate, newValidate)) {
+      formModelCopy[model].fields[name].validate = newValidate;
+
+      // setFormModel(formModelCopy);
+      updateModelInputValue(name, newValue);
+    }
+  };
+
   const updateModelInputValue = (
     name: string,
-    value: InputValue | Date | DateRange
+    value: InputValue | Date | DateRange | null
   ) => {
     const { valid, summary } = validateModelInput(name, value);
     const formModelCopy = Object.assign({}, formModel);
@@ -127,13 +176,59 @@ export const FormProvider: FC<FormContextProps> = ({
     setFormModel(formModelCopy);
   };
 
+  const updateModelInput = (name: string, newProps: FormModelElementProps) => {
+    const formModelCopy = Object.assign({}, formModel);
+
+    formModelCopy[model].fields[name] = {
+      ...formModelCopy[model].fields[name],
+      ...newProps,
+    };
+
+    const formValid = validateForm(formModelCopy, model);
+
+    formModelCopy[model].isValid = formValid;
+    formModelCopy[model].isInvalid = !formValid;
+
+    setFormModel(formModelCopy);
+  };
+
   const validateModelInput = (
     name: string,
-    value: InputValue | Date | DateRange
+    value: InputValue | Date | DateRange | null
   ): ValidationResponse => {
     const { validate } = formModel[model].fields[name];
+    const val = value || '';
 
-    return validateInput(value, validate);
+    return validateInput(val, validate);
+  };
+
+  const validateFormModel = () => {
+    const formModelCopy = Object.assign({}, formModel);
+    const { fields } = formModelCopy[model];
+
+    for (const field in fields) {
+      if (Object.prototype.hasOwnProperty.call(fields, field)) {
+        const { value } = fields[field];
+        const { valid, summary } = validateModelInput(field, value);
+
+        formModelCopy[model].fields[field] = {
+          ...formModelCopy[model].fields[field],
+          value,
+          valid,
+          invalid: !valid,
+          summary,
+        };
+      }
+    }
+
+    const formValid = validateForm(formModelCopy, model);
+
+    formModelCopy[model].isValid = formValid;
+    formModelCopy[model].isInvalid = !formValid;
+
+    setFormModel(formModelCopy);
+
+    return { isValid: formValid, isInvalid: !formValid };
   };
 
   useEffect(() => {
@@ -153,6 +248,9 @@ export const FormProvider: FC<FormContextProps> = ({
         addToModel,
         updateModelInputValue,
         validateModelInput,
+        validateFormModel,
+        formSubmit,
+        updateModelInput,
       }}
     >
       {children}

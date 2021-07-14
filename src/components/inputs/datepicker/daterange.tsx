@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { DateRangeProps } from '../../../types';
 export interface ExtendedDateRangeProps extends DateRangeProps {
   type: 'date' | 'datetime' | 'text';
   startDateVal: string;
   endDateVal: string;
-  displayCalendar: () => void;
+  displayCalendar: (args: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const DateRange = ({
@@ -50,24 +50,6 @@ export const DateRange = ({
         value={endDateVal}
         {...endDateAttrs}
       />
-      {/* {showCalendar && type === 'text' && (
-        <Calendar
-          dateRange
-          onDateSelect={({ startDate, endDate }: DateRanger) => {
-            console.log(startDate, endDate);
-            const mStartDate = m(startDate);
-            const mEndDate = m(endDate);
-
-            const stDate = mStartDate.isValid()
-              ? mStartDate.format(format)
-              : '';
-            const edDate = mEndDate.isValid() ? mEndDate.format(format) : '';
-            setStartDate(stDate);
-            setEndDate(edDate);
-          }}
-          ref={ref}
-        />
-      )} */}
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { Moment } from 'moment';
-import { ReactNode } from 'react';
+import { ReactNode, ErrorInfo } from 'react';
 import { OptionValue } from './components/inputs/inputgroup/InputgroupContext';
 
 export type Attrs = {
@@ -165,9 +165,14 @@ export type FormModelElement = {
 export type FormModel = {
   [key: string]: {
     fields: FormModelElement;
-    isValid: boolean | null; // allow null becaus is not yet validated or will not be validated at all
-    isInvalid: boolean | null; // allow null becaus is not yet validated or will not be validated at all
+    isValid: boolean | null; // allow null because is not yet validated or will not be validated at all
+    isInvalid: boolean | null; // allow null because is not yet validated or will not be validated at all
   };
+};
+
+export type FormValidityResponse = {
+  isValid: boolean;
+  isInvalid: boolean;
 };
 
 export type FormContextType = {
@@ -182,6 +187,9 @@ export type FormContextType = {
     name: string,
     value: InputValue | Date | DateRange
   ) => ValidationResponse;
+  updateModelInput: (name: string, value: FormModelElementProps) => void;
+  validateFormModel: () => FormValidityResponse;
+  formSubmit: (args?: FormValidityResponse) => void;
 };
 
 export type InputGroupContextType = {
@@ -189,5 +197,8 @@ export type InputGroupContextType = {
   // addToOptionValueArray: (args: OptionValue) => void;
   handleChange: (args: ChangeEvent<HTMLInputElement>) => void;
   setAnOption: (args: OptionValue) => void;
-  optionModel: OptionValue[];
+  optionModel: OptionValue[] | null[];
+  useCheckedOption: (value: string | number | null) => boolean | null;
 };
+
+export type ErrorHandler = (error: Error, info: ErrorInfo) => void;

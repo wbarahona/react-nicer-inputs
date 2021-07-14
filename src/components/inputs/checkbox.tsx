@@ -40,6 +40,7 @@ export const Checkbox: FC<CheckboxProps> = ({
   ...props
 }: CheckboxProps & HTMLProps<HTMLInputElement>) => {
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
+  const [inputChecked, setInputChecked] = useState<boolean>(false);
   const {
     model: formModel,
     addToModel,
@@ -49,6 +50,7 @@ export const Checkbox: FC<CheckboxProps> = ({
     handleChange: inputGroupContextChange,
     setAnOption,
     optionModel,
+    useCheckedOption,
   } = useInputGroupContext();
   const classNames = `input ${name} ${className || ''}`;
 
@@ -63,6 +65,7 @@ export const Checkbox: FC<CheckboxProps> = ({
       inputGroupContextChange(e);
     }
 
+    setInputChecked(checked);
     inputChange({ e, name, value });
   };
 
@@ -76,7 +79,7 @@ export const Checkbox: FC<CheckboxProps> = ({
         touched: false,
         dirty: false,
         validate,
-        value: value || '',
+        value: value || null,
       });
     }
   };
@@ -88,13 +91,32 @@ export const Checkbox: FC<CheckboxProps> = ({
   };
 
   useEffect(() => {
-    checkAndAddModel();
+    if (optionModel[0] !== null) {
+      const valueStr = value as string;
+
+      setAnOption({
+        value: valueStr,
+        attrs,
+        checked: checked || false,
+        label: '',
+      });
+    } else if (formModel) {
+      checkAndAddModel();
+    }
     setDefoValue(value);
-
-    const valueStr = value as string;
-
-    setAnOption({ value: valueStr, attrs, checked, label: '' });
   }, [value, validate]);
+
+  useEffect(() => {
+    setInputChecked(checked);
+  }, [checked]);
+
+  useEffect(() => {
+    const chk = useCheckedOption(inputValue || null);
+
+    if (chk !== null) {
+      setInputChecked(chk);
+    }
+  }, [optionModel]);
 
   return (
     <>
@@ -109,6 +131,7 @@ export const Checkbox: FC<CheckboxProps> = ({
         onChange={handleChange}
         value={inputValue}
         {...attrs}
+        checked={inputChecked}
       />
       <Label
         htmlFor={`${name}-${value || ''}`}

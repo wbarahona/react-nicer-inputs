@@ -37,11 +37,10 @@ export interface OptionValue extends Option {
 export interface OptionValueArray extends Array<OptionValue> {}
 
 const InputGroupDefoValues: InputGroupContextType = {
-  // inputGroupOptions: () => [],
-  // addToOptionValueArray: () => {},
   handleChange: () => {},
   setAnOption: () => {},
-  optionModel: [],
+  optionModel: [null],
+  useCheckedOption: () => false,
 };
 
 export const InputGroupContext =
@@ -54,10 +53,9 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
   options = [],
   inputChange,
   value = '',
-  validate,
 }) => {
   const [optionModel, setOptionModel] = useState<OptionValue[]>([]);
-  const { model, updateModelInputValue, addToModel } = useFormContext();
+  const { updateModelInputValue } = useFormContext();
 
   function modifyOption(theOptions: OptionValue[], value: string | number) {
     const valueStr = value as string;
@@ -101,10 +99,11 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
       });
 
       const resultValueArr = opts.map(({ checked, value }) => {
-        return checked ? value : '';
+        return checked ? value : null;
       });
 
       resultValue = resultValueArr
+        .filter(Boolean)
         .join(',')
         .replace(/(^[,\s]+)|([,\s]+$)/g, '');
 
@@ -131,7 +130,7 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
     setOptionModel(prevState => [...prevState, ...newArr]);
   }
 
-  function setDefoValues() {
+  function buildQuickOptions() {
     const arr = createNewOptionArray(options);
     const defoArr = modifyOption(arr, value);
 
@@ -140,28 +139,37 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
     }
   }
 
-  const checkAndAddModel = () => {
-    if (model) {
-      addToModel(name, {
-        type,
-        valid: null,
-        invalid: null,
-        pristine: true,
-        touched: false,
-        dirty: false,
-        value: value || '',
-        validate,
-      });
+  function setDefoValues() {
+    if (value && value !== '' && value !== null) {
+      const arr = createNewOptionArray(optionModel);
+      const defoArr = modifyOption(arr, value);
+      if (defoArr.length > 0) {
+        setOptionModel(defoArr);
+      }
     }
-  };
+  }
+
+  function useCheckedOption(val: string | number | null) {
+    if (val) {
+      const found = optionModel.find(({ value }) => value === val);
+
+      if (found) {
+        const { checked } = found;
+
+        return checked || false;
+      }
+    }
+
+    return null;
+  }
+
+  useEffect(() => {
+    buildQuickOptions();
+  }, [options]);
 
   useEffect(() => {
     setDefoValues();
-  }, [value, options]);
-
-  useEffect(() => {
-    checkAndAddModel();
-  }, [value, validate]);
+  }, [value]);
 
   return (
     <InputGroupContext.Provider
@@ -169,6 +177,7 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
         setAnOption,
         optionModel,
         handleChange,
+        useCheckedOption,
       }}
     >
       {options.length > 0

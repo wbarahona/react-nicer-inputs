@@ -1,6 +1,12 @@
 import React, { ChangeEvent, HTMLProps, FC, useEffect, useState } from 'react';
 import { useFormContext } from '../form/FormContext';
-import { Attrs, ChangeParams, Option, Validation } from '../../types';
+import {
+  Attrs,
+  ChangeParams,
+  Option,
+  Validation,
+  InputValue,
+} from '../../types';
 
 export interface Options extends Array<Option> {}
 export interface SelectProps extends HTMLProps<HTMLSelectElement> {
@@ -44,6 +50,7 @@ export const Select: FC<SelectProps> = ({
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.currentTarget;
 
+    setInputValue(value);
     updateModelInputValue(name, value);
     inputChange({ e, name, value });
   };
@@ -58,8 +65,10 @@ export const Select: FC<SelectProps> = ({
     );
   }
 
-  const setDefaultValue = () => {
-    setInputValue(value);
+  const setDefaultValue = (val: InputValue) => {
+    if (val) {
+      setInputValue(val);
+    }
   };
 
   const checkAndAddModel = () => {
@@ -71,7 +80,7 @@ export const Select: FC<SelectProps> = ({
         pristine: true,
         touched: false,
         dirty: false,
-        value: value || '',
+        value: value || null,
         validate,
       });
     }
@@ -79,7 +88,7 @@ export const Select: FC<SelectProps> = ({
 
   useEffect(() => {
     checkAndAddModel();
-    setDefaultValue();
+    setDefaultValue(value);
   }, [value, validate]);
 
   return (

@@ -164,61 +164,67 @@ const CalendarProvider: FC<CalendarContextProps> = ({
       const mNewDate = m(newDate);
       const mStartDate = m(startDate);
       const mEndDate = m(endDate);
-      const returnRange = {
-        startDate,
-        endDate,
+      const returnDate = {
+        startDate: '',
+        endDate: '',
       };
 
-      if (!hasSelectedFirstRange && !mNewDate.isSame(mEndDate)) {
-        // if user has NOT selected any first date and newdate is NOT the same as endDate
-        if (mNewDate.isAfter(mEndDate)) {
-          // user has selected a date that is past endDate, so we reset a new
-          // selection in the date range, set endDate as empty then...
-          setEndDate('');
-          returnRange.endDate = '';
-        }
-        // ... then set normally the new date as startDate
-        if (!hasDateRangeDisabled(newDate, startDate)) {
-          setStartDate(newDate);
+      if (
+        (mStartDate.isValid() && mNewDate.isSame(mStartDate)) ||
+        (mEndDate.isValid() && mNewDate.isSame(mEndDate))
+      ) {
+        // console.warn('Selecting same date');
+      } else {
+        if (!hasSelectedFirstRange) {
+          // set startDate
+          if (
+            mStartDate.isValid() &&
+            mEndDate.isValid() &&
+            mNewDate.isAfter(mEndDate)
+          ) {
+            returnDate.startDate = mEndDate.isValid()
+              ? mEndDate.toDate().toString()
+              : '';
+            returnDate.endDate = mNewDate.toDate().toString();
+
+            setStartDate(endDate);
+            setEndDate(newDate);
+          } else {
+            returnDate.startDate = mNewDate.toDate().toString();
+            returnDate.endDate = mEndDate.isValid()
+              ? mEndDate.toDate().toString()
+              : '';
+
+            setStartDate(newDate);
+          }
           setHasSelectedFirstRange(true);
-
-          returnRange.startDate = newDate;
         } else {
-          setStartDate('');
-          setEndDate('');
-          setHasSelectedFirstRange(false);
+          // set EndDate
+          if (
+            mStartDate.isValid() &&
+            mEndDate.isValid() &&
+            mNewDate.isBefore(mStartDate)
+          ) {
+            returnDate.startDate = mNewDate.toDate().toString();
+            returnDate.endDate = mStartDate.isValid()
+              ? mStartDate.toDate().toString()
+              : '';
 
-          returnRange.startDate = '';
-          returnRange.endDate = '';
-        }
-
-        if (minNights || maxNights) {
-          setEndDate('');
-          returnRange.endDate = '';
-        }
-      } else if (!mNewDate.isSame(mStartDate)) {
-        // if new date is NOT the same as startDate
-        if (mNewDate.isBefore(mStartDate)) {
-          // Invert selection as the user has selected a new date that is before
-          // previously selected date
-          if (!hasDateRangeDisabled(newDate, startDate)) {
             setStartDate(newDate);
             setEndDate(startDate);
+          } else {
+            returnDate.startDate = mStartDate.isValid()
+              ? mStartDate.toDate().toString()
+              : '';
+            returnDate.endDate = mNewDate.toDate().toString();
 
-            returnRange.startDate = newDate;
-            returnRange.endDate = startDate;
-          }
-        } else {
-          // welp, this is before startDate so normally set it as endDate
-
-          if (!hasDateRangeDisabled(startDate, newDate)) {
             setEndDate(newDate);
-            returnRange.endDate = newDate;
           }
+          setHasSelectedFirstRange(false);
         }
-        setHasSelectedFirstRange(false);
       }
-      onDateSelect(returnRange);
+
+      onDateSelect(returnDate);
     } else {
       setDate(newDate);
       onDateSelect(newDate);

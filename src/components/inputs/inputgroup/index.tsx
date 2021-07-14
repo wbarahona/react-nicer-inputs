@@ -1,5 +1,5 @@
-import React, { FC, HTMLProps, ChangeEvent, useState, useEffect } from 'react';
-import { useIsMount } from '../../form/isMount';
+import React, { FC, HTMLProps, useEffect } from 'react';
+import { useIsMount } from '../../../hooks/isMount';
 import { useFormContext } from '../../form/FormContext';
 import { InputGroupProvider } from './InputgroupContext';
 import { ChangeParams, Option, InputValue, Validation } from '../../../types';
@@ -62,16 +62,14 @@ export const InputGroup: FC<InputGroupProps> = ({
         touched: false,
         dirty: false,
         validate,
-        value: value || '',
+        value: value || null,
       });
     }
   };
 
   useEffect(() => {
-    if (isMount) {
-      checkAndAddModel();
-    }
-  }, [validate]);
+    checkAndAddModel();
+  }, [value, validate]);
 
   return (
     <div className={`inputgroup-wrapper ${classNames}`}>

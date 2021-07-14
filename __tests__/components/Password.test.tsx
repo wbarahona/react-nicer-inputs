@@ -73,7 +73,7 @@ describe('<Password /> Tests', () => {
       />
     );
     const input = screen.getByLabelText(inputName) as HTMLInputElement;
-    const button = screen.getByText('hide');
+    const button = screen.getByText('show');
 
     expect(mockHandleChange).toBeCalledTimes(0);
     fireEvent.change(input, { target: { value: inputValue } });

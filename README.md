@@ -370,6 +370,111 @@ So, it utilizes all the props explained for each component above.
 
 ---
 
+### Form
+
+This component allows you to create forms, all Input component within the <Form> tags are added to a formModel, the model updates when user interacts with the inputs, this allows a very flexible access to everything regarding the form, values, validations, used inputs or pristine inputs.
+
+- `model="login" {string}` Optional - Name for the form model, defaults to "defaultModel"
+- `formSubmit={() => {}} {Function}` This function will run when <Submit> button component is added to the form
+- `useModel={() => {}} {Function}` Optional - A pseudoHook that allows the consuming of the form model and its state
+
+A simple login form can be created as:
+
+```jsx
+<Form
+  model="login"
+  className="col-12"
+  formSubmit={handleFormSubmit}
+  useModel={useModel}
+>
+  <Input
+    name="username"
+    type="text"
+    className="col-6"
+    data-testid="username"
+    inputChange={handleInputChange}
+    validate={['required']}
+  />
+  <Password
+    name="password"
+    className="col-6"
+    data-testid="password"
+    inputChange={handleInputChange}
+    validate={['required']}
+  />
+  <Submit className="col-6" data-testid="submit">
+    Send Form
+  </Submit>
+</Form>
+```
+
+Where handleFormSubmit is a function that can receive back on sync if the form is valid or invalid, destructure the params {isInvalid, isValid}, those booleans will tell if the form is ready to be posted and the action is on your side.
+
+useModel is invoked everytime the form model updates, telling you what input identifier has changed and from there you could access to each input model values:
+
+```js
+{
+  type: string,
+  valid: boolean,
+  invalid: boolean,
+  pristine: boolean,
+  touched: boolean,
+  dirty: boolean,
+  validate: Array,
+  value: string | number | null,
+  summary: Array
+}
+```
+
+- type is this input type.
+- valid is a boolean that represent what the result of the validation Array is.
+- invalid is a boolean and is a more verbose approach and works as helper, inverse of valid.
+- pristine is a boolean, indicates if this input has not been interacted with yet.
+- touched is the inverse of pristine.
+- validate array contains the current validations this input must run each change.
+- value, the value the input holds
+- summary is an array of results for each element in the validate array.
+
+This is an example of what could be the form model in the forementioned login form:
+
+```js
+{
+   "fields":{
+      "username":{
+         "type":"text",
+         "valid":true,
+         "invalid":false,
+         "pristine":false,
+         "touched":true,
+         "dirty":false,
+         "validate":[
+            "required"
+         ],
+         "value":"reactdev",
+         "summary":{
+            "required":true
+         }
+      },
+      "password":{
+         "type":"password",
+         "valid":null,
+         "invalid":null,
+         "pristine":true,
+         "touched":false,
+         "dirty":false,
+         "validate":[
+            "required",
+         ],
+         "value":null
+      },
+   },
+   "isValid":true,
+   "isInvalid":false
+}
+```
+
+From this example you can determine that username has been filled whereas password has not been touched yet. This object is at your disposal and you can do as you see fit on your side of things.
+
 ## Upcoming components:
 
 - Form (Beta)

@@ -120,7 +120,8 @@ export const Autocomplete: FC<AutocompleteProps> = ({
         pristine: true,
         touched: false,
         dirty: false,
-        value: value || '',
+        validate,
+        value: value || null,
       });
     }
   };
@@ -138,6 +139,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
     <div className={`autocomplete-wrapper ${className}`} ref={autocompleteRef}>
       <input
         {...props}
+        type="text"
         name={name}
         id={name}
         className="input autocomplete-input"
@@ -147,6 +149,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
         onFocus={handleFocus}
         value={labelValue}
         {...attrs}
+        autoComplete="off"
       />
       {optionsVisible && (
         <ul className="autocomplete-options">

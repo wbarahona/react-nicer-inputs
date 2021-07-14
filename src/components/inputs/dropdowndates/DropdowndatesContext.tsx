@@ -6,8 +6,9 @@ import React, {
   useEffect,
   Ref,
 } from 'react';
-import m, { min } from 'moment';
+import m from 'moment';
 import { useFormContext } from '../../form/FormContext';
+import { useIsMount } from '../../../hooks/isMount';
 import {
   DropdowndateContextType,
   ChangeParams,
@@ -117,7 +118,9 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   const [ddOptions, setDDOptions] = useState<Option[]>([]);
   const [mmOptions, setMMOptions] = useState<Option[]>([]);
   const [yyOptions, setYYOptions] = useState<Option[]>([]);
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue, updateModelInput } =
+    useFormContext();
+  const isMount = useIsMount();
 
   const getDateFormatElements = (): string[] => displayOrder?.split('-') || [];
   const getElement = (i: number): ReactNode => {
@@ -159,6 +162,8 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
     if (mDate.isValid()) {
       updateModelInputValue(name, mDate.format(format));
       inputChange({ e: dropDownDatesRef, name, value: mDate.format(format) });
+    } else {
+      setCompomponetAsInvalid(dateString);
     }
   };
 
@@ -266,6 +271,24 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
     }
   };
 
+  const setCompomponetAsInvalid = (date: string) => {
+    const mDate = m(date, format, true);
+
+    if (!mDate.isValid()) {
+      if (model) {
+        updateModelInput(name, {
+          type: 'dropdowndates',
+          valid: false,
+          invalid: true,
+          pristine: false,
+          touched: true,
+          dirty: false,
+          value: '',
+        });
+      }
+    }
+  };
+
   const buildYYOptions = (start?: number, limit?: number) => {
     const ret: Option[] = [];
     const mStart = m(minDate, format, true).isValid()
@@ -321,7 +344,7 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
         touched: false,
         dirty: false,
         validate,
-        value,
+        value: value || null,
       });
     }
   };
@@ -331,7 +354,9 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   }, []);
 
   useEffect(() => {
-    buildFinalDate();
+    if (!isMount) {
+      buildFinalDate();
+    }
   }, [mmValueString, ddValueString, yyValueString]);
 
   useEffect(() => {

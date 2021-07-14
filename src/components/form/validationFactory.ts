@@ -109,8 +109,18 @@ export const Assertions: AssertionsProps = {
 
 export const runStringRule = (rule: string, value: AnyInputType): boolean => {
   const daRule = Assertions[rule];
+  let res = true;
 
-  return daRule(value);
+  if (typeof daRule === 'function') {
+    res = daRule(value);
+  } else {
+    console.warn(
+      `Rule "${rule}" not found in validation dictionary, try one of the following: name, alphaNumeric, alpha, pattern, number, equals, min, max, email, required`
+    );
+    res = true;
+  }
+
+  return res;
 };
 
 export const runObjectRule = (
@@ -120,7 +130,26 @@ export const runObjectRule = (
 ): boolean => {
   const daRule = Assertions[rule];
 
-  return daRule(value, boundary);
+  let res = true;
+
+  if (typeof daRule === 'function') {
+    res = daRule(value, boundary);
+  } else {
+    console.warn(
+      `Rule "${rule}" not found in validation dictionary, try one of the following: name, alphaNumeric, alpha, pattern, number, equals, min, max, email, required`
+    );
+    res = true;
+  }
+
+  return res;
+
+  // if (!daRule) {
+  //   console.warn(
+  //     `Rule "${rule}" not found in validation dictionary, try one of the following: name, alphaNumeric, alpha, pattern, number, equals, min, max, email, required`
+  //   );
+  // }
+
+  // return daRule ? daRule(value, boundary) : false;
 };
 
 export const ValidationFactory = {
@@ -212,7 +241,7 @@ export const ValidationFactory = {
       if (Object.prototype.hasOwnProperty.call(fields, field)) {
         const fieldElem = fields[field];
 
-        if (fieldElem.valid !== null && !fieldElem.valid) {
+        if (fieldElem.touched && !fieldElem.valid) {
           return false;
         }
       }

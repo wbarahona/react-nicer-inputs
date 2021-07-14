@@ -1,6 +1,7 @@
 import React, { FC, HTMLProps, useContext } from 'react';
 import { GrecaptchaContext } from './grecaptcha/GrecaptchaContext';
 import { GrecaptchaContextType } from '../../types';
+import { useFormContext } from '../form/FormContext';
 
 export interface SubmitProps extends HTMLProps<HTMLButtonElement> {
   captchaProtected?: boolean;
@@ -24,16 +25,33 @@ export const Submit: FC<SubmitProps> = ({
 }: SubmitProps & HTMLProps<HTMLButtonElement>) => {
   const { validateCaptcha = () => null, v3 } =
     useContext<GrecaptchaContextType>(GrecaptchaContext);
+  const {
+    model,
+    formSubmit: contextSubmit,
+    validateFormModel,
+  } = useFormContext();
   const classNames = `submit-button ${className ? className : ''}`;
 
   const handleClick = async () => {
     const captchaToken = v3 ? await validateCaptcha() : null;
 
     if (v3 && captchaToken !== null) {
-      formSubmit({ captchaToken });
+      if (!model) {
+        formSubmit({ captchaToken });
+      } else {
+        const { isValid, isInvalid } = validateFormModel();
+
+        contextSubmit({ isValid, isInvalid });
+      }
     }
     if (!v3 && !captchaToken) {
-      formSubmit();
+      if (!model) {
+        formSubmit();
+      } else {
+        const { isValid, isInvalid } = validateFormModel();
+
+        contextSubmit({ isValid, isInvalid });
+      }
     }
   };
   return (

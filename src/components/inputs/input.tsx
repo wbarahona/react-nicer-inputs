@@ -6,8 +6,8 @@ import React, {
   useEffect,
   useContext,
 } from 'react';
-import { Attrs, ChangeParams, FormContextType, Validation } from '../../types';
-import { useFormContext, FormContext } from '../form/FormContext';
+import { Attrs, ChangeParams, Validation } from '../../types';
+import { useFormContext } from '../form/FormContext';
 export interface InputProps
   extends HTMLProps<HTMLInputElement & HTMLTextAreaElement> {
   type: string;
@@ -57,9 +57,7 @@ export const Input: FC<InputProps> = ({
   const [cleanValue, setCleanValue] = useState<string | number | undefined>('');
   const [maskedValue, setMaskedValue] = useState<string>('');
   const classNames = `input ${name} ${className || ''}`;
-  // const { model, addToModel, updateModelInputValue } = useFormContext();
-  const { model, addToModel, updateModelInputValue } =
-    useContext<FormContextType>(FormContext);
+  const { model, addToModel, updateModelInputValue } = useFormContext();
 
   const getMask = (val?: string | number) => {
     if (mask && val) {
@@ -82,6 +80,8 @@ export const Input: FC<InputProps> = ({
       }
     } else {
       setMaskedValue(`${val}`);
+
+      return `${val}`;
     }
   };
 
@@ -92,7 +92,7 @@ export const Input: FC<InputProps> = ({
   };
 
   const setDefoValue = (val?: string | number) => {
-    if (value && value !== '') {
+    if (val && val !== '') {
       setCleanValue(val || '');
       const masked = getMask(val || '');
 
@@ -131,7 +131,7 @@ export const Input: FC<InputProps> = ({
         touched: false,
         dirty: false,
         validate,
-        value: value || '',
+        value: value || null,
       });
     }
   };
