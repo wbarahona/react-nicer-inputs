@@ -17,6 +17,7 @@ export interface InputProps
   attrs?: Attrs;
   mask?: string;
   maskChar?: string;
+  inputReset?: boolean;
   validate?: Validation[];
   value?: string | number | undefined;
 }
@@ -34,6 +35,7 @@ export interface InputProps
  * @param {RegExp} [mask] - Optional. Is the regex that will mask this input with discs. THIS DOES NOT AFFECT the returned value to inputChange
  * @param {string} [maskChar] - Optional. Is the special character that is used by the input to mask the text displayed
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
+ * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param {string | number} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input />``` element
  */
@@ -48,6 +50,7 @@ export const Input: FC<InputProps> = ({
   mask,
   maskChar = '●',
   validate,
+  inputReset,
   value,
   onBlurCapture,
   onFocusCapture,
@@ -135,6 +138,31 @@ export const Input: FC<InputProps> = ({
       });
     }
   };
+
+  const resetInput = () => {
+    setCleanValue('');
+    setInputValue('');
+    setMaskedValue('');
+
+    if (model) {
+      addToModel(name, {
+        type,
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value: '',
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (inputReset) {
+      resetInput();
+    }
+  }, [inputReset]);
 
   useEffect(() => {
     checkAndAddModel();

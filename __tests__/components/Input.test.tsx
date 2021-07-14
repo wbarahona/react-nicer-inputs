@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, useRef } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Input } from '../../src';
@@ -92,5 +92,50 @@ describe('<Input /> Tests', () => {
     expect(value).toBe('some text value');
     expect(name).toBe(inputName);
     expect(input.value).toBe(inputMaskedValue);
+  });
+
+  it(`should render input type: "${inputType}" with testid: "${inputName}", reset Input`, () => {
+    interface InputRerenderProps {
+      inputReset: boolean;
+    }
+
+    let counterid = 1;
+
+    const InputRerender: FC<InputRerenderProps> = ({
+      inputReset,
+    }: InputRerenderProps) => {
+      const id = useRef(counterid);
+      return (
+        <div>
+          <span data-testid="instance-id">{id.current}</span>
+          <Input
+            type="text"
+            className="testingclass"
+            name={inputName}
+            data-testid={inputName}
+            inputChange={mockHandleChange}
+            inputReset={inputReset}
+          />
+        </div>
+      );
+    };
+    const { rerender } = render(<InputRerender inputReset={false} />);
+
+    const input = screen.getByLabelText(inputName) as HTMLInputElement;
+
+    expect(mockHandleChange).toBeCalledTimes(0);
+    fireEvent.change(input, { target: { value: inputValue } });
+    expect(mockHandleChange).toBeCalledTimes(1);
+
+    const { name, value } = mockHandleChange.mock.calls[0][0];
+
+    expect(input.value).toBe('some text value');
+    expect(value).toBe('some text value');
+    expect(name).toBe(inputName);
+
+    rerender(<InputRerender inputReset={true} />);
+
+    expect(mockHandleChange).toBeCalledTimes(1);
+    expect(input.value).toBe('');
   });
 });
