@@ -408,7 +408,7 @@ A simple login form can be created as:
 </Form>
 ```
 
-Where handleFormSubmit is a function that can receive back on sync if the form is valid or invalid, destructure the params {isInvalid, isValid}, those booleans will tell if the form is ready to be posted and the action is on your side.
+Where handleFormSubmit is a function that can receive back on sync if the form is valid or invalid, destructure the params {isInvalid, isValid, formModel}; isInvalid and isValid those booleans will tell if the form is ready to be posted and the action is on your side, meanwhile formModel contains all the form model properties for you to use in case you want to work with the form model after the user clicks submit.
 
 useModel is invoked everytime the form model updates, telling you what input identifier has changed and from there you could access to each input model values:
 

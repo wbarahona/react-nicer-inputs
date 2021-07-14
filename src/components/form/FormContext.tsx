@@ -228,7 +228,11 @@ export const FormProvider: FC<FormContextProps> = ({
 
     setFormModel(formModelCopy);
 
-    return { isValid: formValid, isInvalid: !formValid };
+    return {
+      isValid: formValid,
+      isInvalid: !formValid,
+      formModel: formModelCopy,
+    };
   };
 
   useEffect(() => {
