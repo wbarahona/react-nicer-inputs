@@ -12,7 +12,7 @@ export interface CheckboxProps extends HTMLProps<HTMLInputElement> {
   attrs?: Attrs;
   validate?: Validation[];
   checked?: boolean;
-  value: string | number | undefined;
+  value?: string | number | undefined;
 }
 
 /**
@@ -57,9 +57,9 @@ export const Checkbox: FC<CheckboxProps> = ({
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     let { value, checked } = e.currentTarget;
 
-    value = checked ? value : '';
+    value = checked ? name : '';
 
-    if (optionModel.length <= 0 && formModel) {
+    if (optionModel.length === 1 && optionModel[0] === null && formModel) {
       updateModelInputValue(name, value);
     } else if (optionModel.length > 0) {
       inputGroupContextChange(e);

@@ -173,6 +173,7 @@ export type FormModel = {
 export type FormValidityResponse = {
   isValid: boolean;
   isInvalid: boolean;
+  formModel: FormModel;
 };
 
 export type FormContextType = {

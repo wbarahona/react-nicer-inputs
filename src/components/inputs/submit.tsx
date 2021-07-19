@@ -39,18 +39,18 @@ export const Submit: FC<SubmitProps> = ({
       if (!model) {
         formSubmit({ captchaToken });
       } else {
-        const { isValid, isInvalid } = validateFormModel();
+        const { isValid, isInvalid, formModel } = validateFormModel();
 
-        contextSubmit({ isValid, isInvalid });
+        contextSubmit({ isValid, isInvalid, formModel });
       }
     }
     if (!v3 && !captchaToken) {
       if (!model) {
         formSubmit();
       } else {
-        const { isValid, isInvalid } = validateFormModel();
+        const { isValid, isInvalid, formModel } = validateFormModel();
 
-        contextSubmit({ isValid, isInvalid });
+        contextSubmit({ isValid, isInvalid, formModel });
       }
     }
   };

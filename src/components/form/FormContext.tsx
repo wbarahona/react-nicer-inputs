@@ -66,6 +66,7 @@ const FormContextDefoValues: FormContextType = {
     return {
       isValid: false,
       isInvalid: false,
+      formModel: {}
     };
   },
 };
@@ -209,6 +210,7 @@ export const FormProvider: FC<FormContextProps> = ({
     for (const field in fields) {
       if (Object.prototype.hasOwnProperty.call(fields, field)) {
         const { value } = fields[field];
+        
         const { valid, summary } = validateModelInput(field, value);
 
         formModelCopy[model].fields[field] = {

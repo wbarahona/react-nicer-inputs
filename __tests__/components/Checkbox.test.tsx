@@ -44,7 +44,7 @@ describe('<Checkbox /> Tests', () => {
 
     const { name, value } = mockHandleChange.mock.calls[0][0];
 
-    expect(value).toBe('test-val');
+    expect(value).toBe('test');
     expect(name).toBe(inputName);
   });
 
@@ -66,7 +66,7 @@ describe('<Checkbox /> Tests', () => {
 
     const { name, value } = mockHandleChange.mock.calls[0][0];
 
-    expect(value).toBe('test-val');
+    expect(value).toBe('test');
     expect(name).toBe(inputName);
 
     fireEvent.click(input);
