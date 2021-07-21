@@ -66,7 +66,7 @@ const FormContextDefoValues: FormContextType = {
     return {
       isValid: false,
       isInvalid: false,
-      formModel: {}
+      formModel: {},
     };
   },
 };
@@ -148,26 +148,37 @@ export const FormProvider: FC<FormContextProps> = ({
       formModelCopy[model].fields[name].validate = newValidate;
 
       // setFormModel(formModelCopy);
-      updateModelInputValue(name, newValue);
+      updateModelInputValue(name, newValue, newProps);
     }
   };
 
   const updateModelInputValue = (
     name: string,
-    value: InputValue | Date | DateRange | null
+    value: InputValue | Date | DateRange | null,
+    newProps?: FormModelElementProps
   ) => {
     const { valid, summary } = validateModelInput(name, value);
     const formModelCopy = Object.assign({}, formModel);
 
-    formModelCopy[model].fields[name] = {
-      ...formModelCopy[model].fields[name],
-      value,
-      valid,
-      invalid: !valid,
-      pristine: false,
-      touched: true,
-      summary,
-    };
+    if (newProps) {
+      formModelCopy[model].fields[name] = {
+        ...formModelCopy[model].fields[name],
+        value,
+        valid,
+        invalid: !valid,
+        ...newProps,
+      };
+    } else {
+      formModelCopy[model].fields[name] = {
+        ...formModelCopy[model].fields[name],
+        value,
+        valid,
+        invalid: !valid,
+        pristine: false,
+        touched: true,
+        summary,
+      };
+    }
 
     const formValid = validateForm(formModelCopy, model);
 
@@ -210,7 +221,7 @@ export const FormProvider: FC<FormContextProps> = ({
     for (const field in fields) {
       if (Object.prototype.hasOwnProperty.call(fields, field)) {
         const { value } = fields[field];
-        
+
         const { valid, summary } = validateModelInput(field, value);
 
         formModelCopy[model].fields[field] = {
