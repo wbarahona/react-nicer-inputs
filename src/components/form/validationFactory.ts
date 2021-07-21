@@ -80,7 +80,7 @@ export const Assertions: AssertionsProps = {
     const valueStr = value as string;
     const regex = limit as string;
     const newRegex = new RegExp(regex);
-    let resp = false;
+    let resp = true;
 
     if (value !== '') {
       resp = newRegex.test(valueStr);
@@ -241,15 +241,29 @@ export const ValidationFactory = {
       if (Object.prototype.hasOwnProperty.call(fields, field)) {
         const fieldElem = fields[field];
 
-        if (fieldElem.validate && fieldElem.pristine && fieldElem.valid === null) {
+        if (
+          fieldElem.validate &&
+          fieldElem.pristine &&
+          fieldElem.valid === null
+        ) {
           // return false when element needs validation, is still pristine meaning valid is null, the input has not been interacted with
           return false;
         }
-        if (fieldElem.validate && fieldElem.touched && fieldElem.valid !== null && !fieldElem.valid) {
+        if (
+          fieldElem.validate &&
+          fieldElem.touched &&
+          fieldElem.valid !== null &&
+          !fieldElem.valid
+        ) {
           // return false when element needs validation, it has been interacted with however the validation returned false
           return false;
         }
-        if (fieldElem.validate && fieldElem.pristine && fieldElem.valid !== null && !fieldElem.valid) {
+        if (
+          fieldElem.validate &&
+          fieldElem.pristine &&
+          fieldElem.valid !== null &&
+          !fieldElem.valid
+        ) {
           // return false when element needs validation, its pristine but the validation is false, meaning user clicked on submit
           return false;
         }
