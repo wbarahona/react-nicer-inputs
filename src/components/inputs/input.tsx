@@ -172,6 +172,7 @@ export const Input: FC<InputProps> = ({
   if (type === 'textarea') {
     return (
       <textarea
+        {...props}
         name={name}
         id={name}
         className={classNames}
@@ -182,6 +183,7 @@ export const Input: FC<InputProps> = ({
         onChange={handleChange}
         // defaultValue={value}
         value={inputValue}
+        {...attrs}
       ></textarea>
     );
   }
