@@ -7,7 +7,6 @@ import React, {
   useEffect,
   useState,
   useContext,
-  HTMLProps,
 } from 'react';
 import {
   FormContextType,
@@ -19,7 +18,7 @@ import {
   FormValidityResponse,
 } from '../../types';
 import { useIsMount } from '../../hooks/isMount';
-import { isEq } from '../../utils';
+import { isEq, deepCopy } from '../../utils';
 
 import { InputProps, Input } from '../inputs/input';
 import { InputGroupProps, InputGroup } from '../inputs/inputgroup';
@@ -110,7 +109,7 @@ export const FormProvider: FC<FormContextProps> = ({
     name: string,
     modelElementProps: FormModelElementProps
   ) => {
-    const formModelCopy = Object.assign({}, formModel);
+    const formModelCopy = deepCopy(formModel);
     const exists = formModelCopy[model].fields[name];
 
     if (!exists) {
@@ -132,53 +131,80 @@ export const FormProvider: FC<FormContextProps> = ({
   };
 
   const updateModelProps = (name: string, newProps: FormModelElementProps) => {
-    const formModelCopy = Object.assign({}, formModel);
-    const currentProps = Object.assign({}, formModelCopy[model].fields[name]);
+    const formModelCopy = deepCopy(formModel);
+    const currentProps = deepCopy(formModelCopy[model].fields[name]);
 
     const { value: currentValue, validate: currentValidate } = currentProps;
     const { value: newValue, validate: newValidate } = newProps;
 
-    if (newValue !== null && currentValue !== newValue) {
-      formModelCopy[model].fields[name].value = newValue;
+    if (
+      newValue !== undefined &&
+      newValue !== null &&
+      currentValue !== newValue
+    ) {
+      const inputModel = deepCopy(formModelCopy[model].fields[name]);
+      const { validate } = inputModel;
 
-      // setFormModel(formModelCopy);
-      updateModelInputValue(name, newValue);
+      inputModel.value = newValue;
+
+      const { valid, summary } = validateInput(newValue, validate);
+
+      inputModel.valid = valid;
+      inputModel.invalid = !valid;
+      inputModel.summary = summary;
+      inputModel.pristine = false;
+      inputModel.touched = true;
+
+      formModelCopy[model].fields[name] = inputModel;
+
+      const formValid = validateForm(formModelCopy, model);
+
+      formModelCopy[model].isValid = formValid;
+      formModelCopy[model].isInvalid = !formValid;
+
+      setFormModel(formModelCopy);
     }
-    if (!isEq(currentValidate, newValidate)) {
-      formModelCopy[model].fields[name].validate = newValidate;
+    if (!isEq(currentValidate, newValidate) && newValidate !== undefined) {
+      const inputModel = formModelCopy[model].fields[name];
+      const { value } = inputModel;
 
-      // setFormModel(formModelCopy);
-      updateModelInputValue(name, newValue, newProps);
+      inputModel.validate = newValidate;
+
+      if (value !== null && value !== undefined) {
+        const { valid, summary } = validateInput(value, newValidate);
+
+        inputModel.valid = valid;
+        inputModel.invalid = !valid;
+        inputModel.summary = summary;
+        inputModel.pristine = false;
+        inputModel.touched = true;
+      }
+
+      const formValid = validateForm(formModelCopy, model);
+
+      formModelCopy[model].isValid = formValid;
+      formModelCopy[model].isInvalid = !formValid;
+
+      setFormModel(formModelCopy);
     }
   };
 
   const updateModelInputValue = (
     name: string,
-    value: InputValue | Date | DateRange | null,
-    newProps?: FormModelElementProps
+    value: InputValue | Date | DateRange | null
   ) => {
     const { valid, summary } = validateModelInput(name, value);
-    const formModelCopy = Object.assign({}, formModel);
+    const formModelCopy = deepCopy(formModel);
 
-    if (newProps) {
-      formModelCopy[model].fields[name] = {
-        ...formModelCopy[model].fields[name],
-        value,
-        valid,
-        invalid: !valid,
-        ...newProps,
-      };
-    } else {
-      formModelCopy[model].fields[name] = {
-        ...formModelCopy[model].fields[name],
-        value,
-        valid,
-        invalid: !valid,
-        pristine: false,
-        touched: true,
-        summary,
-      };
-    }
+    formModelCopy[model].fields[name] = {
+      ...formModelCopy[model].fields[name],
+      value,
+      valid,
+      invalid: !valid,
+      pristine: false,
+      touched: true,
+      summary,
+    };
 
     const formValid = validateForm(formModelCopy, model);
 
@@ -189,7 +215,7 @@ export const FormProvider: FC<FormContextProps> = ({
   };
 
   const updateModelInput = (name: string, newProps: FormModelElementProps) => {
-    const formModelCopy = Object.assign({}, formModel);
+    const formModelCopy = deepCopy(formModel);
 
     formModelCopy[model].fields[name] = {
       ...formModelCopy[model].fields[name],
@@ -215,7 +241,7 @@ export const FormProvider: FC<FormContextProps> = ({
   };
 
   const validateFormModel = () => {
-    const formModelCopy = Object.assign({}, formModel);
+    const formModelCopy = deepCopy(formModel);
     const { fields } = formModelCopy[model];
 
     for (const field in fields) {
@@ -251,7 +277,7 @@ export const FormProvider: FC<FormContextProps> = ({
   useEffect(() => {
     if (isMount) {
     } else {
-      const formModelCopy = Object.assign({}, formModel);
+      const formModelCopy = deepCopy(formModel);
 
       useModel(formModelCopy);
     }

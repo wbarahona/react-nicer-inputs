@@ -1,13 +1,12 @@
-import React, {
-  FC,
-  HTMLProps,
-  ChangeEvent,
-  useState,
-  useEffect,
-  useContext,
-} from 'react';
-import { Attrs, ChangeParams, Validation } from '../../types';
+import React, { FC, HTMLProps, ChangeEvent, useState, useEffect } from 'react';
+import {
+  Attrs,
+  ChangeParams,
+  Validation,
+  FormModelElementProps,
+} from '../../types';
 import { useFormContext } from '../form/FormContext';
+import { useIsMount } from '../../hooks/isMount';
 export interface InputProps
   extends HTMLProps<HTMLInputElement & HTMLTextAreaElement> {
   type: string;
@@ -61,6 +60,7 @@ export const Input: FC<InputProps> = ({
   const [maskedValue, setMaskedValue] = useState<string>('');
   const classNames = `input ${name} ${className || ''}`;
   const { model, addToModel, updateModelInputValue } = useFormContext();
+  const isMount = useIsMount();
 
   const getMask = (val?: string | number) => {
     if (mask && val) {
@@ -124,7 +124,7 @@ export const Input: FC<InputProps> = ({
     setInputValue(maskedValue);
   };
 
-  const checkAndAddModel = () => {
+  function addNewModel() {
     if (model) {
       addToModel(name, {
         type,
@@ -137,25 +137,22 @@ export const Input: FC<InputProps> = ({
         value: value || null,
       });
     }
-  };
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (model) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
 
   const resetInput = () => {
     setCleanValue('');
     setInputValue('');
     setMaskedValue('');
 
-    if (model) {
-      addToModel(name, {
-        type,
-        valid: null,
-        invalid: null,
-        pristine: true,
-        touched: false,
-        dirty: false,
-        validate,
-        value: '',
-      });
-    }
+    updateModelInputValue(name, '');
   };
 
   useEffect(() => {
@@ -165,8 +162,13 @@ export const Input: FC<InputProps> = ({
   }, [inputReset]);
 
   useEffect(() => {
-    checkAndAddModel();
     setDefoValue(value);
+
+    if (isMount) {
+      addNewModel();
+    } else {
+      updateModel({ value: value || null, validate });
+    }
   }, [value, validate]);
 
   if (type === 'textarea') {

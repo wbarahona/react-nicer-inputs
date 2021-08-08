@@ -1,5 +1,10 @@
 import React, { FC, HTMLProps, ChangeEvent, useState, useEffect } from 'react';
-import { ChangeParams, Attrs, Validation } from '../../types';
+import {
+  ChangeParams,
+  Attrs,
+  Validation,
+  FormModelElementProps,
+} from '../../types';
 import { useFormContext } from '../form/FormContext';
 import { useInputGroupContext } from './inputgroup/InputgroupContext';
 import Label from './label';
@@ -10,6 +15,7 @@ export interface RadioProps extends HTMLProps<HTMLInputElement> {
   className?: string;
   labelClassName?: string;
   inputChange: (args: ChangeParams) => void;
+  inputReset?: boolean;
   attrs?: Attrs;
   validate?: Validation[];
   value: string | number | undefined;
@@ -22,6 +28,7 @@ export interface RadioProps extends HTMLProps<HTMLInputElement> {
  * @param {string} [className] - Optional. Is the class needed, its appended to the component element
  * @param {string} [labelClassName] - Optional. Is the class appended to the label element
  * @param {Function} inputChange - Non native change handler performed by the library, will return the event, the input name and the value
+ * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param {Object} [attrs] - Optional. Are all attributes this input can have they are appended to the input not the wrapper
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param {string | number} [value] - Optional. Is the input value, if sent the input will take this value as default
@@ -32,6 +39,7 @@ export const Radio: FC<RadioProps> = ({
   name,
   className,
   inputChange,
+  inputReset,
   labelClassName,
   attrs,
   validate,
@@ -91,24 +99,55 @@ export const Radio: FC<RadioProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (optionModel[0] !== null) {
-      const valueStr = value as string;
-
-      setAnOption({
-        value: valueStr,
-        attrs,
-        checked: checked || false,
-        label: '',
+  function addNewModel() {
+    if (formModel) {
+      addToModel(name, {
+        type: 'checkbox',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value: value || null,
       });
-    } else if (formModel) {
-      checkAndAddModel();
     }
-    setDefoValue(value);
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (formModel) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (isMount) {
+      if (optionModel[0] !== null) {
+        const valueStr = value as string;
+        setAnOption({
+          value: valueStr,
+          attrs,
+          checked: checked || false,
+          label: '',
+        });
+      } else if (formModel) {
+        addNewModel();
+      }
+      setDefoValue(value);
+    } else {
+      updateModel({ value: value || null, validate });
+    }
   }, [value, validate]);
 
   useEffect(() => {
-    setInputChecked(checked);
+    if (!isMount) {
+      const val = checked ? name : '';
+
+      setInputChecked(checked);
+      updateModel({ value: val });
+    }
   }, [checked]);
 
   useEffect(() => {

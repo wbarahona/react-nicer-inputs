@@ -10,12 +10,14 @@ import React, {
 } from 'react';
 import InputGroupOptionList from './inputgroupoptionlist';
 import { useFormContext } from '../../form/FormContext';
+import { useIsMount } from '../../../hooks/isMount';
 import {
   InputGroupContextType,
   Option,
   ChangeParams,
   Validation,
   InputValue,
+  FormModelElementProps,
 } from '../../../types';
 
 export interface Options extends Array<Option> {}
@@ -26,6 +28,7 @@ export interface InputGroupContextProps extends HTMLProps<HTMLInputElement> {
   name: string;
   options: Options;
   inputChange: (args: ChangeParams) => void;
+  inputReset?: boolean;
   validate?: Validation[];
   value?: InputValue;
 }
@@ -52,20 +55,53 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
   name,
   options = [],
   inputChange,
+  validate,
+  inputReset,
   value = '',
 }) => {
   const [optionModel, setOptionModel] = useState<OptionValue[]>([]);
-  const { updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const isMount = useIsMount();
 
-  function modifyOption(theOptions: OptionValue[], value: string | number) {
-    const valueStr = value as string;
+  function addNewModel() {
+    if (model) {
+      addToModel(name, {
+        type,
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value: value || null,
+      });
+    }
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (model) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
+
+  function modifyOption(theOptions: OptionValue[], val: string | number) {
+    const valueStr = val as string;
     const valueArr = valueStr.split(',');
 
-    const arr: OptionValue[] = theOptions.map(({ label, value, attrs }) => {
-      const val = value as string;
-      const checked = valueArr.includes(val);
-      return { label, value, checked, attrs };
-    });
+    const arr: OptionValue[] = theOptions.map(
+      ({ label, value: optVal, attrs }) => {
+        const val = optVal as string;
+        const checked = valueArr.includes(val);
+
+        if (checked) {
+          updateModel({ value: value || null });
+        }
+
+        return { label, value: val, checked, attrs };
+      }
+    );
 
     return arr;
   }
@@ -131,11 +167,13 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
   }
 
   function buildQuickOptions() {
-    const arr = createNewOptionArray(options);
-    const defoArr = modifyOption(arr, value);
+    if (options.length > 0) {
+      const arr = createNewOptionArray(options);
+      const defoArr = modifyOption(arr, value);
 
-    if (defoArr.length > 0) {
-      setOptionModel(defoArr);
+      if (defoArr.length > 0) {
+        setOptionModel(defoArr);
+      }
     }
   }
 
@@ -163,9 +201,32 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
     return null;
   }
 
+  function resetInput() {
+    const arr = createNewOptionArray(optionModel);
+    const defoArr = modifyOption(arr, '');
+    if (defoArr.length > 0) {
+      setOptionModel(defoArr);
+      updateModel({ value: '' });
+    }
+  }
+
   useEffect(() => {
     buildQuickOptions();
   }, [options]);
+
+  useEffect(() => {
+    if (isMount) {
+      addNewModel();
+    } else {
+      updateModel({ validate });
+    }
+  }, [validate]);
+
+  useEffect(() => {
+    if (inputReset) {
+      resetInput();
+    }
+  }, [inputReset]);
 
   useEffect(() => {
     setDefoValues();

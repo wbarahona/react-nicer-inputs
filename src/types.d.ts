@@ -147,12 +147,12 @@ export type GrecaptchaContextType = {
 };
 
 export type FormModelElementProps = {
-  type: string;
-  valid: boolean | null; // may be null because is not yet validated or will not be validated at all
-  invalid: boolean | null; // may be null because is not yet validated or will not be validated at all
-  pristine: boolean; // input has not received focus nor changed
-  touched: boolean; // input has received focus but not changed
-  dirty: boolean; // input has received focus and changed
+  type?: string;
+  valid?: boolean | null; // may be null because is not yet validated or will not be validated at all
+  invalid?: boolean | null; // may be null because is not yet validated or will not be validated at all
+  pristine?: boolean; // input has not received focus nor changed
+  touched?: boolean; // input has received focus but not changed
+  dirty?: boolean; // input has received focus and changed
   validate?: Validation[];
   summary?: ValidationSummaryElement;
   value?: string | number | DateRange | Date | null;

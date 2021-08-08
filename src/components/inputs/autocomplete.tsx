@@ -7,8 +7,15 @@ import React, {
   useRef,
   useEffect,
 } from 'react';
-import { Attrs, ChangeParams, Option, Validation } from '../../types';
+import {
+  Attrs,
+  ChangeParams,
+  Option,
+  Validation,
+  FormModelElementProps,
+} from '../../types';
 import { useFormContext } from '../form/FormContext';
+import { useIsMount } from '../../hooks/isMount';
 
 export interface Options extends Array<Option> {}
 
@@ -19,6 +26,7 @@ export interface AutocompleteProps extends HTMLProps<HTMLInputElement> {
   inputChange: (args: ChangeParams) => void;
   attrs?: Attrs;
   validate?: Validation[];
+  inputReset?: boolean;
   value?: string | number | undefined;
 }
 
@@ -31,6 +39,7 @@ export interface AutocompleteProps extends HTMLProps<HTMLInputElement> {
  * @param attrs - Are all attributes this input can have they are appended to the input not the wrapper
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param [value] - Optional. Is the input value, if sent the input will take this value as default
+ * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @returns {React.FunctionComponentElement} Returns an ```autocomplete selector``` element
  */
 export const Autocomplete: FC<AutocompleteProps> = ({
@@ -40,6 +49,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   inputChange,
   attrs,
   validate,
+  inputReset,
   value,
   ...props
 }: AutocompleteProps & HTMLProps<HTMLInputElement>) => {
@@ -48,6 +58,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   const [allOptions, setAllOptions] = useState(options);
   const autocompleteRef = useRef<HTMLDivElement>(null);
   const { model, addToModel, updateModelInputValue } = useFormContext();
+  const isMount = useIsMount();
   const toggleOptions = () => {
     setOptionsVisible(!optionsVisible);
   };
@@ -78,7 +89,8 @@ export const Autocomplete: FC<AutocompleteProps> = ({
 
         setLabelValue(label);
       }
-    } else if (val && val === '') {
+    }
+    if (val === '') {
       setLabelValue('');
     }
   };
@@ -111,7 +123,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
     };
   }, []);
 
-  const checkAndAddModel = () => {
+  function addNewModel() {
     if (model) {
       addToModel(name, {
         type: 'autocomplete',
@@ -124,11 +136,42 @@ export const Autocomplete: FC<AutocompleteProps> = ({
         value: value || null,
       });
     }
-  };
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (model) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
+
+  function resetInput() {
+    setValue('');
+
+    updateModelInputValue(name, '');
+  }
 
   useEffect(() => {
-    checkAndAddModel();
+    if (inputReset) {
+      resetInput();
+    }
+  }, [inputReset]);
+
+  useEffect(() => {
     setValue(value);
+
+    if (isMount) {
+      addNewModel();
+    } else {
+      const res = allOptions.filter(({ value: optVal }) => optVal === value);
+
+      if (res.length > 0) {
+        const { value: optVal } = res[0];
+
+        updateModel({ value: optVal || null, validate });
+      }
+    }
   }, [value, validate]);
 
   useEffect(() => {

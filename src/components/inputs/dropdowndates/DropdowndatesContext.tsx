@@ -15,6 +15,7 @@ import {
   Attrs,
   Option,
   Validation,
+  FormModelElementProps,
 } from '../../../types';
 import DD from './DD';
 import MM from './MM';
@@ -24,6 +25,7 @@ export interface DropdowndatesContext {
   children?: ReactNode;
   name: string;
   inputChange: (args: ChangeParams) => void;
+  inputReset?: boolean;
   format?: string;
   maxDate?: string;
   minDate?: string;
@@ -83,6 +85,7 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   name,
   children,
   inputChange,
+  inputReset,
   format,
   maxDate,
   minDate,
@@ -334,21 +337,6 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
     buildYYOptions();
   };
 
-  const checkAndAddModel = () => {
-    if (model) {
-      addToModel(name, {
-        type: 'dropdowndates',
-        valid: null,
-        invalid: null,
-        pristine: true,
-        touched: false,
-        dirty: false,
-        validate,
-        value: value || null,
-      });
-    }
-  };
-
   useEffect(() => {
     buildDropOptions();
   }, []);
@@ -364,8 +352,54 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
     setDefaultValue();
   }, [minDate, maxDate, value]);
 
+  function addNewModel() {
+    if (model) {
+      addToModel(name, {
+        type: 'datepicker',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value: value || null,
+      });
+    }
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (model) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
+
+  const resetInput = () => {
+    setDDvalue(0);
+    setMMValue(0);
+    setYYValue(0);
+    setDDvalueString('');
+    setMMValueString('');
+    setYYValueString('');
+
+    updateModelInputValue(name, '');
+  };
+
   useEffect(() => {
-    checkAndAddModel();
+    if (inputReset) {
+      resetInput();
+    }
+  }, [inputReset]);
+
+  useEffect(() => {
+    setDefaultValue();
+
+    if (isMount) {
+      addNewModel();
+    } else {
+      updateModel({ value: value || null, validate });
+    }
   }, [value, validate]);
 
   return (

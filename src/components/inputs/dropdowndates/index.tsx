@@ -8,6 +8,7 @@ export interface DropDownDatesProps extends HTMLProps<HTMLInputElement> {
   name: string;
   className?: string;
   inputChange: (args: ChangeParams) => void;
+  inputReset?: boolean;
   format?: string;
   maxDate?: string;
   minDate?: string;
@@ -33,6 +34,7 @@ export interface DropDownDatesProps extends HTMLProps<HTMLInputElement> {
  * @param {string} name - Is the input name
  * @param {string} [className] - Optional. Is the class needed, its appended to the component wrapper
  * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value, for checkboxes it will return a comma separated string of each value selected by the user
+ * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param {string} [format] - Optional. Is the format this input will handle, defines the format the date will be returned.
  * @param {string} [maxDate] - Optional. Is the maximum date allowable to select by this datepicker
  * @param {string} [minDate] - Optional. Is the minimum date allowable to select by this datepicker
@@ -55,6 +57,7 @@ export const DropDownDates: FC<DropDownDatesProps> = ({
   name,
   className,
   inputChange,
+  inputReset,
   format = 'MM-DD-YYYY',
   maxDate = m().endOf('year').format('MM-DD-YYYY'),
   minDate = '01-01-1900',
@@ -80,6 +83,7 @@ export const DropDownDates: FC<DropDownDatesProps> = ({
     <DropDownDatesProvider
       name={name}
       inputChange={inputChange}
+      inputReset={inputReset}
       format={format}
       maxDate={maxDate}
       minDate={minDate}

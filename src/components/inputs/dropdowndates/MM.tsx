@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import Select from '../select';
 import { DropDownDatesContext } from './DropdowndatesContext';
 import { DropdowndateContextType } from '../../../types';
@@ -13,7 +13,20 @@ export const MM: FC = () => {
     handleMMChange,
     mmValue,
   } = useContext<DropdowndateContextType>(DropDownDatesContext);
+  const [inputReset, setInputReset] = useState<boolean>(false);
   const groupName = `${name}-mm-select`;
+
+  useEffect(() => {
+    if (mmValue === 0) {
+      setInputReset(true);
+    }
+  }, [mmValue]);
+
+  useEffect(() => {
+    if (inputReset) {
+      setInputReset(false);
+    }
+  }, [inputReset]);
 
   return (
     <div className={`${mmClassName} ${name}-mm-select-wrapper`}>
@@ -25,6 +38,7 @@ export const MM: FC = () => {
         defaultLabel={mmDefaultLabel}
         inputChange={handleMMChange}
         value={mmValue}
+        inputReset={inputReset}
       />
     </div>
   );

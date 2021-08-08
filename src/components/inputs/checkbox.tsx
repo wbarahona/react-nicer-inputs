@@ -1,7 +1,13 @@
 import React, { FC, HTMLProps, ChangeEvent, useState, useEffect } from 'react';
-import { ChangeParams, Attrs, Validation } from '../../types';
+import {
+  ChangeParams,
+  Attrs,
+  Validation,
+  FormModelElementProps,
+} from '../../types';
 import { useFormContext } from '../form/FormContext';
 import { useInputGroupContext } from './inputgroup/InputgroupContext';
+import { useIsMount } from '../../hooks/isMount';
 import Label from './label';
 
 export interface CheckboxProps extends HTMLProps<HTMLInputElement> {
@@ -11,6 +17,7 @@ export interface CheckboxProps extends HTMLProps<HTMLInputElement> {
   inputChange: (args: ChangeParams) => void;
   attrs?: Attrs;
   validate?: Validation[];
+  inputReset?: boolean;
   checked?: boolean;
   value?: string | number | undefined;
 }
@@ -24,6 +31,7 @@ export interface CheckboxProps extends HTMLProps<HTMLInputElement> {
  * @param {Function} inputChange - Non native change handler performed by the library, will return the event, the input name and the value
  * @param {Object} [attrs] - Optional. Are all attributes this input can have they are appended to the input not the wrapper
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
+ * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param {string | number} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input type="checkbox" />``` element
  */
@@ -36,6 +44,7 @@ export const Checkbox: FC<CheckboxProps> = ({
   attrs,
   validate,
   checked = false,
+  inputReset,
   value,
   ...props
 }: CheckboxProps & HTMLProps<HTMLInputElement>) => {
@@ -46,6 +55,7 @@ export const Checkbox: FC<CheckboxProps> = ({
     addToModel,
     updateModelInputValue,
   } = useFormContext();
+  const isMount = useIsMount();
   const {
     handleChange: inputGroupContextChange,
     setAnOption,
@@ -90,24 +100,55 @@ export const Checkbox: FC<CheckboxProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (optionModel[0] !== null) {
-      const valueStr = value as string;
-
-      setAnOption({
-        value: valueStr,
-        attrs,
-        checked: checked || false,
-        label: '',
+  function addNewModel() {
+    if (formModel) {
+      addToModel(name, {
+        type: 'checkbox',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value: value || null,
       });
-    } else if (formModel) {
-      checkAndAddModel();
     }
-    setDefoValue(value);
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (formModel) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (isMount) {
+      if (optionModel[0] !== null) {
+        const valueStr = value as string;
+        setAnOption({
+          value: valueStr,
+          attrs,
+          checked: checked || false,
+          label: '',
+        });
+      } else if (formModel) {
+        addNewModel();
+      }
+      setDefoValue(value);
+    } else {
+      updateModel({ value: value || null, validate });
+    }
   }, [value, validate]);
 
   useEffect(() => {
-    setInputChecked(checked);
+    if (!isMount) {
+      const val = checked ? name : '';
+
+      setInputChecked(checked);
+      updateModel({ value: val });
+    }
   }, [checked]);
 
   useEffect(() => {

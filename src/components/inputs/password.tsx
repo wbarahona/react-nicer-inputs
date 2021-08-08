@@ -5,10 +5,15 @@ import React, {
   ChangeEvent,
   ReactNode,
   useEffect,
-  useContext,
 } from 'react';
 import { useFormContext } from '../form/FormContext';
-import { Attrs, ChangeParams, Validation } from '../../types';
+import {
+  Attrs,
+  ChangeParams,
+  Validation,
+  FormModelElementProps,
+} from '../../types';
+import { useIsMount } from '../../hooks/isMount';
 
 export interface PasswordProps extends HTMLProps<HTMLInputElement> {
   name: string;
@@ -19,6 +24,7 @@ export interface PasswordProps extends HTMLProps<HTMLInputElement> {
   hideIcon?: ReactNode;
   noToggle?: boolean;
   validate?: Validation[];
+  inputReset?: boolean;
   value?: string | number | undefined;
 }
 
@@ -31,6 +37,7 @@ export interface PasswordProps extends HTMLProps<HTMLInputElement> {
  * @param {ReactNode} [showIcon] - Optional. Is the icon to be displayed when the password text is hidden
  * @param {ReactNode} [hideIcon] - Optional. Is the icon to be displayed when the password text is shown
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
+ * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param {string} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input type="password" />``` element
  */
@@ -40,6 +47,7 @@ export const Password: FC<PasswordProps> = ({
   inputChange,
   attrs,
   value,
+  inputReset,
   showIcon = 'show',
   hideIcon = 'hide',
   noToggle = false,
@@ -51,6 +59,7 @@ export const Password: FC<PasswordProps> = ({
   const [pwdVisible, setPwdVisible] = useState<boolean>(false);
   const [finalAttrs, setFinalAttrs] = useState<Attrs>({ ...attrs });
   const { model, addToModel, updateModelInputValue } = useFormContext();
+  const isMount = useIsMount();
 
   const toggleVisible = () => {
     if (!pwdVisible) {
@@ -77,7 +86,32 @@ export const Password: FC<PasswordProps> = ({
     }
   };
 
-  const checkAndAddModel = () => {
+  // const checkAndAddModel = () => {
+  //   if (model) {
+  //     addToModel(name, {
+  //       type: 'password',
+  //       valid: null,
+  //       invalid: null,
+  //       pristine: true,
+  //       touched: false,
+  //       dirty: false,
+  //       validate,
+  //       value: value || null,
+  //     });
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   checkAndAddModel();
+  //   setDefoValue(value);
+  // }, [value, validate]);
+  function resetInput() {
+    setInputValue('');
+
+    updateModelInputValue(name, '');
+  }
+
+  function addNewModel() {
     if (model) {
       addToModel(name, {
         type: 'password',
@@ -90,11 +124,30 @@ export const Password: FC<PasswordProps> = ({
         value: value || null,
       });
     }
-  };
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (model) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
 
   useEffect(() => {
-    checkAndAddModel();
+    if (inputReset) {
+      resetInput();
+    }
+  }, [inputReset]);
+
+  useEffect(() => {
     setDefoValue(value);
+
+    if (isMount) {
+      addNewModel();
+    } else {
+      updateModel({ value: value || null, validate });
+    }
   }, [value, validate]);
 
   return (

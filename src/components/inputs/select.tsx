@@ -1,11 +1,13 @@
 import React, { ChangeEvent, HTMLProps, FC, useEffect, useState } from 'react';
 import { useFormContext } from '../form/FormContext';
+import { useIsMount } from '../../hooks/isMount';
 import {
   Attrs,
   ChangeParams,
   Option,
   Validation,
   InputValue,
+  FormModelElementProps,
 } from '../../types';
 
 export interface Options extends Array<Option> {}
@@ -14,6 +16,7 @@ export interface SelectProps extends HTMLProps<HTMLSelectElement> {
   className?: string;
   options?: Options;
   inputChange: (args: ChangeParams) => void;
+  inputReset?: boolean;
   defaultLabel?: string;
   attrs?: Attrs;
   validate?: Validation[];
@@ -26,6 +29,7 @@ export interface SelectProps extends HTMLProps<HTMLSelectElement> {
  * @param className - Optional. Is the class needed, its appended to the component wrapper
  * @param options - Is the array of options, it takes an array of objects with label and value properties, this accepts attrs for each option
  * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value
+ * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param attrs - Optional. Are all attributes this input can have they are appended to the input not the wrapper
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param value - Optional. Is the input value, if sent the input will take this value as default
@@ -37,6 +41,7 @@ export const Select: FC<SelectProps> = ({
   options = [],
   defaultLabel,
   inputChange,
+  inputReset,
   attrs,
   children,
   validate,
@@ -46,6 +51,7 @@ export const Select: FC<SelectProps> = ({
   const { model, addToModel, updateModelInputValue } = useFormContext();
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
   const classNames = `input ${name} ${className ? className : ''}`;
+  const isMount = useIsMount();
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.currentTarget;
@@ -71,7 +77,7 @@ export const Select: FC<SelectProps> = ({
     }
   };
 
-  const checkAndAddModel = () => {
+  function addNewModel() {
     if (model) {
       addToModel(name, {
         type: 'select',
@@ -80,15 +86,40 @@ export const Select: FC<SelectProps> = ({
         pristine: true,
         touched: false,
         dirty: false,
-        value: value || null,
         validate,
+        value: value || null,
       });
     }
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (model) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
+
+  const resetInput = () => {
+    setInputValue('');
+
+    updateModelInputValue(name, '');
   };
 
   useEffect(() => {
-    checkAndAddModel();
+    if (inputReset) {
+      resetInput();
+    }
+  }, [inputReset]);
+
+  useEffect(() => {
     setDefaultValue(value);
+
+    if (isMount) {
+      addNewModel();
+    } else {
+      updateModel({ value: value || null, validate });
+    }
   }, [value, validate]);
 
   return (

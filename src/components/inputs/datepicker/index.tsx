@@ -9,11 +9,13 @@ import React, {
 } from 'react';
 import m from 'moment';
 import { useFormContext } from '../../form/FormContext';
+import { useIsMount } from '../../../hooks/isMount';
 import {
   Attrs,
   ChangeParamsDatePicker,
   DateRangeProps,
   Validation,
+  FormModelElementProps,
 } from '../../../types';
 import Calendar from './calendar';
 import DateRange from './daterange';
@@ -36,6 +38,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
   name: string;
   className?: string;
   inputChange: (args: ChangeParamsDatePicker) => void;
+  inputReset?: boolean;
   dateRange?: DateRangeProps;
   format?: string;
   maxDate?: string;
@@ -64,6 +67,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
  * @param {string} name - Is the input name
  * @param {string} [className] - Optional. Is the class needed, its appended to the component wrapper
  * @param inputChange - Non native change handler performed by the library, will return the event, the input name and the value, for checkboxes it will return a comma separated string of each value selected by the user
+ * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param {DateRangeProps} [dateRange] - Optional. Defines the behavior of this component, date ranges allows to select 2 dates, therefore there will be two inputs rendered
  * @param {string} [format] - Optional. Is the date format that this input will handle and return to inputChange function, this will format the presentation date on inputs that are not native
  * @param {string} [maxDate] - Optional. Is the maximum date allowable to select by this datepicker
@@ -90,6 +94,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   name,
   className,
   inputChange,
+  inputReset,
   dateRange,
   format = 'MM-DD-YYYY',
   maxDate,
@@ -128,6 +133,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   const [date, setDate] = useState<any>(defDate);
   const ref = useRef<HTMLDivElement>(null);
   const { model, addToModel, updateModelInputValue } = useFormContext();
+  const isMount = useIsMount();
 
   const handleDateChange = (calendarResp: any) => {
     if (dateRange) {
@@ -216,25 +222,6 @@ export const DatePicker: FC<DatePickerProps> = ({
     }
   };
 
-  const checkAndAddModel = () => {
-    if (model) {
-      addToModel(name, {
-        type: 'datepicker',
-        valid: null,
-        invalid: null,
-        pristine: true,
-        touched: false,
-        dirty: false,
-        validate,
-        value: value || null,
-      });
-    }
-  };
-
-  useEffect(() => {
-    setDefaultValue();
-  }, [value]);
-
   useEffect(() => {
     registerMouseDown();
 
@@ -254,8 +241,50 @@ export const DatePicker: FC<DatePickerProps> = ({
     };
   }, [date, startDateVal, endDateVal]);
 
+  function addNewModel() {
+    if (model) {
+      addToModel(name, {
+        type: 'datepicker',
+        valid: null,
+        invalid: null,
+        pristine: true,
+        touched: false,
+        dirty: false,
+        validate,
+        value: value || null,
+      });
+    }
+  }
+
+  function updateModel(newProps: FormModelElementProps) {
+    if (model) {
+      addToModel(name, {
+        ...newProps,
+      });
+    }
+  }
+
+  const resetInput = () => {
+    setStartDateVal('');
+    setEndDateVal('');
+    setDate('');
+    updateModelInputValue(name, '');
+  };
+
   useEffect(() => {
-    checkAndAddModel();
+    if (inputReset) {
+      resetInput();
+    }
+  }, [inputReset]);
+
+  useEffect(() => {
+    setDefaultValue();
+
+    if (isMount) {
+      addNewModel();
+    } else {
+      updateModel({ value: value || null, validate });
+    }
   }, [value, validate]);
 
   return (
