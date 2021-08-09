@@ -275,13 +275,12 @@ export const FormProvider: FC<FormContextProps> = ({
   };
 
   useEffect(() => {
-    if (isMount) {
-    } else {
+    if (!isMount) {
       const formModelCopy = deepCopy(formModel);
 
       useModel(formModelCopy);
     }
-  });
+  }, [formModel]);
 
   return (
     <FormContext.Provider
