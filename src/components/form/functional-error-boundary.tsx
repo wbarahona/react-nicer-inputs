@@ -12,7 +12,10 @@ export default function Catch<Props extends {}>(
   component: ErrorHandlingComponent<Props>,
   errorHandler?: ErrorHandler
 ): React.ComponentType<Props> {
-  return class extends React.Component<Props, ErrorState> {
+  return class ReactNicerInputsFormErrorBoundary extends React.Component<
+    Props,
+    ErrorState
+  > {
     state: ErrorState = {
       error: undefined,
     };

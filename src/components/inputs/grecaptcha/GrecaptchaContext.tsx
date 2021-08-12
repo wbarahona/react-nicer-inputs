@@ -1,4 +1,11 @@
-import React, { FC, createContext, useEffect, ReactNode } from 'react';
+import React, {
+  FC,
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
+import { useIsMount } from '../../../hooks/isMount';
 import {
   GrecaptchaContextType,
   GrecaptchaResponseParams,
@@ -45,6 +52,8 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
   getResponse = () => {},
 }: GrecaptchaContext) => {
   const { model, addToModel, updateModelInputValue } = useFormContext();
+  const [captchaToken, setCaptchaToken] = useState('');
+  const isMount = useIsMount();
   const appendGrParam = v3
     ? `?render=${publicKey}`
     : '?onload=onCallBack&render=explicit';
@@ -55,11 +64,11 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
 
   const verifyCallback = (token: any) => {
     getResponse({ token });
-    updateModelInputValue(name, token);
+    setCaptchaToken(token);
   };
 
   const expiredCallback = () => {
-    updateModelInputValue(name, '');
+    setCaptchaToken('');
   };
 
   const onCallBack = () => {
@@ -81,24 +90,24 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
       });
       if (captchaToken) {
         response = captchaToken;
-        updateModelInputValue(name, captchaToken);
+        setCaptchaToken(captchaToken);
       } else {
         console.warn(
           'Captcha could not be validated. code: CAPTCHA_UNABLE_VALIDATION'
         );
-        updateModelInputValue(name, '');
+        setCaptchaToken('');
       }
     } catch (error) {
       console.warn(
         `There was an error validating the captcha: ${error.message}. code: CAPTCHA_TRY_ERROR`
       );
-      updateModelInputValue(name, '');
+      setCaptchaToken('');
     }
 
     return response;
   };
 
-  const checkAndAddModel = () => {
+  function addNewModel() {
     if (model) {
       addToModel(name, {
         type: 'grecaptcha',
@@ -108,22 +117,31 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
         touched: false,
         dirty: false,
         validate: validate || ['required'],
-        value: '',
+        value: captchaToken,
       });
     }
-  };
+  }
 
   useEffect(() => {
-    checkAndAddModel();
-    if (!v3) {
-      window.onCallBack = onCallBack;
-    }
+    if (isMount) {
+      addNewModel();
 
-    document.body.appendChild(grecaptchaScript);
+      if (!v3) {
+        window.onCallBack = onCallBack;
+      }
+
+      document.body.appendChild(grecaptchaScript);
+    }
     return () => {
       document.body.removeChild(grecaptchaScript);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMount) {
+      updateModelInputValue(name, captchaToken);
+    }
+  }, [captchaToken]);
 
   return (
     <GrecaptchaContext.Provider
