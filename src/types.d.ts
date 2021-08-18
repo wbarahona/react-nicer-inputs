@@ -9,7 +9,7 @@ export type Attrs = {
 export type ChangeParams = {
   e: ChangeEvent<HTMLSelectElement | HTMLInputElement>;
   name: string;
-  value: string | number | null;
+  value: string | number | null | FileList;
 };
 
 export type GrecaptchaResponseParams = {
@@ -155,7 +155,7 @@ export type FormModelElementProps = {
   dirty?: boolean; // input has received focus and changed
   validate?: Validation[];
   summary?: ValidationSummaryElement;
-  value?: string | number | DateRange | Date | null;
+  value?: string | number | DateRange | Date | FileList | File[] | null;
 };
 
 export type FormModelElement = {
@@ -182,11 +182,11 @@ export type FormContextType = {
   addToModel: (name: string, modelElementProps: FormModelElementProps) => void;
   updateModelInputValue: (
     name: string,
-    value: InputValue | Date | DateRange
+    value: InputValue | Date | DateRange | FileList | File[]
   ) => void;
   validateModelInput: (
     name: string,
-    value: InputValue | Date | DateRange
+    value: InputValue | Date | DateRange | FileList | File[]
   ) => ValidationResponse;
   updateModelInput: (name: string, value: FormModelElementProps) => void;
   validateFormModel: () => FormValidityResponse;

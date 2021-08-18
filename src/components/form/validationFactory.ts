@@ -8,7 +8,11 @@ import {
   FormModel,
 } from '../../types';
 
-export type AnyInputType = InputValue | Date | DateRange;
+export type AnyInputType = InputValue | Date | DateRange | FileList | File[];
+
+export interface UnitProps {
+  [key: string]: number;
+}
 
 export interface AssertionsProps {
   [key: string]: (value: AnyInputType, limit?: string | number) => boolean;
@@ -29,6 +33,22 @@ const isValidDate = (v: DateRange, s: string, e: string) =>
   typeof v === 'object' &&
   e !== undefined &&
   e !== '';
+
+function binaryUnitParser(unit: string): number {
+  const ammount = parseFloat(
+    unit.replaceAll(/(B|KB|MB|GB|b|kb|mb|gb|kB|mB|gB)/g, '')
+  );
+  const binaryUnitFormat: string = unit.slice(-2);
+  const unitPrefix: string = binaryUnitFormat.split('')[0].toUpperCase();
+  const unitDictionary: UnitProps = {
+    K: 1000,
+    M: 1000000,
+    G: 1000000000,
+  };
+  const requiredAmmount = ammount * unitDictionary[unitPrefix];
+
+  return requiredAmmount;
+}
 
 export const Assertions: AssertionsProps = {
   required: (value: AnyInputType): boolean => {
@@ -103,6 +123,62 @@ export const Assertions: AssertionsProps = {
     return /^[a-z\u00C0-\u02AB'´`]+\.?\s?([a-z\u00C0-\u02AB'´`]+\.?\s?)+$/i.test(
       valueStr
     );
+  },
+  maxfilesize: (value: AnyInputType, limit): boolean => {
+    const valueFileArr = value as File[];
+    const res = true;
+
+    // console.log(valueFileArr, limit);
+    const byteUnits = binaryUnitParser(`${limit}`);
+
+    for (let i = 0; i < valueFileArr.length; i++) {
+      const file = valueFileArr[i];
+      const { size } = file;
+
+      console.log(file, size, byteUnits, size <= byteUnits);
+      if (size > byteUnits) return false;
+    }
+
+    return res;
+  },
+  minfilesize: (value: AnyInputType, limit): boolean => {
+    const valueFileArr = value as File[];
+    const res = true;
+
+    // console.log(valueFileArr, limit);
+    const byteUnits = binaryUnitParser(`${limit}`);
+
+    for (let i = 0; i < valueFileArr.length; i++) {
+      const file = valueFileArr[i];
+      const { size } = file;
+
+      console.log(file, size, byteUnits, size <= byteUnits);
+      if (size < byteUnits) return false;
+    }
+
+    return res;
+  },
+  extension: (value: AnyInputType, limit): boolean => {
+    const valueFileArr = value as File[];
+    // const extensions = `${limit}`.split('|');
+    const extension = `${limit}`;
+    let res = true;
+
+    console.log(extension);
+
+    for (let i = 0; i < valueFileArr.length; i++) {
+      const file = valueFileArr[i];
+      const { name } = file;
+      const fileExt = name.replaceAll(/(\w+)+\./g, '');
+
+      console.log(file, fileExt, limit);
+
+      if (fileExt !== extension) {
+        return false;
+      }
+    }
+
+    return res;
   },
 };
 

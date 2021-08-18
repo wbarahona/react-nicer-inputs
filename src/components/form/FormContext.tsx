@@ -191,7 +191,7 @@ export const FormProvider: FC<FormContextProps> = ({
 
   const updateModelInputValue = (
     name: string,
-    value: InputValue | Date | DateRange | null
+    value: InputValue | Date | DateRange | FileList | File[] | null
   ) => {
     const { valid, summary } = validateModelInput(name, value);
     const formModelCopy = deepCopy(formModel);
@@ -232,7 +232,7 @@ export const FormProvider: FC<FormContextProps> = ({
 
   const validateModelInput = (
     name: string,
-    value: InputValue | Date | DateRange | null
+    value: InputValue | Date | DateRange | FileList | File[] | null
   ): ValidationResponse => {
     const { validate } = formModel[model].fields[name];
     const val = value || '';
