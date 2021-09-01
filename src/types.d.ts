@@ -182,11 +182,11 @@ export type FormContextType = {
   addToModel: (name: string, modelElementProps: FormModelElementProps) => void;
   updateModelInputValue: (
     name: string,
-    value: InputValue | Date | DateRange | FileList | File[]
+    value: InputValue | Date | DateRange | FileList | File[] | null
   ) => void;
   validateModelInput: (
     name: string,
-    value: InputValue | Date | DateRange | FileList | File[]
+    value: InputValue | Date | DateRange | FileList | File[] | null
   ) => ValidationResponse;
   updateModelInput: (name: string, value: FormModelElementProps) => void;
   validateFormModel: () => FormValidityResponse;

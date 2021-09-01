@@ -41,9 +41,9 @@ function binaryUnitParser(unit: string): number {
   const binaryUnitFormat: string = unit.slice(-2);
   const unitPrefix: string = binaryUnitFormat.split('')[0].toUpperCase();
   const unitDictionary: UnitProps = {
-    K: 1000,
-    M: 1000000,
-    G: 1000000000,
+    K: 1024,
+    M: Math.pow(1024, 2),
+    G: Math.pow(1024, 3),
   };
   const requiredAmmount = ammount * unitDictionary[unitPrefix];
 
@@ -57,11 +57,13 @@ export const Assertions: AssertionsProps = {
     const valueDateRange = value as DateRange;
     const startDateStr = valueDateRange.startDate as string;
     const endDateStr = valueDateRange.endDate as string;
+    const valueFile = value as FileList;
 
     return (
       isEmptyString(valueStr) ||
       isValidNumber(valueNum) ||
-      isValidDate(valueDateRange, startDateStr, endDateStr)
+      isValidDate(valueDateRange, startDateStr, endDateStr) ||
+      valueFile.length > 0
     );
   },
   email: (value: AnyInputType): boolean => {
@@ -128,14 +130,12 @@ export const Assertions: AssertionsProps = {
     const valueFileArr = value as File[];
     const res = true;
 
-    // console.log(valueFileArr, limit);
     const byteUnits = binaryUnitParser(`${limit}`);
 
     for (let i = 0; i < valueFileArr.length; i++) {
       const file = valueFileArr[i];
       const { size } = file;
 
-      console.log(file, size, byteUnits, size <= byteUnits);
       if (size > byteUnits) return false;
     }
 
@@ -145,35 +145,28 @@ export const Assertions: AssertionsProps = {
     const valueFileArr = value as File[];
     const res = true;
 
-    // console.log(valueFileArr, limit);
     const byteUnits = binaryUnitParser(`${limit}`);
 
     for (let i = 0; i < valueFileArr.length; i++) {
       const file = valueFileArr[i];
       const { size } = file;
 
-      console.log(file, size, byteUnits, size <= byteUnits);
       if (size < byteUnits) return false;
     }
 
     return res;
   },
   extension: (value: AnyInputType, limit): boolean => {
-    const valueFileArr = value as File[];
-    // const extensions = `${limit}`.split('|');
+    const valueFileArr = value as FileList;
     const extension = `${limit}`;
     let res = true;
-
-    console.log(extension);
 
     for (let i = 0; i < valueFileArr.length; i++) {
       const file = valueFileArr[i];
       const { name } = file;
-      const fileExt = name.replaceAll(/(\w+)+\./g, '');
+      const fileExt = name.split('.').pop();
 
-      console.log(file, fileExt, limit);
-
-      if (fileExt !== extension) {
+      if (fileExt?.toLowerCase() !== extension.toLowerCase()) {
         return false;
       }
     }

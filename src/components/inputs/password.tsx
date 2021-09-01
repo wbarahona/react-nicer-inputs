@@ -54,7 +54,7 @@ export const Password: FC<PasswordProps> = ({
   validate,
   ...props
 }: PasswordProps & HTMLProps<HTMLInputElement>) => {
-  const classNames = `input ${name} ${className ? className : ''}`;
+  const classNames = `input ${name} ${className || ''}`;
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
   const [pwdVisible, setPwdVisible] = useState<boolean>(false);
   const [finalAttrs, setFinalAttrs] = useState<Attrs>({ ...attrs });

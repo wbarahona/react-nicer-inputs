@@ -35,7 +35,7 @@ export const Grecaptcha: FC<GrecaptchaProps> = ({
   children,
   ...props
 }: GrecaptchaProps & HTMLProps<HTMLDivElement>) => {
-  const classNames = `grecaptcha-wrapper ${className ? className : ''}`;
+  const classNames = `grecaptcha-wrapper ${className || ''}`;
 
   return (
     <GrecaptchaProvider

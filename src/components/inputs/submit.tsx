@@ -30,7 +30,7 @@ export const Submit: FC<SubmitProps> = ({
     formSubmit: contextSubmit,
     validateFormModel,
   } = useFormContext();
-  const classNames = `submit-button ${className ? className : ''}`;
+  const classNames = `submit-button ${className || ''}`;
 
   const handleClick = async () => {
     const captchaToken = v3 ? await validateCaptcha() : null;

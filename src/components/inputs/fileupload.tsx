@@ -8,14 +8,14 @@ import {
   FormModelElementProps,
 } from '../../types';
 
-export interface FileProps extends HTMLProps<HTMLInputElement> {
+export interface FileUploadProps extends HTMLProps<HTMLInputElement> {
   name: string;
   inputChange: (args: ChangeParams) => void;
   attrs?: Attrs;
   validate?: Validation[];
 }
 
-export const File: FC<FileProps> = ({
+export const FileUpload: FC<FileUploadProps> = ({
   name,
   className,
   inputChange,
@@ -23,15 +23,15 @@ export const File: FC<FileProps> = ({
   validate,
   multiple,
   ...props
-}: FileProps & HTMLProps<HTMLInputElement>) => {
-  const [fileArr, setFileArr] = useState<File[]>([]);
+}: FileUploadProps & HTMLProps<HTMLInputElement>) => {
+  const [fileArr, setFileArr] = useState<FileList | null>(null);
   const isMount = useIsMount();
   const { model, addToModel, updateModelInputValue } = useFormContext();
   const classNames = `input ${name} ${className || ''}`;
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     inputChange({ e, name, value: e.target.files });
-    handleFiles(e.target.files);
+    setFileArr(e.target.files || null);
   }
 
   function addNewModel() {
@@ -57,14 +57,6 @@ export const File: FC<FileProps> = ({
     }
   }
 
-  function handleFiles(files: FileList | null) {
-    if (files) {
-      const fromFiles = Array.from(files);
-
-      setFileArr(fromFiles);
-    }
-  }
-
   useEffect(() => {
     if (isMount) {
       addNewModel();
@@ -74,7 +66,9 @@ export const File: FC<FileProps> = ({
   }, [validate]);
 
   useEffect(() => {
-    updateModelInputValue(name, fileArr);
+    if (!isMount) {
+      updateModelInputValue(name, fileArr);
+    }
   }, [fileArr]);
 
   return (
@@ -93,4 +87,4 @@ export const File: FC<FileProps> = ({
   );
 };
 
-export default File;
+export default FileUpload;

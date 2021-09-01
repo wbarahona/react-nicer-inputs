@@ -50,7 +50,7 @@ export const Select: FC<SelectProps> = ({
 }: SelectProps & HTMLProps<HTMLSelectElement>) => {
   const { model, addToModel, updateModelInputValue } = useFormContext();
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
-  const classNames = `input ${name} ${className ? className : ''}`;
+  const classNames = `input ${name} ${className || ''}`;
   const isMount = useIsMount();
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {

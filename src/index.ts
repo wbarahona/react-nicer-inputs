@@ -15,7 +15,7 @@ import Checkbox from './components/inputs/checkbox';
 import Radio from './components/inputs/radio';
 import Grecaptcha from './components/inputs/grecaptcha';
 import Range from './components/inputs/range';
-import File from './components/inputs/file';
+import FileUpload from './components/inputs/fileupload';
 import Submit from './components/inputs/submit';
 import Form from './components/form';
 
@@ -37,7 +37,7 @@ export {
   Radio,
   Grecaptcha,
   Range,
-  File,
+  FileUpload,
   Submit,
   Form,
 };
