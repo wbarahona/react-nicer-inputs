@@ -1,6 +1,6 @@
 {
   "name": "react-nicer-inputs",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "description": "An easy to use library to create react forms 📝, its the new level from react-nice-inputs.",
   "main": "dist/index.js",
   "module": "dist/index.js",
