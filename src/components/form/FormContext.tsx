@@ -174,50 +174,59 @@ export const FormProvider: FC<FormContextProps> = ({
       newValue !== null &&
       currentValue !== newValue
     ) {
-      const inputModel = deepCopy(newFormModel[model].fields[name]);
-      const { validate } = inputModel;
+      setFormModel(prevFormModel => {
+        const currFormModel = { ...prevFormModel };
+        const inputModel = deepCopy(currFormModel[model].fields[name]);
+        const { validate } = inputModel;
 
-      inputModel.value = newValue;
+        inputModel.value = newValue;
 
-      const { valid, summary } = validateInput(newValue, validate);
-
-      inputModel.valid = valid;
-      inputModel.invalid = !valid;
-      inputModel.summary = summary;
-      inputModel.pristine = false;
-      inputModel.touched = true;
-
-      newFormModel[model].fields[name] = inputModel;
-
-      const formValid = validateForm(newFormModel, model);
-
-      newFormModel[model].isValid = formValid;
-      newFormModel[model].isInvalid = !formValid;
-
-      setFormModel(newFormModel);
-    }
-    if (!isEq(currentValidate, newValidate) && newValidate !== undefined) {
-      const inputModel = newFormModel[model].fields[name];
-      const { value } = inputModel;
-
-      inputModel.validate = newValidate;
-
-      if (value !== null && value !== undefined) {
-        const { valid, summary } = validateInput(value, newValidate);
+        const { valid, summary } = validateInput(newValue, validate);
 
         inputModel.valid = valid;
         inputModel.invalid = !valid;
         inputModel.summary = summary;
         inputModel.pristine = false;
         inputModel.touched = true;
-      }
 
-      const formValid = validateForm(newFormModel, model);
+        currFormModel[model].fields[name] = inputModel;
 
-      newFormModel[model].isValid = formValid;
-      newFormModel[model].isInvalid = !formValid;
+        const formValid = validateForm(currFormModel, model);
 
-      setFormModel(newFormModel);
+        currFormModel[model].isValid = formValid;
+        currFormModel[model].isInvalid = !formValid;
+
+        return { ...currFormModel };
+      });
+    }
+    if (!isEq(currentValidate, newValidate) && newValidate !== undefined) {
+      setFormModel(prevFormModel => {
+        const currFormModel = { ...prevFormModel };
+
+        const inputModel = currFormModel[model].fields[name];
+        const { value } = inputModel;
+
+        inputModel.validate = newValidate;
+
+        if (value !== null && value !== undefined) {
+          const { valid, summary } = validateInput(value, newValidate);
+
+          inputModel.valid = valid;
+          inputModel.invalid = !valid;
+          inputModel.summary = summary;
+          inputModel.pristine = false;
+          inputModel.touched = true;
+        }
+
+        const formValid = validateForm(currFormModel, model);
+
+        currFormModel[model].isValid = formValid;
+        currFormModel[model].isInvalid = !formValid;
+
+        console.log(currFormModel);
+
+        return { ...currFormModel };
+      });
     }
   };
 

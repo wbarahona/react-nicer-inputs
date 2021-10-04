@@ -169,10 +169,16 @@ export const Autocomplete: FC<AutocompleteProps> = ({
       if (res.length > 0) {
         const { value: optVal } = res[0];
 
-        updateModel({ value: optVal || null, validate });
+        updateModel({ value: optVal || null });
       }
     }
-  }, [value, validate]);
+  }, [value]);
+
+  useEffect(() => {
+    if (!isMount) {
+      updateModel({ validate });
+    }
+  }, [validate]);
 
   useEffect(() => {
     setAllOptions(options);

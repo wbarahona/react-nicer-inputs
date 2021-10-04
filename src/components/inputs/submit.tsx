@@ -40,8 +40,11 @@ export const Submit: FC<SubmitProps> = ({
         formSubmit({ captchaToken });
       } else {
         const { isValid, isInvalid, formModel } = validateFormModel();
+        const theModel = { ...formModel };
 
-        contextSubmit({ isValid, isInvalid, formModel });
+        theModel[model].fields.gcaptcha.value = captchaToken;
+
+        contextSubmit({ isValid, isInvalid, formModel: theModel });
       }
     }
     if (!v3 && !captchaToken) {

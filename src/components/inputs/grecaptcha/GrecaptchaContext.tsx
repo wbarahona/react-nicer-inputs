@@ -98,9 +98,7 @@ export const GrecaptchaProvider: FC<GrecaptchaContext> = ({
         setCaptchaToken('');
       }
     } catch (error) {
-      console.warn(
-        `There was an error validating the captcha: ${error.message}. code: CAPTCHA_TRY_ERROR`
-      );
+      console.warn(error);
       setCaptchaToken('');
     }
 
