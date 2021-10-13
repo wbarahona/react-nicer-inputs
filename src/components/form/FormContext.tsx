@@ -223,13 +223,37 @@ export const FormProvider: FC<FormContextProps> = ({
         currFormModel[model].isValid = formValid;
         currFormModel[model].isInvalid = !formValid;
 
-        console.log(currFormModel);
+        return { ...currFormModel };
+      });
+    }
+    if (!isEq(currentValidate, newValidate) && newValidate === undefined) {
+      setFormModel(prevFormModel => {
+        const currFormModel = { ...prevFormModel };
+
+        const inputModel = currFormModel[model].fields[name];
+        const { value } = inputModel;
+
+        inputModel.validate = newValidate;
+
+        if (value !== null && value !== undefined) {
+          // const { valid, summary } = validateInput(value, newValidate);
+
+          inputModel.valid = null;
+          inputModel.invalid = null;
+          inputModel.summary = undefined;
+          inputModel.pristine = true;
+          inputModel.touched = false;
+        }
+
+        const formValid = validateForm(currFormModel, model);
+
+        currFormModel[model].isValid = formValid;
+        currFormModel[model].isInvalid = !formValid;
 
         return { ...currFormModel };
       });
     }
   };
-
   const updateModelInputValue = (
     name: string,
     value: InputValue | Date | DateRange | FileList | File[] | null
