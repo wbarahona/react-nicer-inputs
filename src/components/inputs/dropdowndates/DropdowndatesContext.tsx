@@ -43,6 +43,7 @@ export interface DropdowndatesContext {
   displayOrder?: string;
   mmmm?: boolean;
   validate?: Validation[];
+  isInvalid?: boolean;
   dropDownDatesRef: Ref<HTMLDivElement>;
 }
 
@@ -103,6 +104,7 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   displayOrder,
   mmmm,
   validate,
+  isInvalid,
   dropDownDatesRef,
 }: DropdowndatesContext) => {
   const internalFormat = 'MM-DD-YYYY';
@@ -121,8 +123,13 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
   const [ddOptions, setDDOptions] = useState<Option[]>([]);
   const [mmOptions, setMMOptions] = useState<Option[]>([]);
   const [yyOptions, setYYOptions] = useState<Option[]>([]);
-  const { model, addToModel, updateModelInputValue, updateModelInput } =
-    useFormContext();
+  const {
+    model,
+    addToModel,
+    updateModelInputValue,
+    updateModelInput,
+    setInputInvalid,
+  } = useFormContext();
   const isMount = useIsMount();
 
   const getDateFormatElements = (): string[] => displayOrder?.split('-') || [];
@@ -401,6 +408,12 @@ export const DropDownDatesProvider: FC<DropdowndatesContext> = ({
       updateModel({ value: value || null, validate });
     }
   }, [value, validate]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <DropDownDatesContext.Provider

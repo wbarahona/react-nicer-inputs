@@ -12,21 +12,35 @@ export interface FileUploadProps extends HTMLProps<HTMLInputElement> {
   name: string;
   inputChange: (args: ChangeParams) => void;
   attrs?: Attrs;
+  isInvalid?: boolean;
   validate?: Validation[];
 }
 
+/**
+ * FileUpload Component
+ * @param {string} name - Is the input name
+ * @param {string} [className] - Optional. Is the class needed, its appended to the component element
+ * @param {Function} inputChange - Non native change handler performed by the library, will return the event, the input name and the value
+ * @param {Object} [attrs] - Optional. Are all attributes this input can have they are appended to the input not the wrapper
+ * @param {Array} [validate] - Optional. Is an array of entities to validate this input
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
+ * @param {string} [value] - Optional. Is the input value, if sent the input will take this value as default
+ * @returns {React.FunctionComponentElement} Returns an ```<input type="file" />``` element
+ */
 export const FileUpload: FC<FileUploadProps> = ({
   name,
   className,
   inputChange,
   attrs,
   validate,
+  isInvalid,
   multiple,
   ...props
 }: FileUploadProps & HTMLProps<HTMLInputElement>) => {
   const [fileArr, setFileArr] = useState<FileList | null>(null);
   const isMount = useIsMount();
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue, setInputInvalid } =
+    useFormContext();
   const classNames = `input ${name} ${className || ''}`;
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -70,6 +84,12 @@ export const FileUpload: FC<FileUploadProps> = ({
       updateModelInputValue(name, fileArr);
     }
   }, [fileArr]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <input

@@ -25,6 +25,7 @@ export interface DropDownDatesProps extends HTMLProps<HTMLInputElement> {
   yyDefaultLabel?: string;
   displayOrder?: string;
   mmmm?: boolean;
+  isInvalid?: boolean;
   validate?: Validation[];
 }
 
@@ -50,6 +51,7 @@ export interface DropDownDatesProps extends HTMLProps<HTMLInputElement> {
  * @param {string} [displayOrder] - Optional. Is the display order on the selectors elements
  * @param {string} [mmmm] - Optional. Defines if the month is on words or not
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
  * @param {(string | number)} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns a collection of ```<select />``` that allows dates selection
  */
@@ -75,6 +77,7 @@ export const DropDownDates: FC<DropDownDatesProps> = ({
   displayOrder = 'MM-DD-YY',
   mmmm = false,
   validate,
+  isInvalid,
   ...props
 }: DropDownDatesProps & HTMLProps<HTMLDivElement>) => {
   const dropDownDatesRef = useRef<HTMLDivElement>(null);
@@ -102,6 +105,7 @@ export const DropDownDates: FC<DropDownDatesProps> = ({
       mmmm={mmmm}
       validate={validate}
       dropDownDatesRef={dropDownDatesRef || props.ref}
+      isInvalid={isInvalid}
     >
       <div
         className={`${className || ''} dropdowndates-wrapper`}

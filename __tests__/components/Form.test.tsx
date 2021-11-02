@@ -1,7 +1,17 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, Input, Password, Submit } from '../../src';
+import {
+  Form,
+  Input,
+  Password,
+  Select,
+  InputGroup,
+  Checkbox,
+  Radio,
+  DatePicker,
+  Submit,
+} from '../../src';
 import { FormModel, ChangeParams } from '../../src/types';
 
 const modelName = 'login';
@@ -313,5 +323,142 @@ describe('<Form /> Tests', () => {
 
     // validate form validity
     expect(isValid).toBeTruthy();
+  });
+
+  it('should set the text input as invalid therefore form must be invalid', () => {
+    const { rerender } = render(
+      <Form
+        model="profile"
+        className="col-12"
+        formSubmit={mockHandleFormSubmit}
+        useModel={mockHandleUseModel}
+      >
+        <Input
+          name="fname"
+          type="text"
+          className="col-6"
+          data-testid="fname"
+          inputChange={mockHandleChange}
+          validate={['required']}
+        />
+        <Select
+          name="some-options"
+          className="col-6"
+          data-testid="some-options"
+          inputChange={mockHandleChange}
+          options={[{ label: 'Some', value: 'some' }]}
+        />
+        <InputGroup type="checkbox" name="food" inputChange={mockHandleChange}>
+          <Checkbox name="pizza" inputChange={() => {}} value="pizza">
+            Pizza
+          </Checkbox>
+          <Checkbox name="hotdog" inputChange={() => {}} value="hotdog">
+            Hot Dog
+          </Checkbox>
+        </InputGroup>
+        <InputGroup type="radio" name="drink" inputChange={mockHandleChange}>
+          <Radio name="beer" inputChange={() => {}} value="beer" /> Beer <br />
+          <Radio name="soda" inputChange={() => {}} value="soda" /> Soda
+        </InputGroup>
+        <Password
+          name="password"
+          className="col-6"
+          data-testid="password"
+          inputChange={mockHandleChange}
+        />
+        <DatePicker name="checkin-date" inputChange={mockHandleChange} />
+        <Submit className="col-6" data-testid="submit">
+          Send Form
+        </Submit>
+      </Form>
+    );
+
+    const loginForm = screen.queryByTestId(modelName);
+
+    expect(loginForm).toBeDefined();
+
+    const fnameInput = screen.getByLabelText('fname') as HTMLInputElement;
+
+    expect(mockHandleChange).toBeCalledTimes(0);
+    expect(mockHandleUseModel).toBeCalledTimes(1);
+    fireEvent.change(fnameInput, { target: { value: 'Willmer' } });
+    expect(mockHandleChange).toBeCalledTimes(1);
+    expect(mockHandleUseModel).toBeCalledTimes(2);
+
+    rerender(
+      <Form
+        model="profile"
+        className="col-12"
+        formSubmit={mockHandleFormSubmit}
+        useModel={mockHandleUseModel}
+      >
+        <Input
+          name="fname"
+          type="text"
+          className="col-6"
+          data-testid="fname"
+          inputChange={mockHandleChange}
+          validate={['required']}
+          isInvalid
+        />
+        <Select
+          name="some-options"
+          className="col-6"
+          data-testid="some-options"
+          inputChange={mockHandleChange}
+          options={[{ label: 'Some', value: 'some' }]}
+          isInvalid
+        />
+        <InputGroup
+          type="checkbox"
+          name="food"
+          inputChange={mockHandleChange}
+          isInvalid
+        >
+          <Checkbox name="pizza" inputChange={() => {}} value="pizza">
+            Pizza
+          </Checkbox>
+          <Checkbox name="hotdog" inputChange={() => {}} value="hotdog">
+            Hot Dog
+          </Checkbox>
+        </InputGroup>
+        <InputGroup
+          type="radio"
+          name="drink"
+          inputChange={mockHandleChange}
+          isInvalid
+        >
+          <Radio name="beer" inputChange={() => {}} value="beer" /> Beer <br />
+          <Radio name="soda" inputChange={() => {}} value="soda" /> Soda
+        </InputGroup>
+        <Password
+          name="password"
+          className="col-6"
+          data-testid="password"
+          inputChange={mockHandleChange}
+        />
+        <DatePicker
+          name="checkin-date"
+          inputChange={mockHandleChange}
+          isInvalid
+        />
+        <Submit className="col-6" data-testid="submit">
+          Send Form
+        </Submit>
+      </Form>
+    );
+
+    const { profile }: FormModel = mockHandleUseModel.mock.calls[2][0];
+    const { fields, isValid } = profile;
+
+    // validate form model fields
+    expect(fields.fname.value).toBe('Willmer');
+
+    // validate form validity to be false
+    expect(isValid).toBe(false);
+    expect(fields['some-options'].valid).toBe(false);
+    expect(fields.food.valid).toBe(false);
+    expect(fields.drink.valid).toBe(false);
+    expect(fields['checkin-date'].valid).toBe(false);
   });
 });

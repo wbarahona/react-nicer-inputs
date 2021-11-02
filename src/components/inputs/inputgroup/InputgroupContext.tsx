@@ -30,6 +30,7 @@ export interface InputGroupContextProps extends HTMLProps<HTMLInputElement> {
   inputChange: (args: ChangeParams) => void;
   inputReset?: boolean;
   validate?: Validation[];
+  isInvalid?: boolean;
   value?: InputValue;
 }
 
@@ -57,10 +58,12 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
   inputChange,
   validate,
   inputReset,
+  isInvalid,
   value = '',
 }) => {
   const [optionModel, setOptionModel] = useState<OptionValue[]>([]);
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue, setInputInvalid } =
+    useFormContext();
   const isMount = useIsMount();
 
   function addNewModel() {
@@ -231,6 +234,12 @@ export const InputGroupProvider: FC<InputGroupContextProps> = ({
   useEffect(() => {
     setDefoValues();
   }, [value]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <InputGroupContext.Provider

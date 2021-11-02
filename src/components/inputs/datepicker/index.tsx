@@ -57,6 +57,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
   calendarComponentClassName?: string;
   calendarClassName?: string;
   validate?: Validation[];
+  isInvalid?: boolean;
   disableAutoClose?: boolean;
 }
 
@@ -86,6 +87,7 @@ export interface DatePickerProps extends HTMLProps<HTMLInputElement> {
  * @param {string} [calendarComponentClassName] - Optional. Is the class that the calendar below the input will contain
  * @param {string} [calendarClassName] - Optional. Is the class needed in each of the calendar wrappers
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
  * @returns {React.FunctionComponentElement} Returns an ```<input type="text" />``` that allows dates selection or two if its a date range
  */
 
@@ -113,6 +115,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   calendarComponentClassName,
   calendarClassName,
   validate,
+  isInvalid,
   disableAutoClose,
   ...props
 }: DatePickerProps & HTMLProps<HTMLInputElement>) => {
@@ -132,7 +135,8 @@ export const DatePicker: FC<DatePickerProps> = ({
   const [calendarVisible, setCalendarVisible] = useState<boolean>(false);
   const [date, setDate] = useState<any>(defDate);
   const ref = useRef<HTMLDivElement>(null);
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue, setInputInvalid } =
+    useFormContext();
   const isMount = useIsMount();
 
   const handleDateChange = (calendarResp: any) => {
@@ -286,6 +290,12 @@ export const DatePicker: FC<DatePickerProps> = ({
       updateModel({ value: value || null, validate });
     }
   }, [value, validate]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <div className={`datepicker-wrapper ${className}`} ref={ref}>

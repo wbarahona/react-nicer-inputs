@@ -191,6 +191,7 @@ export type FormContextType = {
   updateModelInput: (name: string, value: FormModelElementProps) => void;
   validateFormModel: () => FormValidityResponse;
   formSubmit: (args?: FormValidityResponse) => void;
+  setInputInvalid: (name: string, validity?: boolean) => void;
 };
 
 export type InputGroupContextType = {

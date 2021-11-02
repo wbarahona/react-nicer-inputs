@@ -19,6 +19,7 @@ export interface CheckboxProps extends HTMLProps<HTMLInputElement> {
   validate?: Validation[];
   inputReset?: boolean;
   checked?: boolean;
+  isInvalid?: boolean;
   value?: string | number | undefined;
 }
 
@@ -32,6 +33,7 @@ export interface CheckboxProps extends HTMLProps<HTMLInputElement> {
  * @param {Object} [attrs] - Optional. Are all attributes this input can have they are appended to the input not the wrapper
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
  * @param {string | number} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input type="checkbox" />``` element
  */
@@ -46,6 +48,7 @@ export const Checkbox: FC<CheckboxProps> = ({
   checked = false,
   inputReset,
   value,
+  isInvalid,
   ...props
 }: CheckboxProps & HTMLProps<HTMLInputElement>) => {
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
@@ -54,6 +57,7 @@ export const Checkbox: FC<CheckboxProps> = ({
     model: formModel,
     addToModel,
     updateModelInputValue,
+    setInputInvalid,
   } = useFormContext();
   const isMount = useIsMount();
   const {
@@ -158,6 +162,12 @@ export const Checkbox: FC<CheckboxProps> = ({
       setInputChecked(chk);
     }
   }, [optionModel]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <>

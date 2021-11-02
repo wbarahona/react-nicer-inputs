@@ -25,6 +25,7 @@ export interface PasswordProps extends HTMLProps<HTMLInputElement> {
   noToggle?: boolean;
   validate?: Validation[];
   inputReset?: boolean;
+  isInvalid?: boolean;
   value?: string | number | undefined;
 }
 
@@ -38,6 +39,7 @@ export interface PasswordProps extends HTMLProps<HTMLInputElement> {
  * @param {ReactNode} [hideIcon] - Optional. Is the icon to be displayed when the password text is shown
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
  * @param {string} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input type="password" />``` element
  */
@@ -52,13 +54,15 @@ export const Password: FC<PasswordProps> = ({
   hideIcon = 'hide',
   noToggle = false,
   validate,
+  isInvalid,
   ...props
 }: PasswordProps & HTMLProps<HTMLInputElement>) => {
   const classNames = `input ${name} ${className || ''}`;
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
   const [pwdVisible, setPwdVisible] = useState<boolean>(false);
   const [finalAttrs, setFinalAttrs] = useState<Attrs>({ ...attrs });
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue, setInputInvalid } =
+    useFormContext();
   const isMount = useIsMount();
 
   const toggleVisible = () => {
@@ -86,25 +90,6 @@ export const Password: FC<PasswordProps> = ({
     }
   };
 
-  // const checkAndAddModel = () => {
-  //   if (model) {
-  //     addToModel(name, {
-  //       type: 'password',
-  //       valid: null,
-  //       invalid: null,
-  //       pristine: true,
-  //       touched: false,
-  //       dirty: false,
-  //       validate,
-  //       value: value || null,
-  //     });
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   checkAndAddModel();
-  //   setDefoValue(value);
-  // }, [value, validate]);
   function resetInput() {
     setInputValue('');
 
@@ -149,6 +134,12 @@ export const Password: FC<PasswordProps> = ({
       updateModel({ value: value || null, validate });
     }
   }, [value, validate]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <>

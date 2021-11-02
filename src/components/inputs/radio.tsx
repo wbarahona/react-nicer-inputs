@@ -18,6 +18,7 @@ export interface RadioProps extends HTMLProps<HTMLInputElement> {
   inputReset?: boolean;
   attrs?: Attrs;
   validate?: Validation[];
+  isInvalid?: boolean;
   value: string | number | undefined;
 }
 
@@ -31,6 +32,7 @@ export interface RadioProps extends HTMLProps<HTMLInputElement> {
  * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param {Object} [attrs] - Optional. Are all attributes this input can have they are appended to the input not the wrapper
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
  * @param {string | number} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input type="radio" />``` element
  */
@@ -45,6 +47,7 @@ export const Radio: FC<RadioProps> = ({
   validate,
   value,
   checked = false,
+  isInvalid,
   ...props
 }: RadioProps & HTMLProps<HTMLInputElement>) => {
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
@@ -53,6 +56,7 @@ export const Radio: FC<RadioProps> = ({
     model: formModel,
     addToModel,
     updateModelInputValue,
+    setInputInvalid,
   } = useFormContext();
   const {
     handleChange: inputGroupContextChange,
@@ -157,6 +161,12 @@ export const Radio: FC<RadioProps> = ({
       setInputChecked(chk);
     }
   }, [optionModel]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <>

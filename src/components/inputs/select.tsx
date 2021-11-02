@@ -20,6 +20,7 @@ export interface SelectProps extends HTMLProps<HTMLSelectElement> {
   defaultLabel?: string;
   attrs?: Attrs;
   validate?: Validation[];
+  isInvalid?: boolean;
   value?: string | number;
 }
 
@@ -32,6 +33,7 @@ export interface SelectProps extends HTMLProps<HTMLSelectElement> {
  * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
  * @param attrs - Optional. Are all attributes this input can have they are appended to the input not the wrapper
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
  * @param value - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns a ```<select />``` element
  */
@@ -45,10 +47,12 @@ export const Select: FC<SelectProps> = ({
   attrs,
   children,
   validate,
+  isInvalid,
   value,
   ...props
 }: SelectProps & HTMLProps<HTMLSelectElement>) => {
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue, setInputInvalid } =
+    useFormContext();
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
   const classNames = `input ${name} ${className || ''}`;
   const isMount = useIsMount();
@@ -125,6 +129,12 @@ export const Select: FC<SelectProps> = ({
       updateModel({ value: value || null, validate });
     }
   }, [value, validate]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <div className={`select-wrapper ${classNames}`}>

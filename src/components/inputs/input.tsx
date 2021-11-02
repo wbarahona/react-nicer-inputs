@@ -18,6 +18,7 @@ export interface InputProps
   maskChar?: string;
   inputReset?: boolean;
   validate?: Validation[];
+  isInvalid?: boolean;
   value?: string | number | undefined;
 }
 
@@ -35,6 +36,7 @@ export interface InputProps
  * @param {string} [maskChar] - Optional. Is the special character that is used by the input to mask the text displayed
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
  * @param {string | number} [value] - Optional. Is the input value, if sent the input will take this value as default
  * @returns {React.FunctionComponentElement} Returns an ```<input />``` element
  */
@@ -53,13 +55,15 @@ export const Input: FC<InputProps> = ({
   value,
   onBlurCapture,
   onFocusCapture,
+  isInvalid,
   ...props
 }: InputProps & HTMLProps<HTMLInputElement & HTMLTextAreaElement>) => {
   const [inputValue, setInputValue] = useState<string | number | undefined>('');
   const [cleanValue, setCleanValue] = useState<string | number | undefined>('');
   const [maskedValue, setMaskedValue] = useState<string>('');
   const classNames = `input ${name} ${className || ''}`;
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue, setInputInvalid } =
+    useFormContext();
   const isMount = useIsMount();
 
   const getMask = (val?: string | number) => {
@@ -170,6 +174,12 @@ export const Input: FC<InputProps> = ({
       updateModel({ value: value || null, validate });
     }
   }, [value, validate]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   if (type === 'textarea') {
     return (

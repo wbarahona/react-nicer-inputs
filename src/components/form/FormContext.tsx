@@ -68,6 +68,7 @@ const FormContextDefoValues: FormContextType = {
       formModel: {},
     };
   },
+  setInputInvalid: () => {},
 };
 
 export const FormContext = createContext<FormContextType>(
@@ -409,6 +410,26 @@ export const FormProvider: FC<FormContextProps> = ({
     };
   };
 
+  function setInputInvalid(name: string, validity?: boolean) {
+    if (validity !== undefined && validity !== null) {
+      setFormModel(prevFormModel => {
+        const currFormModel = { ...prevFormModel };
+
+        const inputModel = currFormModel[model].fields[name];
+
+        inputModel.valid = !validity;
+        inputModel.invalid = validity;
+
+        const formValid = validateForm(currFormModel, model);
+
+        currFormModel[model].isValid = formValid;
+        currFormModel[model].isInvalid = !formValid;
+
+        return { ...currFormModel };
+      });
+    }
+  }
+
   useEffect(() => {
     if (!isMount) {
       useModel(formModel);
@@ -426,6 +447,7 @@ export const FormProvider: FC<FormContextProps> = ({
         validateFormModel,
         formSubmit,
         updateModelInput,
+        setInputInvalid,
       }}
     >
       {children}

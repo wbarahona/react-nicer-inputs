@@ -27,6 +27,7 @@ export interface AutocompleteProps extends HTMLProps<HTMLInputElement> {
   attrs?: Attrs;
   validate?: Validation[];
   inputReset?: boolean;
+  isInvalid?: boolean;
   value?: string | number | undefined;
 }
 
@@ -40,6 +41,7 @@ export interface AutocompleteProps extends HTMLProps<HTMLInputElement> {
  * @param {Array} [validate] - Optional. Is an array of entities to validate this input
  * @param [value] - Optional. Is the input value, if sent the input will take this value as default
  * @param {boolean} [inputReset] - Optional. Allows to set the input as empty
+ * @param {boolean} [isInvalid] = Optional. Allows to set the input as invalid
  * @returns {React.FunctionComponentElement} Returns an ```autocomplete selector``` element
  */
 export const Autocomplete: FC<AutocompleteProps> = ({
@@ -51,13 +53,15 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   validate,
   inputReset,
   value,
+  isInvalid,
   ...props
 }: AutocompleteProps & HTMLProps<HTMLInputElement>) => {
   const [optionsVisible, setOptionsVisible] = useState(false);
   const [labelValue, setLabelValue] = useState('');
   const [allOptions, setAllOptions] = useState(options);
   const autocompleteRef = useRef<HTMLDivElement>(null);
-  const { model, addToModel, updateModelInputValue } = useFormContext();
+  const { model, addToModel, updateModelInputValue, setInputInvalid } =
+    useFormContext();
   const isMount = useIsMount();
   const toggleOptions = () => {
     setOptionsVisible(!optionsVisible);
@@ -183,6 +187,12 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   useEffect(() => {
     setAllOptions(options);
   }, [options]);
+
+  useEffect(() => {
+    if (isInvalid !== undefined && isInvalid !== null) {
+      setInputInvalid(name, isInvalid);
+    }
+  }, [isInvalid]);
 
   return (
     <div className={`autocomplete-wrapper ${className}`} ref={autocompleteRef}>
