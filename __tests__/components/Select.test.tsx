@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { Select, OptGroup, Option } from '../../src';
 
@@ -182,4 +182,69 @@ describe('<Select /> Tests', () => {
     expect(value).toBe('react');
     expect(name).toBe(inputName);
   });
+
+  it('should reset select value when inputReset is sent', () => {
+    interface SelectRerenderProps {
+      inputReset?: boolean;
+      value?: string | number
+    }
+
+    let counterid = 1;
+
+    const SelectRerender: FC<SelectRerenderProps> = ({
+      inputReset,
+      value,
+    }: SelectRerenderProps) => {
+      const id = useRef(counterid);
+      return (
+        <div>
+          <span data-testid="instance-id">{id.current}</span>
+          <Select
+            className="testingclass"
+            name={inputName}
+            data-testid={inputName}
+            inputChange={mockHandleChange}
+            inputReset={inputReset}
+            options={options}
+            value={value}
+          />
+        </div>
+      );
+    };
+    const { rerender } = render(<SelectRerender inputReset={false} />);
+
+    const input = screen.getByLabelText(inputName) as HTMLSelectElement;
+
+    expect(mockHandleChange).toBeCalledTimes(0);
+    fireEvent.change(input, { target: { value: inputValue } });
+    expect(mockHandleChange).toBeCalledTimes(1);
+
+    const { name, value } = mockHandleChange.mock.calls[0][0];
+
+    expect(input.value).toBe('option1');
+    expect(value).toBe('option1');
+    expect(name).toBe(inputName);
+
+    rerender(<SelectRerender inputReset={true} />);
+
+    expect(mockHandleChange).toBeCalledTimes(1);
+    expect(input.value).toBe('');
+
+    rerender(<SelectRerender value="option2" />);
+
+    expect(mockHandleChange).not.toBeCalled;
+    expect(input.value).toBe('option2');
+
+    rerender(<SelectRerender inputReset={true} />);
+    expect(input.value).toBe('');
+
+    expect(mockHandleChange).toBeCalledTimes(1);
+    fireEvent.change(input, { target: { value: inputValue } });
+    expect(mockHandleChange).toBeCalledTimes(2);
+
+    const { value: valueSecondTry } = mockHandleChange.mock.calls[1][0];
+
+    expect(valueSecondTry).toBe('option1')
+    
+  })
 });

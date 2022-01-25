@@ -4,7 +4,7 @@ An easy to use library to quickly create react forms 📝, its the new level fro
 
 ![npm](https://img.shields.io/npm/v/react-nicer-inputs)
 [![React Nicer Inputs Actions Status](https://img.shields.io/github/workflow/status/wbarahona/react-nicer-inputs/%E2%9A%9B%F0%9F%8F%97%20publish?style=flat-square)](https://github.com/wbarahona/react-nicer-inputs/actions)
-![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/react-nicer-inputs)
+![Known Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/npm/react-nicer-inputs)
 ![NPM](https://img.shields.io/npm/l/react-nicer-inputs)
 
 ---
@@ -73,7 +73,15 @@ Inside the root directory create a react app called `example`:
 npx create-react-app example
 ```
 
-This way you can see the actual render in browser of any input you are updating and creating, also provides a react instance for the input library in order to avoid [Invalid Hook Call Warnings](https://reactjs.org/warnings/invalid-hook-call-warning.html). Check `package.json` in root dir in order to see the `react` dev-dependency path.
+This way you can see the actual render in browser of any input you are updating and creating.
+Go to the package.json file inside `/example/` folder and modify react and react-dom dependencies to:
+
+```js
+"react": "file:../node_modules/react",
+"react-dom": "file:../node_modules/react-dom",
+```
+
+When we do this we provide a react instance for the example app in order to avoid [Invalid Hook Call Warnings](https://reactjs.org/warnings/invalid-hook-call-warning.html).
 
 ### add react-nicer-inputs to yalc local repo and link to example
 
@@ -372,7 +380,7 @@ So, it utilizes all the props explained for each component above.
 
 ### Form
 
-This component allows you to create forms, all Input component within the <Form> tags are added to a formModel, the model updates when user interacts with the inputs, this allows a very flexible access to everything regarding the form, values, validations, used inputs or pristine inputs.
+This component allows you to create forms, all Input component within the <Form> tags are added to a **formModel** object, the model updates when user interacts with the inputs, this allows a very flexible access to everything regarding the form, values, validations, used inputs or pristine inputs.
 
 - `model="login" {string}` Optional - Name for the form model, defaults to "defaultModel"
 - `formSubmit={() => {}} {Function}` This function will run when <Submit> button component is added to the form
