@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/wbarahona/react-nicer-inputs#readme",
   "devDependencies": {
-    "@babel/preset-typescript": "^7.12.13",
+    "@babel/preset-typescript": "^7.16.7",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^13.1.9",
@@ -52,7 +52,7 @@
     "yalc-watch": "^0.0.6"
   },
   "dependencies": {
-    "@babel/preset-typescript": "^7.12.13",
+    "@babel/preset-typescript": "^7.16.7",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^13.1.9",
