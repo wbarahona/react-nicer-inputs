@@ -74,14 +74,6 @@ npx create-react-app example
 ```
 
 This way you can see the actual render in browser of any input you are updating and creating.
-Go to the package.json file inside `/example/` folder and modify react and react-dom dependencies to:
-
-```js
-"react": "file:../node_modules/react",
-"react-dom": "file:../node_modules/react-dom",
-```
-
-When we do this we provide a react instance for the example app in order to avoid [Invalid Hook Call Warnings](https://reactjs.org/warnings/invalid-hook-call-warning.html).
 
 ### add react-nicer-inputs to yalc local repo and link to example
 
@@ -493,4 +485,4 @@ From this example you can determine that username has been filled whereas passwo
 
 Have a spin: check this **_codesandbox_**
 
-[![Edit quiet-tdd-97si6](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/quiet-tdd-97si6?fontsize=14&hidenavigation=1&theme=dark)
+[![Edit wonderful-benji-t2ow1](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/wonderful-benji-t2ow1?fontsize=14&hidenavigation=1&theme=dark)
